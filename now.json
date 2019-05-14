@@ -1,0 +1,14 @@
+{
+
+	"name": "javierdemartin",
+	"version": 2,
+	"alias": "javierdemart.in",
+"builds": [
+    { "src": "bicis.png", "use": "@now/static" },
+    { "src": "cv.pdf", "use": "@now/static" },
+    { "src": "*.html", "use": "@now/static" },
+	{ "src": "*.css", "use": "@now/static" },
+	{ "src": "*.md", "use": "@now/md" }
+  ],
+ "routes": [{"src": "/molinos", "dest": "molinos/molinos.html", "src": "/cv", "dest": "/cv.pdf"}, { "src": "/bicis", "dest": "/bicis.html" }, {"src":"/neuralbikes", "dest":"/neuralbikes.md"}]
+}
