@@ -8,7 +8,13 @@
     { "src": "cv.pdf", "use": "@now/static" },
     { "src": "*.html", "use": "@now/static" },
 	{ "src": "*.css", "use": "@now/static" },
-	{ "src": "*.md", "use": "@now/md" }
+	{ "src": "js/*.js", "use": "@now/node-server" },
+	{ "src": "*.js", 
+		"use": "@now/node-server",
+		"config": { "maxLambdaSize": "4000mb"}
+	}
   ],
- "routes": [{"src": "/molinos", "dest": "molinos/molinos.html", "src": "/cv", "dest": "/cv.pdf"}, { "src": "/bicis", "dest": "/bicis.html" }, {"src":"/neuralbikes", "dest":"/neuralbikes.md"}]
+ "routes": [
+	{"src" : "/bicis", "dest": "/index.js"},
+	{"src": "/cv", "dest": "/cv.pdf"}]
 }

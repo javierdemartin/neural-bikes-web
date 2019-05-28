@@ -1,0 +1,251 @@
+<html>
+<head>
+<style>
+
+/* Base */
+
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  transition: 1s all;
+  margin: 0;  
+}
+
+#mapid {
+
+  width: 100%; 
+  height: 100%;
+}
+
+/*.container {
+
+  width: 100%;
+  height: 100%;
+
+  background-color: red;
+}*/
+
+
+
+.inner {
+
+  padding: 5%;
+}
+
+p {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 2em;
+  margin: 0;
+}
+
+a {
+  color: #00B2B2;
+  text-decoration: none;
+}
+
+/* Layout */
+
+canvas {
+}
+
+.wrapper {
+    height: 30%;
+    width: 100%;
+    max-width: 100%;
+    max-height: 30%;
+}
+
+.Flex {
+  display: flex;
+}
+
+/*.footer {
+    position: relative;
+  width: 100%; 
+  height: 40%;
+  max-height: 40%;
+
+  background-color: green;
+}*/
+</style>
+
+
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-140485405-1');
+</script>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6446389863983986",
+    enable_page_level_ads: true
+  });
+</script>
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+
+
+
+	    <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+    	
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="">
+        <script src="js/leaflet-providers.js"></script>
+        <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    
+    <script>
+
+    function onClick(e) {
+
+        var prediction = <%- JSON.stringify(prediction) %>;
+        var actual = <%- JSON.stringify(actual) %>;
+
+
+        var canvas = document.getElementById("myChart");
+
+
+        var map = document.getElementById("mapid");
+        map.style.height = "70%";
+        map.style.display = "block";
+
+        var parent = document.getElementById('wrapper');
+
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+
+
+        var popup = e.target.getPopup();
+        var content = popup.getContent().replace(/([0-9-])/g, "");
+        var prediction_values = JSON.parse(prediction[content])
+        prediction_values = Object.values(prediction_values)
+
+        var actual_values = JSON.parse(actual[content])
+
+        actual_values = Object.values(actual_values)        
+
+        var indexes = Object.keys(JSON.parse(prediction[content]))
+
+        var datitos = {
+
+            labels: indexes,
+            datasets: [
+            {
+                label:"Predicción",
+                data: prediction_values,
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderDash: [5, 5],
+                pointStyle: 'line',
+                fill: true,
+                pointRadius: 0
+            },
+            {
+                label: "Actual",
+                data: actual_values,
+                backgroundColor: 'rgba(139,157,195, 0.8)',
+                borderColor: 'rgba(139,157,195, 0.8)',
+                pointStyle: 'line',
+                fill: true,
+                pointRadius: 0
+
+            }
+            ]
+        }
+
+        var chartOptions = {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 10
+            }
+          }
+        };
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+        var myLineChart = new Chart(ctx, {
+            responsive: true,
+            maintainAspectRatio: false,
+            type: 'line',
+            data: datitos,
+            options: chartOptions
+        });
+    }
+
+    function loadMapPins() {
+
+        var lat  = "<%= lat %>"; // Where to center the map
+        var lng  = "<%= lng %>";
+        var zoom = "<%= zoom %>";
+        var data       = <%- JSON.stringify(data) %>;
+        var prediction = <%- JSON.stringify(prediction) %>;
+        var actual     = <%- JSON.stringify(actual) %>;
+
+        var mymap = L.map('mapid').setView([lat, lng], zoom);
+
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(mymap);
+
+
+        // L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        //     maxZoom: 18,
+        //     id: 'mapbox.streets'
+        // }).addTo(mymap);
+
+        for(var i = 0; i < data.length; i++) {
+
+            var lat  = data[i]['lat']
+            var lng  = data[i]['lng']
+            var name = data[i]['name']
+
+            var popip = L.popup({
+                closeOnClick: true,
+                autoClose: true
+            }).setContent(name.replace(/([0-9-])/g, ""));
+
+            L.marker([lat, lng]).addTo(mymap)
+                .bindPopup(popip).on('click', onClick);
+        }
+    }
+    </script>
+
+</head>
+<body onload="loadMapPins()">    
+
+    <div class="container">
+
+        <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0">
+            
+        </div>
+           
+        <%- include('partials/footer') %>
+
+        
+        
+    </div>
+
+
+
+</body>
+</html>
