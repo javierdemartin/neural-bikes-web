@@ -24,12 +24,6 @@
 
 /* Base */
 
-.rainbow-text {
-  background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 html {
   height: 100%;
   width: 100%;
@@ -41,15 +35,25 @@ body {
   width: 100%;
   transition: 1s all;
   margin: 0;
-  color: #FFFFFF;
-  background: #000000;
-  background-color: #000000;
-  
+/*   margin: 0.5; */
+  background-color: #FEFAE8;
 }
 
 #mapid {
 
   width: 100%; height: 50%;
+}
+
+#red {
+  color: red;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+
 }
 
 .container {
@@ -66,21 +70,44 @@ canvas {
   height: 100%;
 }
 
+.table-responsive {
+
+  width:100% !important;
+  height:50% !important;
+  /*height:20% !important;*/
+
+}
+
 .inner {
 
-  padding: 5%;
+  padding: 8%;
 }
 
 p {
   font-family: 'Poppins', sans-serif;
-  font-weight: 600;
+/*  font-weight: 600;
   font-size: 2em;
-  margin: 0;
-overflow-wrap: break-word;
+*/  margin: 0;
+  color: #1E1A1A;
+  overflow-wrap: break-word;
+}
+
+#section { 
+	position:relative; 
+	left:-15px;
+    padding-right:50px;
+	
+}
+
+
+mark {
+	background-color: #FFFFFF;
+	text-align: left;
+	line-height: 1.15;
 }
 
 a {
-  color: #00B2B2;
+  color: #41B3A3;
   text-decoration: none;
 }
 
@@ -99,28 +126,57 @@ a {
 /* Font */
 
 .Poppins {
-  font-size: 5em;
+  font-size: 2em;
   line-height: 1.2em;
-  margin-bottom: 150px;
+  margin-bottom: 1em;
+}
+
+.Poppins_par {
+  font-size: 2em;
 }
 
 .Link:hover{
   color: #0AB2B2;
 }
 
-p {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 2em;
-  margin: 0;
-}
-
-
-
 /* Layout */
 
 .Flex {
   display: flex;
+}
+
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: #000000;
+	}
+	
+	mark {
+		background-color: #FFFFFF;
+	}
+	
+    p {
+		color: #FFFFFF;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	body {
+		background-color: #FFFFFF;
+	}
+	
+	mark {
+		background-color: #000000;
+	}
+	
+	#section {
+		color: #FFFFFF;
+	}
+	
+	p {
+		color: #000000;
+	}
+	
+	
 }
 
 /*.max {
@@ -129,9 +185,4 @@ p {
 
 /* Font */
 
-.Poppins {
-  font-size: 5em;
-  line-height: 1.2em;
-  margin-bottom: 150px;
-}
 

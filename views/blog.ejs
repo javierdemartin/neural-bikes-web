@@ -1,0 +1,104 @@
+<html>
+<head>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-140485405-1');
+	</script>
+
+	  <title>Predicciones y disponibilidad de Bilbao Bizi</title>
+<!-- 	  	<link rel="stylesheet" href="../styles-map.css"> -->
+
+		<meta name="description" content="Consulta y predicción de disponibilidad del servicio de bicicletas de Bilbao, Bilbao Bizi.">
+	<style>
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  transition: 1s all;
+  margin: 0;  
+}
+
+#mapid {
+
+  width: 100%; 
+  height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+	z-index:0;
+/*     opacity: 0.5; */
+}
+
+.container {
+
+  width: 100%;
+  height: 100%;
+  position:relative;
+}
+
+.available-bikes {
+	vertical-align: middle;
+	display: flex;
+	margin: 0px;
+	align-items: center;
+}
+
+.inner {
+
+  padding: 5%;
+}
+
+p {
+  font-family: 'Poppins', sans-serif;
+/*   font-weight: 600; */
+  font-size: 1em;
+  margin: 0;
+}
+
+a {
+  color: #00B2B2;
+  text-decoration: none;
+}
+
+
+
+
+
+	</style>
+    	
+    
+    <script>
+    function init() {
+    
+
+    
+    
+    }
+    </script>
+
+</head>
+<body onload="init()">    
+
+    <div class="list-group">
+      <!-- loop over blog posts and render them -->
+      <% posts.forEach((post) => { %>
+        <a href="/blog/<%= post %>" class="list-group-item">
+          <p class="list-group-item-heading"><%= post %></p>
+        </a>
+      <% }) %>
+    </div>
+
+
+</body>
+</html>

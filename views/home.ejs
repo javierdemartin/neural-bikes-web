@@ -1,9 +1,21 @@
 <html>
 <head>
-<style>
 
-/* Base */
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
 
+	  gtag('config', 'UA-140485405-1');
+	</script>
+
+	  <title>Predicciones y disponibilidad de Bilbao Bizi</title>
+<!-- 	  	<link rel="stylesheet" href="../styles-map.css"> -->
+
+		<meta name="description" content="Consulta y predicción de disponibilidad del servicio de bicicletas de Bilbao, Bilbao Bizi.">
+	<style>
 html {
   height: 100%;
   width: 100%;
@@ -21,17 +33,26 @@ body {
 
   width: 100%; 
   height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+	z-index:0;
+/*     opacity: 0.5; */
 }
 
-/*.container {
+.container {
 
   width: 100%;
   height: 100%;
+  position:relative;
+}
 
-  background-color: red;
-}*/
-
-
+.available-bikes {
+	vertical-align: middle;
+	display: flex;
+	margin: 0px;
+	align-items: center;
+}
 
 .inner {
 
@@ -40,8 +61,8 @@ body {
 
 p {
   font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 2em;
+/*   font-weight: 600; */
+  font-size: 1em;
   margin: 0;
 }
 
@@ -52,51 +73,128 @@ a {
 
 /* Layout */
 
-canvas {
+.available_bikes_wrapper {
+
+	height: 40px;
+    width: 80px;
+    max-width: 80px;
+    max-height: 40px;
+    border-radius: 15px;	
+    position:absolute;
+	background-color:red;
+	text-align: center;
+	top:40px;
+	display:table-cell;
+	margin-right: 80px;
+ 	opacity:0.95;
+ 
+ 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+
+	z-index:10;
+
 }
 
+
 .wrapper {
-    height: 30%;
-    width: 100%;
-    max-width: 100%;
-    max-height: 30%;
+    height: 25%;
+    width: 95%;
+    max-width: 95%;
+    max-height: 25%;
+    border-radius: 15px;
+	background-color:white;
+	position:absolute;
+	bottom:20px;
+	display:none;
+	margin-left: 2.5%;
+ 	margin-right: 2.5%;
+ 	opacity:0.95;
+ 		
+ 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+
+/* 	z-index: 10; */
+	
+}
+
+#myChart {
+
+	display:none;
+}
+
+.segmented_control_wrapper {
+
+	height: 60px;
+    width: 200px;
+    max-width: 200px;
+    max-height: 60px;
+	position:absolute;
+	
+	top:0px;
+	display:block;
+	margin-left: calc(50% - 100px);
+ 	margin-right: calc(50% - 100px);
+ 	opacity:0.95;
+	z-index:10;
 }
 
 .Flex {
   display: flex;
 }
 
-/*.footer {
-    position: relative;
-  width: 100%; 
-  height: 40%;
-  max-height: 40%;
+.segmented-control {
 
-  background-color: green;
-}*/
-</style>
+ 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+    display: table;
+    width: 100%;
+/*     margin: 2em 0; */
+    padding: 0;
+}
+
+.segmented-control__item {
+    display: table-cell;
+    margin: 0;
+    padding: 0;
+
+    background-color: #A8A8A8;
+    list-style-type: none;
+}
+
+.segmented-control__input {
+
+    position: absolute;
+    visibility: hidden;
+}
+
+.segmented-control__label {
+    display: block;
+    margin: 0 -1px -1px 0; /* -1px margin removes double-thickness borders between items */
+    padding: 1em .25em;
+    border: 1px solid #ddd;
+	color: white;
+    font: 14px/1.5 sans-serif; 
+    text-align: center;  
+    cursor: pointer;
+}
 
 
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+.segmented-control__label:hover {
+    background: #fafafa;
+    color: gray;
+}
 
-  gtag('config', 'UA-140485405-1');
-</script>
+.segmented-control__input:checked + .segmented-control__label {
+    background: #EBEBEB;
+    color: #333;
+}
+	</style>
 
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({
-    google_ad_client: "ca-pub-6446389863983986",
-    enable_page_level_ads: true
-  });
-</script>
-
- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 
 
 
@@ -110,8 +208,151 @@ canvas {
     
     <script>
 
-    function onClick(e) {
+      var chartOptions = {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: {
+              boxWidth: 10
+            }
+          }
+        }
+    
+	var mymap = undefined;
+	
+	var LamMarker = [];
+	
+	var cluster_color = {0: "#cf455c", 1: "#00a79d", 2: "#2d3561", 3: "#f3826f"}
+	
+	var stations_clusters = {
+		"ABANDO":1,
+		"AMETZOLA":0,
+		"ANSELMO CLAVE":1,
+		"ARANGOIT":3,
+		"ARANGOITI":0,
+		"AREILTZA":2,
+		"ARRIAGA":3,
+		"ASKATASUNA":0,
+		"ASTILLERO":0,
+		"AYUNTAMIENTO":0,
+		"BASARRATE":0,
+		"BLAS OTERO":3,
+		"BOLUETA":2,
+		"CORAZÓN MARIA":3,
+		"EGAÑA":2,
+		"EGUILLOR":1,
+		"EPALZA":3,
+		"ESKURTZE":0,
+		"ESTRADA CALEROS":0,
+		"ETXEBARRIA":0,
+		"GABRIEL ARESTI":0,
+		"HEROS":1,
+		"IBAIZABAL":0,
+		"INDAUTXU":3,
+		"KARMELO":0,
+		"LEIZAOLA":1,
+		"LEVANTE":0,
+		"MERCADO RIBERA":3,
+		"MOYUA":1,
+		"OLABEAGA":0,
+		"OTXARKOAGA":0,
+		"PLAZA ENCARNACIÓN":0,
+		"POLIDEPORTIVO ZORROZA":2,
+		"RAMÓN RUBIAL":1,
+		"REKALDE":0,
+		"SABINO ARANA":2,
+		"SAN NICOLAS":3,
+		"SAN PEDRO":3,
+		"SARRIKO":0,
+		"TERMIBUS":1,
+		"ZORROZAURRE":2
+	}
+	
+	var clusters = {0: [0.9135059767779583,0.9551078334350837,0.9695485827166049,0.9783873219301737,0.9707406645166858,0.9544827939411211,0.9116821175164707,0.6849566722368484,0.43740638255243564,0.35683090732310996,0.33360471517635737,0.3265769641835409,0.3422433056011902,0.41067910097168686,0.507484103932455,0.5687121762700299,0.5302191017127413,0.4539608943023247,0.4058821035582022,0.4103549112608805,0.4712346027565431,0.5911493163038511,0.7240924433131836,0.8266594713372878],
+	1:[0.2071646691797111,0.20192410571167518,0.19927807299933764,0.1985908702165209,0.21013711849627287,0.22490809443049742,0.2757959170769923,0.46105289329316274,0.8309082104289378,0.9509241131381723,0.9622461309206365,0.8807333441376342,0.7144539921633422,0.46859269809237614,0.2836967232200699,0.28951657351509524,0.33558421695934115,0.3236655943180576,0.3012363616135394,0.29652470819175825,0.29151340327972064,0.2715386601655041,0.2431723892410571,0.2190131242936234],
+	2:[0.8423751661666253,0.8368771685111839,0.8444744866604202,0.8497065829752488,0.8653710839440203,0.8829665738038762,0.8988158987838196,0.8668252118186802,0.709286112746019,0.7630682921725017,0.7357936295684903,0.7422377102404171,0.7971901868959468,0.8553516811359635,0.8750294695699972,0.8449381390682738,0.8429351586789768,0.8466984313447656,0.8482817470434274,0.8385090554214074,0.7984642657202308,0.8272896818171414,0.8345768446905598,0.8680439570394077],
+	3: [0.5541947712852969,0.525386662214853,0.5381382800507171,0.5334807355191454,0.5204465994255707,0.50306609410069,0.505194690262712,0.48384215649566675,0.45466644223974345,0.4049888737991032,0.4415344389579834,0.47788713453711257,0.4811333291203209,0.5431015992045215,0.5745179403666115,0.5953356452923291,0.7765847974096032,0.7839344118777115,0.6742321839265515,0.6666880528971711,0.6336046940625988,0.6679832269559002,0.6650005646805422,0.6444921120353408]}
+	
+	function onClickCluster(e) {
+	
+	
+		console.log("CLICKED CLUSTER")
+	
+	    var prediction = <%- JSON.stringify(prediction) %>;
+	    var actual = <%- JSON.stringify(actual) %>;
+        	
+    	var popup = e.target.getPopup();
+        var content = popup.getContent().replace(/([0-9-])/g, "");
+        
+        
+        var prediction_values = JSON.parse(prediction[content])
+        prediction_values = Object.values(prediction_values)
 
+        var actual_values = JSON.parse(actual[content])
+
+        actual_values = Object.values(actual_values)        
+
+        var indexes = Object.keys(JSON.parse(prediction[content]))
+        
+        
+        cluster_data = clusters[stations_clusters[content]].map(function(x) { return x * Math.max.apply(Math, prediction_values);; });
+   
+		
+		new_cluster_data = []
+		
+		for(var i = 0; i < cluster_data.length; i++) {
+		
+			for(var j=0; j < prediction_values.length / cluster_data.length; j++) {
+				
+				new_cluster_data.push(cluster_data[i])
+				
+			}
+		}
+		        
+        var datitos = {
+
+            labels: indexes,
+            datasets: [
+            {
+                label:"Prediction",
+                data: prediction_values,
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderDash: [5, 5],
+                pointStyle: 'line',
+                fill: true,
+                pointRadius: 0
+            },
+            {
+                label: "Cluster",
+                data: new_cluster_data,
+                backgroundColor: cluster_color[stations_clusters[content]] + '50',
+                borderColor: cluster_color[stations_clusters[content]],
+                pointStyle: 'line',
+                fill: true,
+                pointRadius: 0
+
+            }
+            ]
+        }
+        
+        let ctx = document.getElementById('myChart').getContext('2d');
+
+        var myLineChart = new Chart(ctx, {
+            responsive: true,
+            maintainAspectRatio: false,
+            type: 'line',
+            data: datitos,
+            options: chartOptions
+        });
+    }
+    
+    var myLineChart = undefined;
+
+    function onClick(e) {
+    
+    	console.log("CLICKED PREDICTION")
+    	
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual = <%- JSON.stringify(actual) %>;
 
@@ -120,14 +361,15 @@ canvas {
 
 
         var map = document.getElementById("mapid");
-        map.style.height = "70%";
+        map.style.height = "100%";
         map.style.display = "block";
 
         var parent = document.getElementById('wrapper');
 
+        parent.style.display = "block";
+
         canvas.width = parent.offsetWidth;
         canvas.height = parent.offsetHeight;
-
 
         var popup = e.target.getPopup();
         var content = popup.getContent().replace(/([0-9-])/g, "");
@@ -145,7 +387,7 @@ canvas {
             labels: indexes,
             datasets: [
             {
-                label:"Predicción",
+                label:"Prediction",
                 data: prediction_values,
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -167,19 +409,17 @@ canvas {
             ]
         }
 
-        var chartOptions = {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              boxWidth: 10
-            }
-          }
-        };
 
-        var ctx = document.getElementById('myChart').getContext('2d');
+        datitos.datasets[0].data = prediction_values
+        datitos.datasets[1].data = actual_values
+        
+        let ctx = document.getElementById('myChart').getContext('2d');
 
-        var myLineChart = new Chart(ctx, {
+      
+        
+        myLineChart.destroy();
+        
+        myLineChart = new Chart(ctx, {
             responsive: true,
             maintainAspectRatio: false,
             type: 'line',
@@ -187,8 +427,14 @@ canvas {
             options: chartOptions
         });
     }
-
-    function loadMapPins() {
+        
+    function selectedPrediction() {
+    
+    	console.log("PREDICTION")
+    	
+    	var parent = document.getElementById('wrapper');
+        
+        parent.style.display = "none"
 
         var lat  = "<%= lat %>"; // Where to center the map
         var lng  = "<%= lng %>";
@@ -197,13 +443,88 @@ canvas {
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
 
-        var mymap = L.map('mapid').setView([lat, lng], zoom);
+        for(var i = 0; i < LamMarker.length; i++) {
+			
+			mymap.removeLayer(LamMarker[i]);
+			
+			LamMarker[i].options.color = "#3395DE"
+			LamMarker[i].options.fillColor = "#3395DE"
+
+			LamMarker[i].addTo(mymap).on('click', onClick);
+        }
+        
+        alert("Graphs will show the current availability versus the predictions made with the neural network.")
+    }
+    
+    function selectedCluster() {
+    
+    	console.log("Cluster")   
+    	
+    	var parent = document.getElementById('wrapper');
+        
+        parent.style.display = "none"
+	    
+    	
+		for(i=0;i<LamMarker.length;i++) {
+			
+			mymap.removeLayer(LamMarker[i]);
+			
+			LamMarker[i].options.color = cluster_color[stations_clusters[LamMarker[i]._popup._content]]
+			LamMarker[i].options.fillColor = cluster_color[stations_clusters[LamMarker[i]._popup._content]]
+
+			LamMarker[i].addTo(mymap).on('click', onClickCluster);
+						
+		}  
+			
+		alert("Graphs will show the behaviour expected for the selected station versus the predictions made with the neural network.\n\nThe displayed colors in the nodes represent the different behaviours on each of the stations: work stations, residential stations and unused stations.")
+    }
+    
+    
+    
 
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-             maxZoom: 18,
-             id: 'mapbox.streets'
-         }).addTo(mymap);
+    function loadMapPins() {
+    
+    	var canvas = document.getElementById("myChart");
+
+
+        var map = document.getElementById("mapid");
+        map.style.height = "100%";
+        map.style.display = "block";
+
+        var parent = document.getElementById('wrapper');
+
+//         parent.style.display = "block";
+
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+    
+	    let ctx = document.getElementById('myChart').getContext('2d');
+	    
+	    myLineChart = new Chart(ctx, {
+            responsive: true,
+            maintainAspectRatio: false,
+            type: 'line',
+            data: [],
+            options: chartOptions
+        });
+
+        var lat  = "<%= lat %>"; // Where to center the map
+        var lng  = "<%= lng %>";
+        var zoom = "<%= zoom %>";
+        var data       = <%- JSON.stringify(data) %>;
+        var prediction = <%- JSON.stringify(prediction) %>;
+        var actual     = <%- JSON.stringify(actual) %>;
+
+        mymap = L.map('mapid').setView([lat, lng], zoom);
+
+      	L.tileLayer(
+                "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+                {detectRetina: true,
+                maxZoom: L.Browser.retina ? 12 : 11,
+				  maxNativeZoom: L.Browser.retina ? 10 : 11, // 1 level LOWER for high pixel ratio device.
+                "attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(mymap);
 
         for(var i = 0; i < data.length; i++) {
 
@@ -211,13 +532,18 @@ canvas {
             var lng  = data[i]['lng']
             var name = data[i]['name']
 
-            var popip = L.popup({
-                closeOnClick: true,
-                autoClose: true
-            }).setContent(name.replace(/([0-9-])/g, ""));
-
-            L.marker([lat, lng]).addTo(mymap)
-                .bindPopup(popip).on('click', onClick);
+            var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
+                 autoClose: true
+             }).setContent(name.replace(/([0-9-])/g, ""));
+            
+            
+            var marker = new L.circleMarker([lat, lng],
+                {"bubblingMouseEvents": true, "color": "#3395DE", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3395DE", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            )
+            
+            LamMarker.push(marker);
+            
+			LamMarker[i].addTo(mymap).bindPopup(popup).on('click', onClick);
         }
     }
     </script>
@@ -226,12 +552,27 @@ canvas {
 <body onload="loadMapPins()">    
 
     <div class="container">
+    
+    <div class="segmented_control_wrapper">
+		<ul class="segmented-control">
+			<li class="segmented-control__item">
+				<input class="segmented-control__input" type="radio" value="1" name="option" id="option-1" checked OnClick="selectedPrediction()">
+				<label class="segmented-control__label" for="option-1">Prediction</label>
+			</li>
+			<li class="segmented-control__item">
+				<input class="segmented-control__input" type="radio" value="2" name="option" id="option-2" OnClick="selectedCluster()">
+				<label class="segmented-control__label" for="option-2">Cluster</label>
+			</li>
+		</ul>
+	</div>
 
-        <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0">
-            
-        </div>
+        <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
            
-        <%- include('partials/footer') %>
+        <!-- <%- include('partials/footer') %> -->
+        
+	 	<div class="wrapper" id="wrapper" >
+			<canvas id="myChart"></canvas>
+		</div>
 
         
         

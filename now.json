@@ -5,16 +5,16 @@
 	"alias": "javierdemart.in",
 "builds": [
     { "src": "bicis.png", "use": "@now/static" },
-    { "src": "cv.pdf", "use": "@now/static" },
+    { "src": "resources/*", "use": "@now/static" },
     { "src": "*.html", "use": "@now/static" },
+    {"src": "/blog/*.md", "use": "@now/md"},
 	{ "src": "*.css", "use": "@now/static" },
-	{ "src": "js/*.js", "use": "@now/node-server" },
-	{ "src": "*.js", 
-		"use": "@now/node-server",
-		"config": { "maxLambdaSize": "4000mb"}
-	}
+	{ "src": "/js/*.js", "use": "@now/node-server" }
   ],
  "routes": [
-	{"src" : "/bicis", "dest": "/index.js"},
-	{"src": "/cv", "dest": "/cv.pdf"}]
+	{"src": "/blog", "dest": "/js/index.js"},
+	{"src": "/blog/", "dest": "/js/index.js"},
+	{"src" : "/bicis", "dest": "/js/index.js"},
+	{"src" : "/cluster", "dest": "/cluster.html"},
+	{"src": "/cv", "dest": "/resources/cv.pdf"}]
 }

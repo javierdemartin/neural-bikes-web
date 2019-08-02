@@ -5,6 +5,7 @@ var fs = require('fs');
 var async = require('async');
 var fetch = require("node-fetch");
 var util = require("util")
+var path = require("path")
 var CloudKit = require('./cloudkit.js')
 
 var stations = [];
@@ -21,7 +22,7 @@ var actual_values = {}
 
 var apiToken = "624a589151c33d7bbc25f082535b4a624ac20ad28fb99e77dd11316884a865d1"
 
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, '../'));
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine','ejs');
 
@@ -32,6 +33,26 @@ console.timestamp = function () {
   args.unshift(now - started, 'ms');
   console.log(args.join(' '));
 }
+
+// app.get('/blog', (req, res) => {
+// 	const testFolder = path.join(__dirname, '../blog')
+// 	
+// 	console.log(testFolder)
+// 	
+// 	posts = []
+// 
+// 	fs.readdir(testFolder, (err, files) => {
+// 	  files.forEach(file => {
+// 		console.log(file);
+// 		posts.push(file.replace('.md', '.html'))
+// 		
+// 	  });
+// 	  
+// 	  res.render('views/blog', {
+// 	  	posts: posts
+// 	  })
+// 	});
+// })
 
 
 app.get('/bicis', (req, res) => {
@@ -55,6 +76,11 @@ app.get('/bicis', (req, res) => {
 
 			data = body['countries'][0]['cities'][0]
 
+			available_bikes = data['available_bikes']
+			total_bikes = data['set_point_bikes']
+			
+			console.log(">>>> " + available_bikes)
+			
 			lat = data['lat']
 			lng = data['lng']
 			zoom = data['zoom'] + 1
@@ -72,35 +98,15 @@ app.get('/bicis', (req, res) => {
 
 			console.timestamp('>>>> second query ', 0);
 
-			res.render('home', { 
+			res.render('views/home', { 
 				lat: lat, 
 				lng: lng, 
 				zoom: zoom, 
 				data: data, 
 				prediction: prediction_values, 
-				actual: actual_values})
-
-
-
-			// queryPredictionValues("Prediction").then(function(val) {
-
-			// 	console.timestamp('>>>> first query ', 0);
-
-
-			// 	queryPredictionValues("Today").then(function(real) {
-
-			// 		console.timestamp('>>>> second query ', 0);
-
-			// 		res.render('home', { 
-			// 			lat: lat, 
-			// 			lng: lng, 
-			// 			zoom: zoom, 
-			// 			data: data, 
-			// 			prediction: prediction_values, 
-			// 			actual: actual_values})
-					
-			// 	})
-			// })
+				actual: actual_values,
+				available: available_bikes, 
+				total: total_bikes})
 		}
 	})
 })
@@ -154,7 +160,6 @@ var queryPredictionValues = function(typeOfQuery) {
 						}
 						}]
 					}
-
 				}
 			}, (error, res, body) => {
 			  
@@ -174,10 +179,8 @@ var queryPredictionValues = function(typeOfQuery) {
 				} else {
 					actual_values[body['records'][0]['recordName'].replace('_TODAY', '')] = decoded_data
 					resolve(actual_values)
-
 				}
 			})
-			
 		}))
 	}
 
@@ -188,4 +191,4 @@ var queryPredictionValues = function(typeOfQuery) {
 module.exports = app
 
 
-app.listen(3000)
+app.listen()
