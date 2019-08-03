@@ -6,11 +6,13 @@
   "dependencies": {
     "async": "^2.6.2",
     "ejs": "2.6.1",
+    "encoding": "^0.1.12",
     "express": "^4.16.4",
     "html": "1.0.0",
-    "encoding": "^0.1.12",
     "node-fetch": "^2.6.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "frontmatter": "^0.0.3",
+    "marked": "^0.7.0"
   },
   "scripts": {
     "start": "node ."

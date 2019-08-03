@@ -1,3 +1,8 @@
+---
+date: 2018-10-31T12:00:00+12:00
+title: "Hello World"
+---
+
 # Analyzing bike share with Graphext
 
 [Graphext](https://graphext.com) is a user friendly site to perform data science analysis in an easy way. All of it it's codeless, presents a visual result and it's collaborative.
