@@ -1,5 +1,6 @@
 
 const app = require('express')()
+var express = require("express");
 var request = require('request')
 var fs = require('fs');
 var async = require('async');
@@ -26,6 +27,8 @@ var prediction_values = {}
 var actual_values = {}
 
 var apiToken = "624a589151c33d7bbc25f082535b4a624ac20ad28fb99e77dd11316884a865d1"
+
+app.use(express.static(path.join(__dirname, '../')));
 
 app.set('views', path.join(__dirname, '../'));
 app.engine('ejs', require('ejs').renderFile);
@@ -56,9 +59,12 @@ app.get('/blog', (req, res) => {
 		fs.readdir(testFolder, (err, files) => {
 		  files.forEach(file => {
 			console.log(file);
+			
+			if (file.indexOf(".md") !== -1) {
+				posts.push(file.replace('.md', ''))
+			}
 		
-			posts.push(file.replace('.md', ''))
-		
+			
 		  });
 	  
 		  res.render('views/blog', {
@@ -68,17 +74,16 @@ app.get('/blog', (req, res) => {
 	} else {
 	
 		console.log("%%%%%%%%%%%%%% " + req.originalUrl)
-
 	}
-	
-	
 })
 
 app.get('/blog/*', (req, res) => {
-	
-	console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + req.originalUrl)
-	
+
+// 	console.log("[ROUTING TO POST]")
+		
 	const testFolder = path.join(__dirname, '../_posts')
+	
+	console.log("THE PATH IS " + path.join(__dirname, '../'))
 	
 	var file = req.originalUrl.replace('/blog/', '')
 	
@@ -86,19 +91,22 @@ app.get('/blog/*', (req, res) => {
 	
 	const { data, content } = frontmatter(raw);
 	
-	console.log("---------")
-	console.log(data)
-	console.log(data.title)
-	console.log("---------")
-	console.log(content)
-	console.log("---------")
+	var aux = frontmatter(raw);
+
+	// console.log("*****************")	
+// 	console.log(aux)
+// 	console.log("*****************")
+// 	
+// 	console.log("---------")
+// 	console.log(content)
+// 	console.log("---------")
 	
 	const markdown = ejs.render(content, data);
 	const html = marked.parse(markdown);
 	
-	res.render('views/post', {data: data, content: content})
+	res.render('views/post', {data: data, content: html})
 
-	console.log(html);
+// 	console.log(html);
 })
 
 
@@ -251,4 +259,4 @@ var queryPredictionValues = function(typeOfQuery) {
 module.exports = app
 
 
-app.listen()
+app.listen(3000)
