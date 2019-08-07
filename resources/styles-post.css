@@ -5,6 +5,21 @@
   src: local('Poppins'), local('Poppins'), url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
   unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
 }
+/* latin-ext */
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Playfair Display'), local('Playfair Display'), url('https://fonts.googleapis.com/css?family=Playfair+Display&display=swap');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+    --c-bg-light: hsl(0, 0%, 97%);
+    --c-high: hsla(54, 100%, 62%, 0.4);
+    --c-high-light: hsla(54, 100%, 62%, 0.9);
+}
+
 /* Base */
 
 html {
@@ -29,8 +44,6 @@ img {
 
 }
 
-
-
 .inner {
 
   padding: 8%;
@@ -39,22 +52,19 @@ img {
 h1 {
 
 	font-family: 'Poppins', sans-serif;
-/*  font-weight: 600; */
-  font-size: 2em;
-  margin: 0;
-  color: #1E1A1A;
+	font-size: 2em;
+	margin: 0;
+
 }
 
 p, li {
-  font-family: 'Poppins', sans-serif;
-/*  font-weight: 600; */
+	font-family: 'Poppins', sans-serif;
   font-size: 1em;
   margin: 0;
-  color: #1E1A1A;
+
   overflow-wrap: break-word;
   text-align: justify;
   text-justify: inter-word;
-  
 }
 
 #section { 
@@ -62,6 +72,10 @@ p, li {
 	left:-15px;
     padding-right:50px;
 	
+}
+
+pre {
+	margin-left:40px;
 }
 
 
@@ -73,8 +87,19 @@ mark {
 
 a, a:visited, a:focus {
 
-  text-decoration: underline;
+  text-decoration: none;
   text-rendering: optimizeLegibility;
+  
+  background: -webkit-linear-gradient(left, var(--c-high), var(--c-high-light));
+    background: linear-gradient(to right, var(--c-high), var(--c-high-light));
+    background-size: 300% 40%;
+    background-repeat: no-repeat;
+    background-position: 0% 100%;
+    -webkit-transition-property: background-position;
+    transition-property: background-position;
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;
+    padding: 0
 }
 /* Font */
 
@@ -103,6 +128,8 @@ a, a:visited, a:focus {
 		color: #000000;
 	}
 		
+
+		
 	h1, code, p, li, a {
 		color: #FFFFFF;
 	}
@@ -112,6 +139,7 @@ a, a:visited, a:focus {
 	body {
 		background-color: #FFFFFF;
 	}
+	
 	
 	mark {
 		background-color: #000000;
