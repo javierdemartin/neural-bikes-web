@@ -93,20 +93,20 @@ app.get('/blog/*', (req, res) => {
 	
 	var aux = frontmatter(raw);
 
-	// console.log("*****************")	
-// 	console.log(aux)
-// 	console.log("*****************")
-// 	
-// 	console.log("---------")
-// 	console.log(content)
-// 	console.log("---------")
+	console.log("*****************")	
+	console.log(aux)
+	console.log("*****************")
+	
+	console.log("---------")
+	console.log(content)
+	console.log("---------")
 	
 	const markdown = ejs.render(content, data);
 	const html = marked.parse(markdown);
 	
 	res.render('views/post', {data: data, content: html})
 
-// 	console.log(html);
+	console.log(html);
 })
 
 
@@ -259,4 +259,4 @@ var queryPredictionValues = function(typeOfQuery) {
 module.exports = app
 
 
-app.listen(3000)
+app.listen()

@@ -2,7 +2,7 @@
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 700;
-  src: local('Poppins Bold'), local('Poppins-Bold'), url("https://fonts.gstatic.com/s/poppins/v5/pxiByp8kv8JHgFVrLCz7Z11lFd2JQEl8qw.woff2") format('woff2');
+  src: local('Poppins'), local('Poppins'), url("https://fonts.googleapis.com/css?family=Poppins:700&display=swap");
   unicode-range: U+0900-097F, U+1CD0-1CF6, U+1CF8-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FB;
 }
 
@@ -69,7 +69,7 @@ canvas {
 
 p {
   font-family: 'Poppins', sans-serif;
-/*  font-weight: 600; */
+ font-weight: 700;
   font-size: 1em;
   margin: 0;
   color: #1E1A1A;
@@ -105,6 +105,7 @@ a {
 
 h1 {
 	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
 	font-size: 2em;
 }
 
