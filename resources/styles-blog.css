@@ -144,9 +144,8 @@ h1 {
 	
 	mark {
 		background-color: #FFFFFF;
+		color: #000000;
 	}
-	
-	
 	
     p, a, h1 {
 		color: #FFFFFF;
@@ -168,10 +167,11 @@ h1 {
 	
 	mark {
 		background-color: #000000;
+		color: #FFFFFF;
 	}
 	
 	#section {
-		color: #FFFFFF;
+		color: #000000;
 	}
 	
 	p {

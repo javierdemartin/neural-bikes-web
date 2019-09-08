@@ -17,22 +17,18 @@
 	  	</style>
     	    
     <script>
-		function clickedPost() {
-		
-			console.log("CLICKED POST")
-		}
     </script>
 </head>
  <body class="body" id="boo">
 
 	 <div class="inner">
 	 
-	 <h1 class="Poppins" id="section"><mark id="section">Blog</mark></h1>
+	 <h1 class="Poppins" id="section"><mark>Blog</mark></h1>
 
     <div class="list-group">
       <!-- loop over blog posts and render them -->
       <% posts.forEach((post) => { %>
-        <p><a href="/blog/<%= post %>"><%= post.replace(/_/g, " ").replace("_", " ") %></a></p><br>
+        <p class="Poppins"><a href="/blog/<%= post %>"><%= post.replace(/_/g, " ").replace("_", " ") %></a></p><br>
 
       <% }) %>
     </div>
