@@ -1,4 +1,11 @@
-# Network Extension Framework
+---
+title: Network Extensions in Swift 
+author: Javier de Martín
+date: 2019-09-13
+published: true
+---
+
+This is still a work in progress!
 
 [1]: http://kean.github.io/post/network-extensions-into "Title"
 

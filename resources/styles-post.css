@@ -54,12 +54,18 @@ h1 {
 	font-family: 'Poppins', sans-serif;
 	font-size: 2em;
 	margin: 0;
+}
+
+h2 {
+font-family: 'Poppins', sans-serif;
+	font-size: 1em;
 
 }
 
+
 p, li {
 	font-family: 'Poppins', sans-serif;
-  font-size: 1em;
+  font-size: 0.9em;
   margin: 0;
 
   overflow-wrap: break-word;
@@ -71,11 +77,16 @@ p, li {
 	position:relative; 
 	left:-15px;
     padding-right:50px;
+    
 	
 }
 
 pre {
 	margin-left:40px;
+	font-size: 0.9em;
+	overflow-wrap: break-word;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 

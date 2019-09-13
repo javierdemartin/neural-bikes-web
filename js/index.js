@@ -61,7 +61,31 @@ app.get('/blog', (req, res) => {
 			console.log(file);
 			
 			if (file.indexOf(".md") !== -1) {
-				posts.push(file.replace('.md', ''))
+			
+				
+			
+				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
+	
+				const { data, content } = frontmatter(raw);
+				
+
+				
+				var tituloPost = data.title.replace(/\ /g, "_")
+				
+				console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + tituloPost) 
+				
+				var post = {
+					date: data.date,
+					title: tituloPost
+				}
+				
+				console.log(data);
+				console.log("--------------");
+				
+				posts.unshift(post)
+				
+				console.log(posts)
+// 				posts.push(file.replace('.md', ''))
 			}
 		
 			
@@ -181,7 +205,6 @@ var bigAssQuery = async function() {
 		data: data, 
 		prediction: prediction_values, 
 		actual: actual_values})
-
 }
 
 
