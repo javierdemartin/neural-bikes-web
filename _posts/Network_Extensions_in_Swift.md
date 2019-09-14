@@ -1,5 +1,5 @@
 ---
-title: Network Extensions in Swift 
+title: Packet Tunnel Network Extensions in Swift 
 author: Javier de Martín
 date: 2019-09-13
 published: true
@@ -9,29 +9,30 @@ This is still a work in progress!
 
 [1]: http://kean.github.io/post/network-extensions-into "Title"
 
-The [Network Extension](https://developer.apple.com/documentation/networkextension) framework is one of the most customizable frameworks that Apple provides. This article by [Alexander Grebenyuk][1] covers this topic in depth. This framework allows you to customize and extend the core networking features of iOS and macOS. 
+The [Network Extension](https://developer.apple.com/documentation/networkextension) framework is one of the most customizable frameworks that Apple provides. Allowing you to customize and extend the core networking features of iOS and macOS. 
 
-I have recently worked implementing a VPN using the OpenVPN protocol. This is not supported natively by the framework and it requires a third party library, I used [OpenVPNAdapter](https://github.com/ss-abramchuk/OpenVPNAdapter). And when it comes to delivering an always on VPN you have to do some tricks to get it to work.
+While this article by [Alexander Grebenyuk][1] covers this topic in depth I would like to add some things I have learnt. 
+
+I have recently worked on a project implementing a VPN using the OpenVPN protocol. This is not supported natively by the framework and it requires a third party library, I used [OpenVPNAdapter](https://github.com/ss-abramchuk/OpenVPNAdapter). And when it comes to delivering an always on VPN you have to do some tricks to get it to work.
+
+The WWDC sessions from [2015](https://developer.apple.com/videos/play/wwdc2015/717/), [2017 Part 1](https://developer.apple.com/videos/play/wwdc2017/707)  and [2017 Part 2](). Are specially useful to grasp essential points and know how this framework is used.
 
 ## Using the Packet Tunnel Extension to Implement a VPN
 
-Imagine you want to tunnel all your outgoing traffic using the VPN connection. All your traffic will be sent to your VPN server, that is also your DNS server. This solution can be used to block certain websites, like gambling or adult content. Therefore, you have to be sure that all the traffic is going out of your tunneled interface.
+Imagine you want to tunnel all your outgoing traffic using the VPN connection. All your traffic will be sent to your VPN server, that is also your DNS server. This solution can be used to block certain websites, like gambling or adult content. You have to be sure that all the traffic is going out of your tunneled interface, if it doesn't your app won't be usable. That's what I've been working on.
 
 Apple provides three protocols to implement a VPN: Personal VPN, Packet Tunnel Provider and App Proxy Provider. I have only worked with the second, this post will be all about **packet tunnels**.
 
-Implementing **an always on VPN for unmanaged devices is not possible**, it can only be done using an IKEv2 VPN solution. Trying to mimic the always on VPN behavior requires some tricks and using the [on demand rules](https://developer.apple.com/documentation/networkextension/personal_vpn/vpn_on_demand_rules). Allowing the system to automatically start a VPN connection based on rules, starting the VPN when it's on WiFi but stopping the connection while on Cellular. Not being able to use these capabilities limits the applicability of the tunnel. 
+As this is going to be an app in the App Store I couldn't use an always on VPN. That's only possible for managed devices and implementing an IKEv2 VPN solution. So for unmanaged devices there are some things at our hand. Like playing around with the [on demand rules](https://developer.apple.com/documentation/networkextension/personal_vpn/vpn_on_demand_rules). Allowing the system to automatically start a VPN connection based on rules, starting the VPN when it's on WiFi but stopping the connection while on Cellular.
 
-As the device goes to sleep the tunnel stalls and goes to sleep, it drops the IP address and sends no traffic. OpenVPN implements in their iOS app their solution, [seamless tunnel](https://forums.openvpn.net/viewtopic.php?t=20820).
+Another problem to overcome is dealing with keeping the tunnel alive. As the device goes to sleep the tunnel stalls and goes to sleep, it drops the IP address and sends no traffic. 
 
-So here goes my attempt to replicate that seamless mode and establishing an always on VPN.
 
-**How does a Network Extension work?** Your main app is going to be divided into two targets:
+OpenVPN has implemented their own solution, [seamless tunnel](https://forums.openvpn.net/viewtopic.php?t=20820). So here goes my attempt to replicate that seamless mode and establishing an always on VPN.
 
-* App target, where your app will be
-* Packet Tunnel Network Extension target, subclasses [`NEPacketTunnelProvider`](https://developer.apple.com/documentation/networkextension/nepackettunnelprovider#)
+Implementing this Packet Tunnel Network Extension will divide the app into two targets. Your main app where your app will reside and the target that subclasses  [`NEPacketTunnelProvider`](https://developer.apple.com/documentation/networkextension/nepackettunnelprovider#). Subclassing this class will grant us access to a virtual network interface. Creating a packet tunnel provider requires to configure the `Info.plist` file.
 
-Subclassing this provider will grant us access to a virtual network interface. Creating a packet tunnel provider requires to configure the `Info.plist` file.
-
+The main app will only be in charge of doing tasks like user management downloading the VPN configuration. The target will be doing all the networking operations: starting, stopping and managing all the states the tunnel could be in.
 
 ## Monitoring Network Interface Changes
 
@@ -55,9 +56,7 @@ As a rule, you should only cancel the tunnel if you've exhausted the reconnectio
 
 There is no need to monitor `defaultPath` for interface changes. All that is needed is to monitor the path associated with my tunnel. Doing so you can check if the path is failing or if a better path becomes available.
 
-Many of my problems developing this came here. When an interface changed the traffic was not going out by the `tun` interface. The network stack used and some details about the innards of this are detailed in [this](https://developer.apple.com/videos/play/wwdc2015/717/) WWDC session of 2015. What I came to think was that when the device performed a network interface change all the traffic was going out by the newly established interface. Rendering the tunnel unusable as the traffic was not being sent through the tunnel. 
-
-Monitoring the interface changes with an observer allowed me to cancel or reconnect the tunnel when I saw these changes.
+When an interface changed the traffic was not going out by the `tun` interface. I don't' yet know how this happens or why. This renders the tunnel unusable as the traffic is not being sent by the tunnel. Monitoring the interface changes with an observer allowed me to cancel or reconnect the tunnel when I saw these changes. But it's not a viable solutions. Some times a reconnection loop would happen or weird edge cases.
 
 * The [NWPathStatus.satisfied] is returned as long as the device is connected to a network, regardless of whether that network is working, transmitting data or not. [Sauce](https://stackoverflow.com/questions/57502517/why-does-nwpathmonitor-status-is-always-satisfied/57510122#57510122). This leads me to think that you don't know if the outgoing traffic is going out through the tunnel interface.
 
