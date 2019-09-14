@@ -28,7 +28,7 @@
     <div class="list-group">
       <!-- loop over blog posts and render them -->
       <% posts.forEach((post) => { %>
-        <p class="Poppins"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></p><br>
+        <p class="Poppins"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></p>
         <pre><%= post.date %></pre><br>
 
       <% }) %>

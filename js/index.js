@@ -79,6 +79,8 @@ app.get('/blog', (req, res) => {
 					title: tituloPost
 				}
 				
+				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
+				
 				console.log(data);
 				console.log("--------------");
 				
@@ -114,6 +116,8 @@ app.get('/blog/*', (req, res) => {
 	var raw = fs.readFileSync(testFolder + '/' + file + ".md", 'utf8');
 	
 	const { data, content } = frontmatter(raw);
+	
+	data.date = data.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
 	
 	var aux = frontmatter(raw);
 

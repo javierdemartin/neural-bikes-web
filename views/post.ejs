@@ -13,31 +13,22 @@
 
 	  <title><%= data.title %></title>
 	<link href="/resources/styles-post.css" rel="stylesheet" type="text/css">
-
-
-	  	<style>
-
-	  	</style>
-    <script>
-    function init() {
-    
-    	console.log("HOLA TOLAI")
-    	console.log(window.location)
-    }
-		
+	
+    <script>	
     </script>
 </head>
  <body onload="init()" class="body" id="boo">
 
 	 <div class="inner">
+	 
+	 	<p class="Poppins"><a href="/blog/ %>">Back</a></p>
+	 
+		<code><%= data.date %></code><br></br>
+		
         <h1 class="Poppins"><%= data.title %></h1>
         <br></br>
-        <code><%= data.date %></code><br></br>
+
 		<div class="Poppins"><%- content %></div>
-	
-    
     </div>
-
-
 </body>
 </html>

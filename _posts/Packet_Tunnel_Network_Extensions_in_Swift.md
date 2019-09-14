@@ -15,7 +15,7 @@ While this article by [Alexander Grebenyuk][1] covers this topic in depth I woul
 
 I have recently worked on a project implementing a VPN using the OpenVPN protocol. This is not supported natively by the framework and it requires a third party library, I used [OpenVPNAdapter](https://github.com/ss-abramchuk/OpenVPNAdapter). And when it comes to delivering an always on VPN you have to do some tricks to get it to work.
 
-The WWDC sessions from [2015](https://developer.apple.com/videos/play/wwdc2015/717/), [2017 Part 1](https://developer.apple.com/videos/play/wwdc2017/707)  and [2017 Part 2](). Are specially useful to grasp essential points and know how this framework is used.
+The WWDC sessions from [2015](https://developer.apple.com/videos/play/wwdc2015/717/), 2017 [Part 1](https://developer.apple.com/videos/play/wwdc2017/707)  and [Part 2](https://developer.apple.com/videos/play/wwdc2017/709). Are specially useful to grasp essential points and know how this framework is used.
 
 ## Using the Packet Tunnel Extension to Implement a VPN
 
