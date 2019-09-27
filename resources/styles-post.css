@@ -28,6 +28,31 @@ html {
   margin: 0;
 }
 
+@media (min-width:320px)  { 
+/* smartphones, iPhone, portrait 480x320 phones */ 
+body { width: 100%; }
+}
+@media (min-width:481px)  { 
+/* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ 
+body { width: 100%; }
+}
+@media (min-width:641px)  { 
+/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ 
+body { width: 80%; }
+}
+@media (min-width:961px)  { 
+/* tablet, landscape iPad, lo-res laptops ands desktops */ 
+body { width: 60%; }
+}
+@media (min-width:1025px) { 
+/* big landscape tablets, laptops, and desktops */ 
+body { width: 60%; }
+}
+@media (min-width:1281px) { 
+/* hi-res laptops and desktops */ 
+body { width: 60%; }
+}
+
 body {
   height: 100%;
   width: 100%;
@@ -142,7 +167,7 @@ a, a:visited, a:focus {
 		
 
 		
-	h1, code, p, li, a {
+	h1, h2, code, p, li, a {
 		color: #FFFFFF;
 	}
 }
@@ -158,7 +183,7 @@ a, a:visited, a:focus {
 		color: #FFFFFF;
 	}
 	
-	h1, code, p, li, a {
+	h1, h2, code, p, li, a {
 		color: #000000;
 	}
 
