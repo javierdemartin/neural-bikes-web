@@ -22,13 +22,22 @@
 
 	 <div class="inner">
 	 
+	 
 	 	<p class="Poppins"><a href="/blog/ %>">Back</a></p>
 	 
 		<code><%= data.date %></code><br></br>
 		
+		
         <h1 class="Poppins"><%= data.title %></h1>
+        
+        				    <%- include('partials/footer') %>
 
-		<div class="Poppins"><%- content %></div>
+		<div class="Poppins">
+			<%- content %>
+		</div>
     </div>
+
+
+	
 </body>
 </html>

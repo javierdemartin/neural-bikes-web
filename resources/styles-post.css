@@ -74,6 +74,11 @@ img {
   padding: 8%;
 }
 
+.kofi {
+	 text-align: center;
+	 display: inline-block;
+}
+
 h1 {
 
 	font-family: 'Poppins', sans-serif;
@@ -134,9 +139,15 @@ a, a:visited, a:focus {
     background-position: 0% 100%;
     -webkit-transition-property: background-position;
     transition-property: background-position;
-    -webkit-transition-duration: 300ms;
-    transition-duration: 300ms;
     padding: 0
+}
+
+a:not(#kofi) {
+  text-decoration: none;
+}
+
+.Link:not(#kofi){
+/*   color: #0AB2B2; */
 }
 
 .Poppins {
