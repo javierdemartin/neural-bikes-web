@@ -73,50 +73,24 @@ a {
 
 /* Layout */
 
-.available_bikes_wrapper {
-
-	height: 40px;
-    width: 80px;
-    max-width: 80px;
-    max-height: 40px;
-    border-radius: 15px;	
-    position:absolute;
-	background-color:red;
-	text-align: center;
-	top:40px;
-	display:table-cell;
-	margin-right: 80px;
- 	opacity:0.95;
- 
- 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-
-	z-index:10;
-
-}
-
-
 .wrapper {
     height: 25%;
-    width: 95%;
-    max-width: 95%;
+    width: 65%;
+    max-width: 65%;
     max-height: 25%;
     border-radius: 15px;
 	background-color:white;
 	position:absolute;
+	margin: auto;
 	bottom:20px;
 	display:none;
-	margin-left: 2.5%;
- 	margin-right: 2.5%;
  	opacity:0.95;
+	margin-left: 17.5%;
+ 	margin-right: 17.5%;
  		
  	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
 	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
 	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-
-/* 	z-index: 10; */
-	
 }
 
 #myChart {
@@ -191,6 +165,96 @@ a {
 .segmented-control__input:checked + .segmented-control__label {
     background: #EBEBEB;
     color: #333;
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+  /* Styles */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) {
+  /* Styles */
+    .wrapper {
+    width: 75%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+  /* Styles */
+    .wrapper {
+    width: 95%;
+    max-width: 95%;
+    margin-left: 2.5%;
+ 	margin-right: 2.5%;
+   }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) {
+  /* Styles */
+}
+
+/* iPads (landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) {
+  /* Styles */
+    .wrapper {
+    width: 65%;
+    max-width: 65%;
+    margin-left: 17.5%;
+ 	margin-right: 17.5%;
+   }
+}
+
+/* iPads (portrait) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+  /* Styles */
+    .wrapper {
+    width: 75%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+  /* Styles */
+    .wrapper {
+    width: 55%;
+    max-width: 55%;
+    margin-left: 22.5%;
+ 	margin-right: 22.5%;
+   }
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+  /* Styles */
+    .wrapper {
+    width: 35%;
+    max-width: 35%;
+    margin-left: 32.5%;
+ 	margin-right: 32.5%;
+   }
 }
 	</style>
 
@@ -429,8 +493,6 @@ a {
     }
         
     function selectedPrediction() {
-    
-    	console.log("PREDICTION")
     	
     	var parent = document.getElementById('wrapper');
         
