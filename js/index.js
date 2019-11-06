@@ -42,6 +42,87 @@ console.timestamp = function () {
   console.log(args.join(' '));
 }
 
+app.get('/api/prediction/*/*', (req, res) => {
+
+	let city = req.params[0].toLowerCase()
+	let station = req.params[1].toUpperCase()
+
+	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+		json: {
+			"zoneID": { "zoneName": "_defaultZone"},
+			"query": {
+			"recordType": "Prediction",
+			"filterBy": [
+				{
+				"systemFieldName": "recordName",
+				"comparator": "EQUALS", 
+				"fieldValue": { 
+					"value": { 
+						"recordName": station
+					}
+				}
+				}]
+			}
+		}
+	}, (error, response, body) => {
+	  
+		if (error) {
+			console.error(error)
+			return
+		}
+
+		var b64 = body['records'][0]['fields']['values']['value']
+		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
+		decoded_data = JSON.parse(decoded_data)
+
+		console.log(decoded_data)
+
+		console.log(typeof(decoded_data))
+		res.json(decoded_data)
+	})
+})
+
+
+app.get('/api/today/*/*', (req, res) => {
+
+	let city = req.params[0].toLowerCase()
+	let station = req.params[1].toUpperCase()
+
+
+	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+		json: {
+			"zoneID": { "zoneName": "_defaultZone"},
+			"query": {
+			"recordType": "Today",
+			"filterBy": [
+				{
+				"systemFieldName": "recordName",
+				"comparator": "EQUALS", 
+				"fieldValue": { 
+					"value": { 
+						"recordName": station + "_TODAY"
+					}
+				}
+				}]
+			}
+		}
+	}, (error, response, body) => {
+	  
+		if (error) {
+			console.error(error)
+			return
+		}
+
+		var b64 = body['records'][0]['fields']['values']['value']
+		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
+		decoded_data = JSON.parse(decoded_data)
+
+		console.log(decoded_data)
+
+		console.log(typeof(decoded_data))
+		res.json(decoded_data)
+	})
+})
 
 app.get('/blog', (req, res) => {
 
@@ -105,7 +186,6 @@ app.get('/blog', (req, res) => {
 
 app.get('/blog/*', (req, res) => {
 
-// 	console.log("[ROUTING TO POST]")
 		
 	const testFolder = path.join(__dirname, '../_posts')
 	
@@ -156,7 +236,6 @@ app.get('/bicis', (req, res) => {
 	}, async function (error, response, body) {
 
 		if (!error && response.statusCode === 200) {
-
 
 			data = body['countries'][0]['cities'][0]
 
