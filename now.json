@@ -12,8 +12,10 @@
 	{ "src": "/js/*.js", "use": "@now/node-server" }
   ],
  "routes": [
-	{"src": "/api/prediction/([^/]+)/([^/]+)", "dest": "/js/index.js"},
-	{"src": "/api/today/([^/]+)/([^/]+)", "dest": "/js/index.js"},
+  	{"src": "/api/v1/prediction/(.*)", "dest": "/js/index.js"},
+ 	{"src": "/api/v1/today/(.*)", "dest": "/js/index.js"},
+ 	{"src": "/api/v1/prediction/(.*)/(.*)", "dest": "/js/index.js"},
+	{"src": "/api/v1/today/(.*)/(.*)", "dest": "/js/index.js"},
 	{"src": "/blog", "dest": "/js/index.js"},
 	{"src": "/blog/", "dest": "/js/index.js"},
 	{"src": "/blog/([^/]+)", "dest": "/js/index.js"},

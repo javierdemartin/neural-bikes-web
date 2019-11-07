@@ -25,6 +25,7 @@ var data = undefined;
 
 var prediction_values = {}
 var actual_values = {}
+let license_message = "Free to use and create things with it, if you find it useful consider donating some money."
 
 var apiToken = "624a589151c33d7bbc25f082535b4a624ac20ad28fb99e77dd11316884a865d1"
 
@@ -42,7 +43,11 @@ console.timestamp = function () {
   console.log(args.join(' '));
 }
 
-app.get('/api/prediction/*/*', (req, res) => {
+// Get individual stations by name
+app.get('/api/v1/prediction/*/*', (req, res) => {
+
+
+	console.log(req.params)
 
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
@@ -74,16 +79,22 @@ app.get('/api/prediction/*/*', (req, res) => {
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
+		
+		var payload = {};
+		
+		payload['values'] = decoded_data;
+		payload['donate'] = 'https://ko-fi.com/javierdemartin'
+		payload['license'] = license_message
 
 		console.log(decoded_data)
 
 		console.log(typeof(decoded_data))
-		res.json(decoded_data)
+		res.json(payload)
 	})
 })
 
 
-app.get('/api/today/*/*', (req, res) => {
+app.get('/api/v1/today/*/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
@@ -116,11 +127,112 @@ app.get('/api/today/*/*', (req, res) => {
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
+		
+		var payload = {};
+		payload['values'] = decoded_data;
+		payload['donate'] = 'https://ko-fi.com/javierdemartin'
+		payload['license'] = license_message
 
 		console.log(decoded_data)
 
 		console.log(typeof(decoded_data))
-		res.json(decoded_data)
+		res.json(payload)
+	})
+})
+
+app.get('/api/v1/today/*', (req, res) => {
+
+	console.log(req.params)
+
+	let city = req.params[0].toLowerCase()
+	
+	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
+
+	request({
+		url: url,
+		json: true
+	}, async function (error, response, body) {
+
+		let stationsList = body.countries[0].cities[0].places
+
+		var promises = [];
+		
+
+		  stationsList.forEach(async (item) => {
+
+			lista_estaciones.push(item.name.replace(/([0-9-])/g, ""))
+			console.log("[" + item.name.replace(/([0-9-])/g, "") + "]")
+			console.log("-----------------")
+			promises.push(queryForStation("Today", item.name.replace(/([0-9-])/g, "")))
+			
+		  })
+
+		console.log("Finished")
+		console.log("--------------------------------")
+// 		let result =  Promise.all(promises)
+// 		console.log(result)
+		
+		Promise.all(promises)
+		  .then(data => {
+			console.log("First handler", data);
+			
+			var payload = {};
+			payload['values'] = data;
+			payload['donate'] = 'https://ko-fi.com/javierdemartin'
+			payload['license'] = license_message
+			res.json(payload);
+
+		  })
+	})
+})
+
+app.get('/api/v1/prediction/*', (req, res) => {
+
+	console.log(req.params)
+
+	let city = req.params[0].toLowerCase()
+
+
+	// render `home.ejs` with the list of posts
+	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
+
+	request({
+		url: url,
+		json: true
+	}, async function (error, response, body) {
+
+		let stationsList = body.countries[0].cities[0].places
+
+		var promises = [];
+		
+
+		  stationsList.forEach(async (item) => {
+
+			lista_estaciones.push(item.name.replace(/([0-9-])/g, ""))
+			console.log("[" + item.name.replace(/([0-9-])/g, "") + "]")
+			console.log("-----------------")
+			promises.push(queryForStation("Prediction", item.name.replace(/([0-9-])/g, "")))
+			
+		  })
+
+		console.log("Finished")
+		console.log("--------------------------------")
+// 		let result =  Promise.all(promises)
+// 		console.log(result)
+		
+		Promise.all(promises)
+		  .then(data => {
+			console.log("First handler", data);
+			
+			var payload = {};
+			payload['values'] = data;
+			payload['donate'] = 'https://ko-fi.com/javierdemartin'
+			payload['license'] = license_message
+			res.json(payload);
+			
+			res.json(data);
+
+		  })
 	})
 })
 
@@ -143,17 +255,11 @@ app.get('/blog', (req, res) => {
 			
 			if (file.indexOf(".md") !== -1) {
 			
-				
-			
 				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
 	
 				const { data, content } = frontmatter(raw);
 				
-
-				
 				var tituloPost = data.title.replace(/\ /g, "_")
-				
-				console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + tituloPost) 
 				
 				var post = {
 					date: data.date,
@@ -168,7 +274,6 @@ app.get('/blog', (req, res) => {
 				posts.unshift(post)
 				
 				console.log(posts)
-// 				posts.push(file.replace('.md', ''))
 			}
 		
 			
@@ -290,6 +395,55 @@ var bigAssQuery = async function() {
 		actual: actual_values})
 }
 
+var queryForStation = function(typeOfQuery, stationName) {
+
+	let recordNameSuffix = ""
+	
+	console.log("Querying " + stationName)
+
+	if (typeOfQuery === "Today") {
+		recordNameSuffix += "_TODAY"
+	}
+
+	let promise = new Promise(function(resolve,reject){
+
+		request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+			json: {
+				"zoneID": { "zoneName": "_defaultZone"},
+				"query": {
+				"recordType": typeOfQuery,
+				"filterBy": [
+					{
+					"systemFieldName": "recordName",
+					"comparator": "EQUALS", 
+					"fieldValue": { 
+						"value": { 
+							"recordName": stationName + recordNameSuffix
+						}
+					}
+					}]
+				}
+			}
+		}, (error, res, body) => {
+		  
+			if (error) {
+				console.error(error)
+				return
+			}
+
+			var b64 = body['records'][0]['fields']['values']['value']
+			var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
+			var toDeliver = {}
+			toDeliver[stationName] = JSON.parse(decoded_data);
+		
+			resolve(toDeliver)
+		})
+	})
+
+
+	return promise
+}
+
 
 
 var queryPredictionValues = function(typeOfQuery) {
@@ -328,6 +482,8 @@ var queryPredictionValues = function(typeOfQuery) {
 					console.error(error)
 					return
 				}
+				
+				console.log(body)
 
 				var b64 = body['records'][0]['fields']['values']['value']
 				var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
