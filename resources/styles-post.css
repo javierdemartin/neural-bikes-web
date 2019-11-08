@@ -87,7 +87,7 @@ h1 {
 }
 
 h2 {
-font-family: 'Poppins', sans-serif;
+	font-family: 'Poppins', sans-serif;
 	font-size: 1.5em;
 
 }
@@ -107,7 +107,6 @@ p, li {
 	position:relative; 
 	left:-15px;
     padding-right:50px;
-    
 	
 }
 
@@ -127,7 +126,9 @@ mark {
 	line-height: 1.15;
 }
 
-a, a:visited, a:focus {
+
+
+:not(#kofi) > a, :not(#kofi) > a:visited, :not(#kofi) > a:focus {
 
   text-decoration: none;
   text-rendering: optimizeLegibility;
@@ -142,28 +143,18 @@ a, a:visited, a:focus {
     padding: 0
 }
 
-a:not(#kofi) {
-  text-decoration: none;
-}
 
-.Link:not(#kofi){
-/*   color: #0AB2B2; */
-}
 
 .Poppins {
 /*   font-size: 1em; */
   line-height: 1.3em;
-  margin-bottom: 2em;
-  padding-bottom: 3em;
+  margin-bottom: 1em;
+  padding-bottom: 1.3em;
 }
 
 .Footer {
 	text-align: center;
-	margin-top: 2em;
-}
-
-.Link:hover{
-  color: #0AB2B2;
+	margin-top: 1em;
 }
 
 @media (prefers-color-scheme: dark) {

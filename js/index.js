@@ -25,7 +25,8 @@ var data = undefined;
 
 var prediction_values = {}
 var actual_values = {}
-let license_message = "Free to use and create things with it, if you find it useful consider donating some money."
+let license_message = "Free to use and create things with. If you find it useful, please consider donating to support the development of the project."
+let donationLink = 'https://ko-fi.com/javierdemartin';
 
 var apiToken = "624a589151c33d7bbc25f082535b4a624ac20ad28fb99e77dd11316884a865d1"
 
@@ -83,7 +84,7 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		var payload = {};
 		
 		payload['values'] = decoded_data;
-		payload['donate'] = 'https://ko-fi.com/javierdemartin'
+		payload['donate'] = donationLink
 		payload['license'] = license_message
 
 		console.log(decoded_data)
@@ -130,7 +131,7 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		
 		var payload = {};
 		payload['values'] = decoded_data;
-		payload['donate'] = 'https://ko-fi.com/javierdemartin'
+		payload['donate'] = donationLink
 		payload['license'] = license_message
 
 		console.log(decoded_data)
@@ -178,7 +179,7 @@ app.get('/api/v1/today/*', (req, res) => {
 			
 			var payload = {};
 			payload['values'] = data;
-			payload['donate'] = 'https://ko-fi.com/javierdemartin'
+			payload['donate'] = donationLink
 			payload['license'] = license_message
 			res.json(payload);
 
@@ -226,12 +227,9 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			
 			var payload = {};
 			payload['values'] = data;
-			payload['donate'] = 'https://ko-fi.com/javierdemartin'
+			payload['donate'] = donationLink;
 			payload['license'] = license_message
 			res.json(payload);
-			
-			res.json(data);
-
 		  })
 	})
 })
@@ -240,12 +238,7 @@ app.get('/blog', (req, res) => {
 
 	const testFolder = path.join(__dirname, '../_posts')
 	
-	
-	console.log(">>> QUERY " + req.originalUrl)
-	
 	if (req.originalUrl === '/blog' || req.originalUrl === '/blog/') {
-	
-		console.log("INSIDE IF")
 	
 		posts = [];
 
@@ -268,16 +261,11 @@ app.get('/blog', (req, res) => {
 				
 				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
 				
-				console.log(data);
-				console.log("--------------");
-				
 				posts.unshift(post)
-				
-				console.log(posts)
 			}
-		
-			
 		  });
+		  
+		  posts = posts.sort((a, b) => b.date.localeCompare(a.date));
 	  
 		  res.render('views/blog', {
 			posts: posts
