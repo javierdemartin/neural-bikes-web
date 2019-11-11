@@ -74,7 +74,7 @@ a {
 /* Layout */
 
 .wrapper {
-    height: 25%;
+    height: 20%;
     width: 65%;
     max-width: 65%;
     max-height: 25%;
@@ -339,9 +339,6 @@ and (min-width : 1824px) {
 	
 	function onClickCluster(e) {
 	
-	
-		console.log("CLICKED CLUSTER")
-	
 	    var prediction = <%- JSON.stringify(prediction) %>;
 	    var actual = <%- JSON.stringify(actual) %>;
         	
@@ -378,8 +375,8 @@ and (min-width : 1824px) {
             labels: indexes,
             datasets: [
             {
-                label:"Prediction",
-                data: prediction_values,
+                label:"Ahora",
+                data: actual_values,
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
                 borderDash: [5, 5],
@@ -388,7 +385,7 @@ and (min-width : 1824px) {
                 pointRadius: 0
             },
             {
-                label: "Cluster",
+                label: "Agrupación",
                 data: new_cluster_data,
                 backgroundColor: cluster_color[stations_clusters[content]] + '50',
                 borderColor: cluster_color[stations_clusters[content]],
@@ -414,15 +411,11 @@ and (min-width : 1824px) {
     var myLineChart = undefined;
 
     function onClick(e) {
-    
-    	console.log("CLICKED PREDICTION")
     	
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual = <%- JSON.stringify(actual) %>;
 
-
         var canvas = document.getElementById("myChart");
-
 
         var map = document.getElementById("mapid");
         map.style.height = "100%";
@@ -451,7 +444,7 @@ and (min-width : 1824px) {
             labels: indexes,
             datasets: [
             {
-                label:"Prediction",
+                label:"Predicción",
                 data: prediction_values,
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -461,7 +454,7 @@ and (min-width : 1824px) {
                 pointRadius: 0
             },
             {
-                label: "Actual",
+                label: "Ahora",
                 data: actual_values,
                 backgroundColor: 'rgba(139,157,195, 0.8)',
                 borderColor: 'rgba(139,157,195, 0.8)',
@@ -473,14 +466,11 @@ and (min-width : 1824px) {
             ]
         }
 
-
         datitos.datasets[0].data = prediction_values
         datitos.datasets[1].data = actual_values
         
         let ctx = document.getElementById('myChart').getContext('2d');
 
-      
-        
         myLineChart.destroy();
         
         myLineChart = new Chart(ctx, {
@@ -493,6 +483,18 @@ and (min-width : 1824px) {
     }
         
     function selectedPrediction() {
+    
+		let ctx = document.getElementById('myChart').getContext('2d');
+
+        myLineChart.destroy();
+        
+        myLineChart = new Chart(ctx, {
+            responsive: true,
+            maintainAspectRatio: false,
+            type: 'line',
+            data: [],
+            options: chartOptions
+        });
     	
     	var parent = document.getElementById('wrapper');
         
@@ -515,13 +517,23 @@ and (min-width : 1824px) {
 			LamMarker[i].addTo(mymap).on('click', onClick);
         }
         
-        alert("Graphs will show the current availability versus the predictions made with the neural network.")
+        alert("Bicis es una utilidad para consultar el servicio de préstamo de bicicletas de Bilbao, Bilbao Bizi. Muestra para cada estación su historial de uso durante el día y una predicción estimada del uso que tendrá.")
     }
     
     function selectedCluster() {
     
-    	console.log("Cluster")   
-    	
+    	let ctx = document.getElementById('myChart').getContext('2d');
+
+        myLineChart.destroy();
+        
+        myLineChart = new Chart(ctx, {
+            responsive: true,
+            maintainAspectRatio: false,
+            type: 'line',
+            data: [],
+            options: chartOptions
+        });
+        	
     	var parent = document.getElementById('wrapper');
         
         parent.style.display = "none"
@@ -538,25 +550,31 @@ and (min-width : 1824px) {
 						
 		}  
 			
-		alert("Graphs will show the behaviour expected for the selected station versus the predictions made with the neural network.\n\nThe displayed colors in the nodes represent the different behaviours on each of the stations: work stations, residential stations and unused stations.")
+		alert("Muchas estaciones tienen un comportamiento similar, son centros de trabajo, residenciales o puntos cercanos a sitios de trabajo. Se muestra el comportamiento esperado y el histórico del día.")
+// 		alert("Graphs will show the behaviour expected for the selected station versus the predictions made with the neural network.\n\nThe displayed colors in the nodes represent the different behaviours on each of the stations: work stations, residential stations and unused stations.")
     }
     
     
     
+	function init() {
+	
+		loadMapPins()
+		showStartMessage()
+	}
 
+	function showStartMessage() {
+	
+	}
 
     function loadMapPins() {
     
     	var canvas = document.getElementById("myChart");
-
 
         var map = document.getElementById("mapid");
         map.style.height = "100%";
         map.style.display = "block";
 
         var parent = document.getElementById('wrapper');
-
-//         parent.style.display = "block";
 
         canvas.width = parent.offsetWidth;
         canvas.height = parent.offsetHeight;
@@ -611,7 +629,7 @@ and (min-width : 1824px) {
     </script>
 
 </head>
-<body onload="loadMapPins()">    
+<body onload="init()">    
 
     <div class="container">
     
@@ -619,11 +637,11 @@ and (min-width : 1824px) {
 		<ul class="segmented-control">
 			<li class="segmented-control__item">
 				<input class="segmented-control__input" type="radio" value="1" name="option" id="option-1" checked OnClick="selectedPrediction()">
-				<label class="segmented-control__label" for="option-1">Prediction</label>
+				<label class="segmented-control__label" for="option-1">Predicción</label>
 			</li>
 			<li class="segmented-control__item">
 				<input class="segmented-control__input" type="radio" value="2" name="option" id="option-2" OnClick="selectedCluster()">
-				<label class="segmented-control__label" for="option-2">Cluster</label>
+				<label class="segmented-control__label" for="option-2">Agrupación</label>
 			</li>
 		</ul>
 	</div>
