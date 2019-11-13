@@ -74,11 +74,6 @@ img {
   padding: 8%;
 }
 
-.kofi {
-	 text-align: center;
-	 display: inline-block;
-}
-
 h1 {
 
 	font-family: 'Poppins', sans-serif;
@@ -128,7 +123,7 @@ mark {
 
 
 
-:not(#kofi) > a, :not(#kofi) > a:visited, :not(#kofi) > a:focus {
+a, a:visited, a:focus {
 
   text-decoration: none;
   text-rendering: optimizeLegibility;
