@@ -1,0 +1,287 @@
+<html>
+<head>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-140485405-1');
+	</script>
+
+	  <title>Bike Sharing Services Predictions</title>
+<!-- 	  	<link rel="stylesheet" href="../styles-map.css"> -->
+
+		<meta name="description" content="Consulta y predicción de disponibilidad del servicio de bicicletas de Bilbao, Bilbao Bizi.">
+	<style>
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  transition: 1s all;
+  margin: 0;  
+}
+
+#mapid {
+
+  width: 100%; 
+  height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+	z-index:0;
+/*     opacity: 0.5; */
+}
+
+.container {
+
+  width: 100%;
+  height: 100%;
+  position:relative;
+}
+
+.available-bikes {
+	vertical-align: middle;
+	display: flex;
+	margin: 0px;
+	align-items: center;
+}
+
+.inner {
+
+  padding: 5%;
+}
+
+p {
+  font-family: 'Poppins', sans-serif;
+/*   font-weight: 600; */
+  font-size: 1em;
+  margin: 0;
+}
+
+a {
+  color: #00B2B2;
+  text-decoration: none;
+}
+
+/* Layout */
+
+.wrapper {
+    height: 20%;
+    width: 65%;
+    max-width: 65%;
+    max-height: 25%;
+    border-radius: 15px;
+	background-color:white;
+	position:absolute;
+	margin: auto;
+	bottom:20px;
+	display:none;
+ 	opacity:0.95;
+	margin-left: 17.5%;
+ 	margin-right: 17.5%;
+ 		
+ 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+}
+
+#myChart {
+
+	display:none;
+}
+
+.segmented_control_wrapper {
+
+	height: 60px;
+    width: 200px;
+    max-width: 200px;
+    max-height: 60px;
+	position:absolute;
+	
+	top:0px;
+	display:block;
+	margin-left: calc(50% - 100px);
+ 	margin-right: calc(50% - 100px);
+ 	opacity:0.95;
+	z-index:10;
+}
+
+.Flex {
+  display: flex;
+}
+
+.segmented-control {
+
+ 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+    display: table;
+    width: 100%;
+/*     margin: 2em 0; */
+    padding: 0;
+}
+
+.segmented-control__item {
+    display: table-cell;
+    margin: 0;
+    padding: 0;
+
+    background-color: #A8A8A8;
+    list-style-type: none;
+}
+
+.segmented-control__input {
+
+    position: absolute;
+    visibility: hidden;
+}
+
+.segmented-control__label {
+    display: block;
+    margin: 0 -1px -1px 0; /* -1px margin removes double-thickness borders between items */
+    padding: 1em .25em;
+    border: 1px solid #ddd;
+	color: white;
+    font: 14px/1.5 sans-serif; 
+    text-align: center;  
+    cursor: pointer;
+}
+
+
+
+.segmented-control__label:hover {
+    background: #fafafa;
+    color: gray;
+}
+
+.segmented-control__input:checked + .segmented-control__label {
+    background: #EBEBEB;
+    color: #333;
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 480px) {
+  /* Styles */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen 
+and (min-width : 321px) {
+  /* Styles */
+    .wrapper {
+    width: 75%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen 
+and (max-width : 320px) {
+  /* Styles */
+    .wrapper {
+    width: 95%;
+    max-width: 95%;
+    margin-left: 2.5%;
+ 	margin-right: 2.5%;
+   }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) {
+  /* Styles */
+}
+
+/* iPads (landscape) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : landscape) {
+  /* Styles */
+    .wrapper {
+    width: 65%;
+    max-width: 65%;
+    margin-left: 17.5%;
+ 	margin-right: 17.5%;
+   }
+}
+
+/* iPads (portrait) ----------- */
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+  /* Styles */
+    .wrapper {
+    width: 75%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+}
+
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+  /* Styles */
+    .wrapper {
+    width: 55%;
+    max-width: 55%;
+    margin-left: 22.5%;
+ 	margin-right: 22.5%;
+   }
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+  /* Styles */
+    .wrapper {
+    width: 35%;
+    max-width: 35%;
+    margin-left: 32.5%;
+ 	margin-right: 32.5%;
+   }
+}
+	</style>
+
+	    <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+    
+    <script>
+    </script>
+
+</head>
+<body>    
+
+        
+    <div>
+    
+    <table style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+    <tr style="height: 50%;">
+        <td><a href="/bicis/bilbao">Bilbao</a></td>
+    </tr>
+    <tr style="height: 50%;">
+        <td><a href="/bicis/madrid">Madrid</a></td>
+    </tr>
+</table>
+    </div>
+
+
+
+</body>
+</html>
