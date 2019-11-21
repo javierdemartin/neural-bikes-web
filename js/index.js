@@ -28,7 +28,7 @@ var actual_values = {}
 let license_message = "Free to use and create things with. If you find it useful, please consider donating to support the development of the project."
 let donationLink = 'https://ko-fi.com/javierdemartin';
 
-var apiToken = "624a589151c33d7bbc25f082535b4a624ac20ad28fb99e77dd11316884a865d1"
+var apiToken = "4747c89304762c4f4c754ed9c15ecfdc02b89aa2006a85f46c109414f5307025"
 
 app.use(express.static(path.join(__dirname, '../')));
 
@@ -81,11 +81,14 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
 		
+						var datetime = new Date();
+		
 		var payload = {};
 		
 		payload['values'] = decoded_data;
 		payload['donate'] = donationLink
 		payload['license'] = license_message
+					payload['last_updated'] = datetime
 
 		console.log(decoded_data)
 
@@ -124,6 +127,8 @@ app.get('/api/v1/today/*/*', (req, res) => {
 			console.error(error)
 			return
 		}
+		
+				var datetime = new Date();
 
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
@@ -133,6 +138,7 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		payload['values'] = decoded_data;
 		payload['donate'] = donationLink
 		payload['license'] = license_message
+			payload['last_updated'] = datetime
 
 		console.log(decoded_data)
 
@@ -170,17 +176,19 @@ app.get('/api/v1/today/*', (req, res) => {
 
 		console.log("Finished")
 		console.log("--------------------------------")
-// 		let result =  Promise.all(promises)
-// 		console.log(result)
+		
+		var datetime = new Date();
 		
 		Promise.all(promises)
 		  .then(data => {
 			console.log("First handler", data);
 			
+			
 			var payload = {};
 			payload['values'] = data;
 			payload['donate'] = donationLink
 			payload['license'] = license_message
+			payload['last_updated'] = datetime
 			res.json(payload);
 
 		  })
@@ -210,16 +218,11 @@ app.get('/api/v1/prediction/*', (req, res) => {
 		  stationsList.forEach(async (item) => {
 
 			lista_estaciones.push(item.name.replace(/([0-9-])/g, ""))
-			console.log("[" + item.name.replace(/([0-9-])/g, "") + "]")
-			console.log("-----------------")
 			promises.push(queryForStation("Prediction", item.name.replace(/([0-9-])/g, "")))
 			
 		  })
-
-		console.log("Finished")
-		console.log("--------------------------------")
-// 		let result =  Promise.all(promises)
-// 		console.log(result)
+		  
+		  		var datetime = new Date();
 		
 		Promise.all(promises)
 		  .then(data => {
@@ -229,6 +232,7 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			payload['values'] = data;
 			payload['donate'] = donationLink;
 			payload['license'] = license_message
+						payload['last_updated'] = datetime
 			res.json(payload);
 		  })
 	})
@@ -311,29 +315,17 @@ app.get('/blog/*', (req, res) => {
 })
 
 
-app.get('/bicis', (req, res) => {
-	
-	res.render('views/select-city')
-})	
 
-app.get('/bicis/*', (req, res) => {
+app.get('/bicis', (req, res) => {
 
 	console.timestamp('>>>> start delay', 0);
-	
-	let city = req.params[0].toLowerCase()
-	
-	let urls = {"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532", "madrid": "https://api.citybik.es/v2/networks/bicimad"}
-	
-	let url = urls[city]
-	
-	console.log(url)
 
 	lista_estaciones = [];
 	prediction_values = {};
 	actual_values = {};
 
 	// render `home.ejs` with the list of posts
-
+	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
 
 	request({
 		url: url,
@@ -361,131 +353,145 @@ app.get('/bicis/*', (req, res) => {
 
 			console.timestamp('>>>> first query ', 0);
 
-			var someResult = await Promise.all([queryPredictionValues("Today", city)])
-			var anotherResult = Promise.all([queryPredictionValues("Prediction", city)])
+			const [someResult, anotherResult] = await Promise.all([queryPredictionValues("Today"), queryPredictionValues("Prediction")]);
 
 			console.timestamp('>>>> second query ', 0);
-			
-			someResult = dictionary(someResult[0])[0]
-			anotherResult = dictionary(anotherResult[0])[0]			
-			
-			console.log(someResult)
-			console.log("///////////////////////////")
 
 			res.render('views/home', { 
 				lat: lat, 
 				lng: lng, 
 				zoom: zoom, 
 				data: data, 
-				prediction: someResult, 
-				actual: anotherResult,
+				prediction: prediction_values, 
+				actual: actual_values,
 				available: available_bikes, 
 				total: total_bikes})
 		}
 	})
 })
 
-function dictionary(list) {
-    var map = {};
-    for (var i = 0; i < list.length; ++i) {
-        var category = list[i].category;
-        if (!map[category]) 
-            map[category] = [];
-        map[category].push(list[i].name);  // add product names only
-        // map[category].push(list[i]);    // add complete products
-    }
-    return map;
+var bigAssQuery = async function() {
+
+	console.timestamp('>>>> first query ', 0);
+
+	const [someResult, anotherResult] = await Promise.all([queryPredictionValues("Today"), queryPredictionValues("Prediction")]);
+
+	console.timestamp('>>>> second query ', 0);
+
+	res.render('home', { 
+		lat: lat, 
+		lng: lng, 
+		zoom: zoom, 
+		data: data, 
+		prediction: prediction_values, 
+		actual: actual_values})
 }
 
 var queryForStation = function(typeOfQuery, stationName) {
 
 	let recordNameSuffix = ""
 	
-	var whatToQuery = ""
-	
 	console.log("Querying " + stationName)
 
 	if (typeOfQuery === "Today") {
 		recordNameSuffix += "_TODAY"
-		whatToQuery = "today"
-	} else {
-		whatToQuery = "prediction"
 	}
 
 	let promise = new Promise(function(resolve,reject){
-		
-		
-		
-		request.get("http://javierdemart.in/api/v1/" + whatToQuery + "/" + city + "/" + stationName, (error,res,body) => {
-			
-						if (error) {
+
+		request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+			json: {
+				"zoneID": { "zoneName": "_defaultZone"},
+				"query": {
+				"recordType": typeOfQuery,
+				"filterBy": [
+					{
+					"systemFieldName": "recordName",
+					"comparator": "EQUALS", 
+					"fieldValue": { 
+						"value": { 
+							"recordName": stationName + recordNameSuffix
+						}
+					}
+					}]
+				}
+			}
+		}, (error, res, body) => {
+		  
+			if (error) {
 				console.error(error)
 				return
 			}
-			
-			console.log("-------------------------------------------------------")
-			console.log(body)
-			console.log("-------------------------------------------------------")
 
-			
-			/* var b64 = body['records'][0]['fields']['values']['value']
+			var b64 = body['records'][0]['fields']['values']['value']
 			var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 			var toDeliver = {}
-			toDeliver[stationName] = JSON.parse(decoded_data); */
+			toDeliver[stationName] = JSON.parse(decoded_data);
 		
 			resolve(toDeliver)
+		})
 	})
 
-		return promise	
-	})
 
-
-
+	return promise
 }
 
 
 
-var queryPredictionValues = function(typeOfQuery, city) {
+var queryPredictionValues = function(typeOfQuery) {
 
 	let promises = [];
 	let recordNameSuffix = ""
-	
-		
-	var whatToQuery = ""
-
-	if (typeOfQuery === "Today") {
-		recordNameSuffix += "_TODAY"
-		whatToQuery = "today"
-	} else {
-		whatToQuery = "prediction"
-	}
 
 	if (typeOfQuery === "Today") {
 		recordNameSuffix += "_TODAY"
 	}
 
-// 	for(i in lista_estaciones) {
-
+	for(i in lista_estaciones) {
 
 		promises.push(new Promise(function(resolve,reject){
-			
-			let url = "http://javierdemart.in/api/v1/" + whatToQuery + "/" + city
-			
-			console.log(url)
-			
-			request({
-			  url: url,
-			  json: true
-			}, function(error, response, body) {
+
+			request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+		  		json: {
+					"zoneID": { "zoneName": "_defaultZone"},
+					"query": {
+					"recordType": typeOfQuery,
+					"filterBy": [
+						{
+						"systemFieldName": "recordName",
+						"comparator": "EQUALS", 
+						"fieldValue": { 
+							"value": { 
+								"recordName": lista_estaciones[i] + recordNameSuffix
+							}
+						}
+						}]
+					}
+				}
+			}, (error, res, body) => {
+			  
+				if (error) {
+					console.error(error)
+					return
+				}
 				
-				console.log(body['values'])
-						
-				resolve(body['values'])
+				console.log(body)
 
-			});
+				var b64 = body['records'][0]['fields']['values']['value']
+				var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 
+
+				if (typeOfQuery === "Prediction") {
+					prediction_values[body['records'][0]['recordName'].replace('_TODAY', '')] = decoded_data
+					resolve(prediction_values)
+
+				} else {
+					actual_values[body['records'][0]['recordName'].replace('_TODAY', '')] = decoded_data
+					resolve(actual_values)
+				}
+			})
 		}))
-// 	}
+	}
 
 	return Promise.all(promises)
 }
