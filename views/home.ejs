@@ -184,6 +184,64 @@ a {
 and (min-device-width : 320px) 
 and (max-device-width : 480px) {
   /* Styles */
+  .wrapper {
+    width: 75%;
+        height: 30%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+
+}
+
+
+/* Portrait and Landscape */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3) { 
+  
+  .wrapper {
+    width: 75%;
+        height: 30%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+
+}
+
+/* Portrait */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: portrait) { 
+
+
+.wrapper {
+    width: 75%;
+    height: 30%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+}
+
+/* Landscape */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: landscape) { 
+  
+  .wrapper {
+    width: 75%;
+    max-width: 75%;
+    margin-left: 12.5%;
+ 	margin-right: 12.5%;
+   }
+
 }
 
 /* Smartphones (landscape) ----------- */
@@ -215,6 +273,13 @@ and (max-width : 320px) {
 and (min-device-width : 768px) 
 and (max-device-width : 1024px) {
   /* Styles */
+  .wrapper {
+    width: 95%;
+    max-width: 95%;
+    margin-left: 17.5%;
+ 	margin-right: 17.5%;
+ 	height: 25%;
+ 	}
 }
 
 /* iPads (landscape) ----------- */

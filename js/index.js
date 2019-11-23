@@ -535,10 +535,6 @@ app.get('/bicis', (req, res) => {
 	res.render('views/select-city')
 })
 
-
-
-
-
 module.exports = app
 
 
