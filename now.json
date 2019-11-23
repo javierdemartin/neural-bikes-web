@@ -19,6 +19,7 @@
 	{"src": "/blog", "dest": "/js/index.js"},
 	{"src": "/blog/", "dest": "/js/index.js"},
 	{"src": "/blog/([^/]+)", "dest": "/js/index.js"},
+	{"src" : "/bicis/(.*)", "dest": "/js/index.js"},
 	{"src" : "/bicis", "dest": "/js/index.js"},
 	{"src": "/bicis/(.*)", "dest": "/js/index.js"},
 	{ "src": "/bicis-app", "status": 200, "dest": "https://apps.apple.com/es/app/bicis-consulta-y-predicción/id1275889928"},

@@ -103,7 +103,6 @@ app.get('/api/v1/today/*/*', (req, res) => {
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
 
-
 	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
 		json: {
 			"zoneID": { "zoneName": "_defaultZone"},
@@ -149,76 +148,56 @@ app.get('/api/v1/today/*/*', (req, res) => {
 
 app.get('/api/v1/today/*', (req, res) => {
 
-	console.log(req.params)
+	console.log("PREDICTION")
+
 
 	let city = req.params[0].toLowerCase()
 	
-	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
-
-	request({
-		url: url,
-		json: true
-	}, async function (error, response, body) {
-
-		let stationsList = body.countries[0].cities[0].places
-
-		var promises = [];
-		
-
-		  stationsList.forEach(async (item) => {
-
-			lista_estaciones.push(item.name.replace(/([0-9-])/g, ""))
-			console.log("[" + item.name.replace(/([0-9-])/g, "") + "]")
-			console.log("-----------------")
-			promises.push(queryForStation("Today", item.name.replace(/([0-9-])/g, "")))
-			
-		  })
-
-		console.log("Finished")
-		console.log("--------------------------------")
-		
-		var datetime = new Date();
-		
-		Promise.all(promises)
-		  .then(data => {
-			console.log("First handler", data);
-			
-			
-			var payload = {};
-			payload['values'] = data;
-			payload['donate'] = donationLink
-			payload['license'] = license_message
-			payload['last_updated'] = datetime
-			res.json(payload);
-
-		  })
-	})
-})
-
-app.get('/api/v1/prediction/*', (req, res) => {
-
-	console.log(req.params)
-
-	let city = req.params[0].toLowerCase()
-
-
+	var gotStationsList = []
+	
 	// render `home.ejs` with the list of posts
-	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
+	let url = cityParsers[city]
 
 	request({
 		url: url,
 		json: true
 	}, async function (error, response, body) {
 
-		let stationsList = body.countries[0].cities[0].places
+		var stationsList = []
+		var stationsDict = []
+		
+		if (city === "bilbao") {
+			stationsList = body.countries[0].cities[0].places
+			
+			for(i = 0; i < stationsList.length; i++) {
+			
+				var name = stationsList[i].name.replace(/^\d\d-/g, '')
+			
+				gotStationsList.push(name)
+				stationsDict[name] = name
+			}			
+			
+			
+			console.log(gotStationsList)
+		} else if (city === "madrid") {
+		
+			stationsList = body["network"]['stations']
+			
+			for (i = 0; i < stationsList.length; i++) {
 
-		var promises = [];
+				gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
+				
+				stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
+			}
+		}
 		
 
-		  stationsList.forEach(async (item) => {
+		var promises = [];
 
-			lista_estaciones.push(item.name.replace(/([0-9-])/g, ""))
-			promises.push(queryForStation("Prediction", item.name.replace(/([0-9-])/g, "")))
+		   gotStationsList.forEach(async (item) => {
+
+ 			// Queries for the ID
+			promises.push(queryForStation("Today", stationsDict[item], item))
 			
 		  })
 		  
@@ -226,17 +205,142 @@ app.get('/api/v1/prediction/*', (req, res) => {
 		
 		Promise.all(promises)
 		  .then(data => {
-			console.log("First handler", data);
-			
+		  	
 			var payload = {};
 			payload['values'] = data;
 			payload['donate'] = donationLink;
 			payload['license'] = license_message
-						payload['last_updated'] = datetime
+			payload['last_updated'] = datetime
 			res.json(payload);
+		  }).catch(err => {
+			console.log("*************************")
+			console.log(err)
+		  
 		  })
 	})
 })
+
+app.get('/api/v1/prediction/*', (req, res) => {
+
+	let city = req.params[0].toLowerCase()
+	
+	var gotStationsList = []
+	
+	// render `home.ejs` with the list of posts
+	let url = cityParsers[city]
+
+	request({
+		url: url,
+		json: true
+	}, async function (error, response, body) {
+
+		var stationsList = []
+		var stationsDict = []
+		
+		if (city === "bilbao") {
+			stationsList = body.countries[0].cities[0].places
+			
+			for(i = 0; i < stationsList.length; i++) {
+			
+				var name = stationsList[i].name.replace(/(^\d\d-)/g, '')
+			
+				gotStationsList.push(name)
+				stationsDict[name] = name
+			}			
+			
+			
+		} else if (city === "madrid") {
+		
+			stationsList = body["network"]['stations']
+			
+			for (i = 0; i < stationsList.length; i++) {
+
+				gotStationsList.push(stationsList[i]["name"].replace(/(^\d\d-)/g, ''))
+				
+				stationsDict[String(stationsList[i]["name"].replace(/(^\d\d-)/g, ''))] = stationsList[i]["id"]
+			}
+		}
+		
+
+		var promises = [];
+
+		   gotStationsList.forEach(async (item) => {
+
+ 			// Queries for the ID
+			promises.push(queryForStation("Prediction", stationsDict[item], item))
+			
+		  })
+		  
+		  		var datetime = new Date();
+		
+		Promise.all(promises)
+		  .then(data => {
+		  	
+			var payload = {};
+			payload['values'] = data;
+			payload['donate'] = donationLink;
+			payload['license'] = license_message
+			payload['last_updated'] = datetime
+			res.json(payload);
+		  }).catch(err => {
+			console.log("*************************")
+			console.log(err)
+		  
+		  })
+	})
+})
+
+var queryForStation = function(typeOfQuery, stationName, resolveName) {
+
+	let recordNameSuffix = ""
+	
+	if (typeOfQuery === "Today") {
+		recordNameSuffix += "_TODAY"
+	}
+
+	let promise = new Promise(function(resolve,reject){
+
+		request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
+			json: {
+				"zoneID": { "zoneName": "_defaultZone"},
+				"query": {
+				"recordType": typeOfQuery,
+				"filterBy": [
+					{
+					"systemFieldName": "recordName",
+					"comparator": "EQUALS", 
+					"fieldValue": { 
+						"value": { 
+							"recordName": stationName + recordNameSuffix
+						}
+					}
+					}]
+				}
+			}
+		}, (error, res, body) => {
+		  
+			if (error) {
+				console.error(error)
+				return
+			}			
+
+			if ((body['records'][0])) {
+				var b64 = body['records'][0]['fields']['values']['value']
+				var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
+				
+				var toDeliver = {}
+				toDeliver[resolveName] = JSON.parse(decoded_data);
+		
+				resolve(toDeliver)
+			} else {
+				resolve({})
+			}
+		})
+	})
+
+
+	return promise
+}
 
 app.get('/blog', (req, res) => {
 
@@ -297,204 +401,142 @@ app.get('/blog/*', (req, res) => {
 	data.date = data.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
 	
 	var aux = frontmatter(raw);
-
-	console.log("*****************")	
-	console.log(aux)
-	console.log("*****************")
-	
-	console.log("---------")
-	console.log(content)
-	console.log("---------")
 	
 	const markdown = ejs.render(content, data);
 	const html = marked.parse(markdown);
 	
 	res.render('views/post', {data: data, content: html})
-
-	console.log(html);
 })
 
+let cityParsers = {
+	"madrid": "http://api.citybik.es/v2/networks/bicimad",
+	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532"
+}
+
+var queryCityFromApi = function(typeOfQuery, city) {
+
+	let apiUrl = "http://javierdemart.in/api/v1/" + typeOfQuery + "/" + city
+
+	return new Promise(function(resolve, reject) {
+	
+		request.get(apiUrl, (error, res, body) => {
+		
+			if (error) {
+				console.error(error)
+				reject(error)
+			}
+						
+			if (body) {
+			
+				let data = JSON.parse(body)['values']
+				resolve(data)
+			
+			} else {
+				reject()
+			}
+		})
+	})
+}
+
+app.get('/bicis/*', (req, res) => {
+
+	let city = req.params[0].toLowerCase()
+	
+	let urlToParse = cityParsers[city]
+	
+	console.log(urlToParse)
+	
+	
+	request({
+		url: urlToParse,
+		json: true
+	}, async function (error, response, body) {
+	
+		console.log(body)
+		
+		
+		var centerLatitude = 0.0; 
+		var centerLongitude = 0.0; 
+		var dataToEjsView = []
+		
+		if (city === "bilbao") {
+		
+			centerLatitude = body['countries'][0]['lat']
+			centerLongitude = body['countries'][0]['lng']
+			
+			
+			let stations = body['countries'][0]['cities'][0]['places']
+			
+			for (i = 0; i< stations.length; i++) { 
+		
+				let data = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "name": stations[i]["name"].replace(/(^\d\d-)/g, '')}
+		
+				dataToEjsView.push(data)
+			}
+			
+		} else if (city === "madrid") {
+			
+			
+			let stations = body["network"]['stations']
+			centerLatitude = body["network"]['location']['latitude']
+			centerLongitude = body["network"]['location']['longitude']
+			
+			for (i = 0; i< stations.length; i++) { 
+		
+				let data = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "name": stations[i]["name"]}
+		
+				dataToEjsView.push(data)
+			}
+		}
+		
+		console.log(centerLatitude + " - " + centerLongitude)
+				
+		var resultTodayDict = {};
+		var resultPredictionDict = {};
+		
+		queryCityFromApi("today", city).then(function(result) {
+		
+			for (i = 0; i < result.length; i++) {
+				
+				resultTodayDict[Object.keys(result[i])[0]] = Object.values(result[i])[0]
+			}
+			
+			queryCityFromApi("prediction", city).then(function(resultPred) {
+		
+				for (i = 0; i < resultPred.length; i++) {
+				
+					resultPredictionDict[Object.keys(resultPred[i])[0]] = Object.values(resultPred[i])[0]
+				}
+			
+				res.render('views/home', { 
+					lat: centerLatitude, 
+					lng: centerLongitude, 
+					zoom: 13, 
+					data: dataToEjsView, 
+					prediction: resultPredictionDict, 
+					actual: resultTodayDict,
+					available: [], 
+					total: 0})
+			
+			})
+		
+			
+		}).catch(err => {
+		
+		})
+	})
+})
 
 
 app.get('/bicis', (req, res) => {
 
 	console.timestamp('>>>> start delay', 0);
 
-	lista_estaciones = [];
-	prediction_values = {};
-	actual_values = {};
-
-	// render `home.ejs` with the list of posts
-	var url = "https://nextbike.net/maps/nextbike-official.json?city=532"
-
-	request({
-		url: url,
-		json: true
-	}, async function (error, response, body) {
-
-		if (!error && response.statusCode === 200) {
-
-			data = body['countries'][0]['cities'][0]
-
-			available_bikes = data['available_bikes']
-			total_bikes = data['set_point_bikes']
-			
-			console.log(">>>> " + available_bikes)
-			
-			lat = data['lat']
-			lng = data['lng']
-			zoom = data['zoom'] + 1
-
-			data = data['places']
-
-			for(var i=0; i < data.length; i++) {
-				lista_estaciones.push(data[i]['name'].replace(/([0-9-])/g, ""))
-			}
-
-			console.timestamp('>>>> first query ', 0);
-
-			const [someResult, anotherResult] = await Promise.all([queryPredictionValues("Today"), queryPredictionValues("Prediction")]);
-
-			console.timestamp('>>>> second query ', 0);
-
-			res.render('views/home', { 
-				lat: lat, 
-				lng: lng, 
-				zoom: zoom, 
-				data: data, 
-				prediction: prediction_values, 
-				actual: actual_values,
-				available: available_bikes, 
-				total: total_bikes})
-		}
-	})
+	res.render('views/select-city')
 })
 
-var bigAssQuery = async function() {
-
-	console.timestamp('>>>> first query ', 0);
-
-	const [someResult, anotherResult] = await Promise.all([queryPredictionValues("Today"), queryPredictionValues("Prediction")]);
-
-	console.timestamp('>>>> second query ', 0);
-
-	res.render('home', { 
-		lat: lat, 
-		lng: lng, 
-		zoom: zoom, 
-		data: data, 
-		prediction: prediction_values, 
-		actual: actual_values})
-}
-
-var queryForStation = function(typeOfQuery, stationName) {
-
-	let recordNameSuffix = ""
-	
-	console.log("Querying " + stationName)
-
-	if (typeOfQuery === "Today") {
-		recordNameSuffix += "_TODAY"
-	}
-
-	let promise = new Promise(function(resolve,reject){
-
-		request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
-			json: {
-				"zoneID": { "zoneName": "_defaultZone"},
-				"query": {
-				"recordType": typeOfQuery,
-				"filterBy": [
-					{
-					"systemFieldName": "recordName",
-					"comparator": "EQUALS", 
-					"fieldValue": { 
-						"value": { 
-							"recordName": stationName + recordNameSuffix
-						}
-					}
-					}]
-				}
-			}
-		}, (error, res, body) => {
-		  
-			if (error) {
-				console.error(error)
-				return
-			}
-
-			var b64 = body['records'][0]['fields']['values']['value']
-			var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
-			var toDeliver = {}
-			toDeliver[stationName] = JSON.parse(decoded_data);
-		
-			resolve(toDeliver)
-		})
-	})
 
 
-	return promise
-}
-
-
-
-var queryPredictionValues = function(typeOfQuery) {
-
-	let promises = [];
-	let recordNameSuffix = ""
-
-	if (typeOfQuery === "Today") {
-		recordNameSuffix += "_TODAY"
-	}
-
-	for(i in lista_estaciones) {
-
-		promises.push(new Promise(function(resolve,reject){
-
-			request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
-		  		json: {
-					"zoneID": { "zoneName": "_defaultZone"},
-					"query": {
-					"recordType": typeOfQuery,
-					"filterBy": [
-						{
-						"systemFieldName": "recordName",
-						"comparator": "EQUALS", 
-						"fieldValue": { 
-							"value": { 
-								"recordName": lista_estaciones[i] + recordNameSuffix
-							}
-						}
-						}]
-					}
-				}
-			}, (error, res, body) => {
-			  
-				if (error) {
-					console.error(error)
-					return
-				}
-				
-				console.log(body)
-
-				var b64 = body['records'][0]['fields']['values']['value']
-				var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
-
-
-				if (typeOfQuery === "Prediction") {
-					prediction_values[body['records'][0]['recordName'].replace('_TODAY', '')] = decoded_data
-					resolve(prediction_values)
-
-				} else {
-					actual_values[body['records'][0]['recordName'].replace('_TODAY', '')] = decoded_data
-					resolve(actual_values)
-				}
-			})
-		}))
-	}
-
-	return Promise.all(promises)
-}
 
 
 module.exports = app

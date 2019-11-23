@@ -100,18 +100,30 @@ a {
 
 .segmented_control_wrapper {
 
+/* 
 	height: 60px;
     width: 200px;
     max-width: 200px;
     max-height: 60px;
-	position:absolute;
+ */
+
+	position:relative;
+    margin:0 auto;
+    clear:left;
+    height:auto;
+    z-index: 10;
+    top: 20px;
+    
+    text-align:center;/* Add This*/
 	
+/* 
 	top:0px;
 	display:block;
 	margin-left: calc(50% - 100px);
  	margin-right: calc(50% - 100px);
  	opacity:0.95;
 	z-index:10;
+ */
 }
 
 .Flex {
@@ -343,7 +355,7 @@ and (min-width : 1824px) {
 	    var actual = <%- JSON.stringify(actual) %>;
         	
     	var popup = e.target.getPopup();
-        var content = popup.getContent().replace(/([0-9-])/g, "");
+        var content = popup.getContent().replace(/(^\d\d-)/g, "");
         
         
         var prediction_values = JSON.parse(prediction[content])
@@ -414,7 +426,7 @@ and (min-width : 1824px) {
     	
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual = <%- JSON.stringify(actual) %>;
-
+        
         var canvas = document.getElementById("myChart");
 
         var map = document.getElementById("mapid");
@@ -428,15 +440,16 @@ and (min-width : 1824px) {
         canvas.height = parent.offsetHeight;
 
         var popup = e.target.getPopup();
-        var content = popup.getContent().replace(/([0-9-])/g, "");
-        var prediction_values = JSON.parse(prediction[content])
-        prediction_values = Object.values(prediction_values)
+        var content = popup.getContent().replace(/(^\d\d-)/g, '');
+        
+        var prediction_values = prediction[content]
+        
+        var actual_values = actual[content]
+        
+		var indexes = Object.keys(prediction_values)
 
-        var actual_values = JSON.parse(actual[content])
-
-        actual_values = Object.values(actual_values)        
-
-        var indexes = Object.keys(JSON.parse(prediction[content]))
+		actual_values = Object.values(actual_values)		
+		prediction_values = Object.values(prediction_values)
 
         var datitos = {
 
@@ -464,9 +477,6 @@ and (min-width : 1824px) {
             }
             ]
         }
-
-        datitos.datasets[0].data = prediction_values
-        datitos.datasets[1].data = actual_values
         
         let ctx = document.getElementById('myChart').getContext('2d');
 
@@ -505,6 +515,9 @@ and (min-width : 1824px) {
         var data       = <%- JSON.stringify(data) %>;
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
+        
+        console.log(data)
+        console.log(actual)
 
         for(var i = 0; i < LamMarker.length; i++) {
 			
@@ -594,6 +607,9 @@ and (min-width : 1824px) {
         var data       = <%- JSON.stringify(data) %>;
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
+        
+        console.log(lat);
+        console.log(lng);
 
         mymap = L.map('mapid').setView([lat, lng], zoom);
 
@@ -613,7 +629,7 @@ and (min-width : 1824px) {
 
             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
                  autoClose: true
-             }).setContent(name.replace(/([0-9-])/g, ""));
+             }).setContent(name.replace(/(^\d\d-)/g, ""));
             
             
             var marker = new L.circleMarker([lat, lng],
@@ -633,21 +649,12 @@ and (min-width : 1824px) {
     <div class="container">
     
     <div class="segmented_control_wrapper">
-		<ul class="segmented-control">
-			<li class="segmented-control__item">
-				<input class="segmented-control__input" type="radio" value="1" name="option" id="option-1" checked OnClick="selectedPrediction()">
-				<label class="segmented-control__label" for="option-1">Predicción</label>
-			</li>
-			<li class="segmented-control__item">
-				<input class="segmented-control__input" type="radio" value="2" name="option" id="option-2" OnClick="selectedCluster()">
-				<label class="segmented-control__label" for="option-2">Agrupación</label>
-			</li>
-		</ul>
+		<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me!', '#29abe0', 'H2H814TXG');kofiwidget2.draw();</script> 
 	</div>
 
         <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
            
-        <!-- <%- include('partials/footer') %> -->
+
         
 	 	<div class="wrapper" id="wrapper" >
 			<canvas id="myChart"></canvas>

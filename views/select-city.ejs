@@ -348,6 +348,10 @@ h1 {
       
     
     <script>
+    function selectedCity(city) {
+    	window.location.href = "bicis/" + city;
+
+    }
     </script>
 
 </head>
@@ -355,12 +359,12 @@ h1 {
 
      
 <section class="container">
-  <div class="left-half">
+  <div class="left-half" id="bilbao" onClick="selectedCity(this.id)">
     <article>
       <h1>Bilbao</h1>
     </article>
   </div>
-  <div class="right-half">
+  <div class="right-half" id="madrid" onClick="selectedCity(this.id)">
     <article>
       <h1>Madrid</h1>
     </article>
