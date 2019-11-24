@@ -492,6 +492,8 @@ and (min-width : 1824px) {
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual = <%- JSON.stringify(actual) %>;
         
+        mymap.setView([e.latlng.lat, e.latlng.lng]);
+        
         var canvas = document.getElementById("myChart");
 
         var map = document.getElementById("mapid");
@@ -580,9 +582,6 @@ and (min-width : 1824px) {
         var data       = <%- JSON.stringify(data) %>;
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
-        
-        console.log(data)
-        console.log(actual)
 
         for(var i = 0; i < LamMarker.length; i++) {
 			
@@ -597,42 +596,6 @@ and (min-width : 1824px) {
         alert("Bicis es una utilidad para consultar el servicio de préstamo de bicicletas de Bilbao, Bilbao Bizi. Muestra para cada estación su historial de uso durante el día y una predicción estimada del uso que tendrá.")
     }
     
-    function selectedCluster() {
-    
-    	let ctx = document.getElementById('myChart').getContext('2d');
-
-        myLineChart.destroy();
-        
-        myLineChart = new Chart(ctx, {
-            responsive: true,
-            maintainAspectRatio: false,
-            type: 'line',
-            data: [],
-            options: chartOptions
-        });
-        	
-    	var parent = document.getElementById('wrapper');
-        
-        parent.style.display = "none"
-	    
-    	
-		for(i=0;i<LamMarker.length;i++) {
-			
-			mymap.removeLayer(LamMarker[i]);
-			
-			LamMarker[i].options.color = cluster_color[stations_clusters[LamMarker[i]._popup._content]]
-			LamMarker[i].options.fillColor = cluster_color[stations_clusters[LamMarker[i]._popup._content]]
-
-			LamMarker[i].addTo(mymap).on('click', onClickCluster);
-						
-		}  
-			
-		alert("Muchas estaciones tienen un comportamiento similar, son centros de trabajo, residenciales o puntos cercanos a sitios de trabajo. Se muestra el comportamiento esperado y el histórico del día.")
-// 		alert("Graphs will show the behaviour expected for the selected station versus the predictions made with the neural network.\n\nThe displayed colors in the nodes represent the different behaviours on each of the stations: work stations, residential stations and unused stations.")
-    }
-    
-    
-    
 	function init() {
 	
 		loadMapPins()
@@ -642,8 +605,22 @@ and (min-width : 1824px) {
 	function showStartMessage() {
 	
 	}
+	
+	function showMap(position) {
+      // Show a map centered at position
+
+		latitude = position.coords.latitude;
+		longitude = position.coords.longitude;
+
+		mymap.setView([latitude, longitude], 17);
+
+    }
 
     function loadMapPins() {
+    
+    	console.log("Hey! Thanks for using Neural Bikes, if you consider this useful contribute donating money to cover the development and server costs. Thanks, @javierdemartin")
+    
+    	 navigator.geolocation.getCurrentPosition(showMap);
     
     	var canvas = document.getElementById("myChart");
 
@@ -672,9 +649,6 @@ and (min-width : 1824px) {
         var data       = <%- JSON.stringify(data) %>;
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
-        
-        console.log(lat);
-        console.log(lng);
 
         mymap = L.map('mapid').setView([lat, lng], zoom);
 

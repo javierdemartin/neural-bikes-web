@@ -88,11 +88,8 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		payload['values'] = decoded_data;
 		payload['donate'] = donationLink
 		payload['license'] = license_message
-					payload['last_updated'] = datetime
+		payload['last_updated'] = datetime
 
-		console.log(decoded_data)
-
-		console.log(typeof(decoded_data))
 		res.json(payload)
 	})
 })
@@ -137,19 +134,13 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		payload['values'] = decoded_data;
 		payload['donate'] = donationLink
 		payload['license'] = license_message
-			payload['last_updated'] = datetime
+		payload['last_updated'] = datetime
 
-		console.log(decoded_data)
-
-		console.log(typeof(decoded_data))
 		res.json(payload)
 	})
 })
 
 app.get('/api/v1/today/*', (req, res) => {
-
-	console.log("PREDICTION")
-
 
 	let city = req.params[0].toLowerCase()
 	
@@ -177,8 +168,6 @@ app.get('/api/v1/today/*', (req, res) => {
 				stationsDict[name] = name
 			}			
 			
-			
-			console.log(gotStationsList)
 		} else if (city === "madrid") {
 		
 			stationsList = body["network"]['stations']
@@ -488,9 +477,7 @@ app.get('/bicis/*', (req, res) => {
 				dataToEjsView.push(data)
 			}
 		}
-		
-		console.log(centerLatitude + " - " + centerLongitude)
-				
+						
 		var resultTodayDict = {};
 		var resultPredictionDict = {};
 		
