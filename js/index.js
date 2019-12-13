@@ -51,9 +51,6 @@ app.get('/bicis', (req, res) => {
 // Get individual stations by name
 app.get('/api/v1/prediction/*/*', (req, res) => {
 
-
-	console.log(req.params)
-
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
 
@@ -85,7 +82,7 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
 		
-						var datetime = new Date();
+		var datetime = new Date();
 		
 		var payload = {};
 		
@@ -101,7 +98,6 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 
 app.get('/api/v1/today/*/*', (req, res) => {
 
-	console.log(req)
 
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
@@ -130,13 +126,12 @@ app.get('/api/v1/today/*/*', (req, res) => {
 			return
 		}
 		
-				var datetime = new Date();
+		var datetime = new Date();
 
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
 
-		console.log(decoded_data)
 		process.exit()
 		
 		var payload = {};
@@ -150,9 +145,6 @@ app.get('/api/v1/today/*/*', (req, res) => {
 })
 
 var apiPreLogIn = function(city) {
-
-
-	console.log("LOGGIN IN " + city)
 	
 	const options = {
     url: 'https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/', 
@@ -183,7 +175,6 @@ var apiPreLogIn = function(city) {
 			
 				let data = JSON.parse(body)['data'][0]['accessToken']
 				
-				console.log(data)
 				resolve(data)
 			
 			} else {
@@ -206,7 +197,6 @@ app.get('/api/v1/today/*', (req, res) => {
 
 
 	apiPreLogIn(city).then(accessToken => {
-		console.log(accessToken)
 		
 		var options = {
     		url: url, 
@@ -216,7 +206,6 @@ app.get('/api/v1/today/*', (req, res) => {
     
 		if (city === 'madrid') {
 		
-			console.log(options)
 			options = {
     		url: url, 
     		method: 'GET',
@@ -224,17 +213,11 @@ app.get('/api/v1/today/*', (req, res) => {
     		headers: {'accessToken': accessToken}
     		}
 		}
-    
-		console.log(options)
 		
 		request(options, async function (error, response, body) {
 
 			var stationsList = []
 			var stationsDict = []
-
-			console.log("-------------------------------------------------")			
-			console.log(body)
-			console.log("-------------------------------------------------")
 		
 			if (city === "bilbao") {
 				stationsList = body.countries[0].cities[0].places
@@ -248,8 +231,6 @@ app.get('/api/v1/today/*', (req, res) => {
 				}			
 			
 			} else if (city === "madrid") {
-			
-				console.log(body)
 		
 				stationsList = body["data"]
 			
@@ -282,8 +263,6 @@ app.get('/api/v1/today/*', (req, res) => {
 				payload['license'] = license_message
 				payload['last_updated'] = datetime
 				
-				console.log(payload)
-				
 				res.json(payload);
 			  }).catch(err => {
 				console.log("*************************")
@@ -309,7 +288,6 @@ app.get('/api/v1/prediction/*', (req, res) => {
 	let url = cityParsers[city]
 	
 	apiPreLogIn(city).then(accessToken => {
-		console.log(accessToken)
 		
 		var options = {
     		url: url, 
@@ -319,7 +297,6 @@ app.get('/api/v1/prediction/*', (req, res) => {
     
 		if (city === 'madrid') {
 		
-			console.log(options)
 			options = {
     		url: url, 
     		method: 'GET',
@@ -328,14 +305,12 @@ app.get('/api/v1/prediction/*', (req, res) => {
     		}
 		}
     
-		console.log(options)
 
 	request(options, async function (error, response, body) {
 
 		var stationsList = []
 		var stationsDict = []
 		
-		console.log(body)
 		
 		if (city === "bilbao") {
 			stationsList = body.countries[0].cities[0].places
@@ -383,7 +358,6 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			payload['last_updated'] = datetime
 			res.json(payload);
 		  }).catch(err => {
-			console.log("*************************")
 			console.log(err)
 		  
 		  })
@@ -481,9 +455,6 @@ app.get('/blog', (req, res) => {
 			posts: posts
 		  })
 		});
-	} else {
-	
-		console.log("%%%%%%%%%%%%%% " + req.originalUrl)
 	}
 })
 
@@ -491,9 +462,7 @@ app.get('/blog/*', (req, res) => {
 
 		
 	const testFolder = path.join(__dirname, '../_posts')
-	
-	console.log("THE PATH IS " + path.join(__dirname, '../'))
-	
+		
 	var file = req.originalUrl.replace('/blog/', '')
 	
 	var raw = fs.readFileSync(testFolder + '/' + file + ".md", 'utf8');
@@ -520,7 +489,6 @@ let cityParsers = {
 var queryCityFromApi = function(typeOfQuery, city) {
 
 	let apiUrl = "http://javierdemart.in/api/v1/" + typeOfQuery + "/" + city
-	console.log(apiUrl)
 
 	return new Promise(function(resolve, reject) {
 	
@@ -550,7 +518,6 @@ app.get('/bicis/*', (req, res) => {
 	let urlToParse = cityParsers[city]
 	
 	apiPreLogIn(city).then(accessToken => {
-		console.log(accessToken)
 		
 		var options = {
     		url: urlToParse, 
@@ -560,7 +527,6 @@ app.get('/bicis/*', (req, res) => {
     
 		if (city === 'madrid') {
 		
-			console.log(options)
 			options = {
     		url: urlToParse, 
     		method: 'GET',
@@ -575,10 +541,6 @@ app.get('/bicis/*', (req, res) => {
 		var centerLatitude = 0.0; 
 		var centerLongitude = 0.0; 
 		var dataToEjsView = []
-		
-		console.log("-------------------------------------------------")			
-		console.log(body)
-		console.log("-------------------------------------------------")
 		
 		if (city === "bilbao") {
 		
@@ -603,9 +565,7 @@ app.get('/bicis/*', (req, res) => {
 			centerLongitude = -3.7025600
 			
 			for (i = 0; i< stations.length; i++) { 
-		
-				console.log(stations[i])
-		
+				
 				let data = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "name": stations[i]["name"]}
 		
 				dataToEjsView.push(data)
