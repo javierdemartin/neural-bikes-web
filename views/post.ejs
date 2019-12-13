@@ -13,20 +13,18 @@
 	</script>
 
 	  <title><%= data.title %></title>
-	<link href="/resources/styles-post.css" rel="stylesheet" type="text/css">
+	<link href="/resources/styles.css" rel="stylesheet" type="text/css">
 	
     <script>	
     </script>
 </head>
- <body onload="init()" class="body" id="boo">
+ <body onload="init()" class="body">
 
 	 <div class="inner">
 	 
-	 	<p class="Poppins"><a href="/blog/ %>">Back</a></p>
-	 
-		<code><%= data.date %></code><br></br>
+		<div class="title"><%= data.title %></div>
+		<div class="subtitle"><%= data.date %></div>
 		
-        <h1 class="Poppins"><%= data.title %></h1>
         
 <!--         <%- include('partials/footer') %> -->
 

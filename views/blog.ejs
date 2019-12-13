@@ -11,7 +11,7 @@
 	</script>
 
 	  <title>Blog</title>
-	<link href="/resources/styles-blog.css" rel="stylesheet" type="text/css">
+	<link href="/resources/styles.css" rel="stylesheet" type="text/css">
 	  	<style>
 
 	  	</style>
@@ -23,14 +23,13 @@
 
 	 <div class="inner">
 	 
-	 <h1 class="Poppins" id="section"><mark>Blog</mark></h1>
+	 <div class="title">Blog</div>
 
     <div class="list-group">
       <!-- loop over blog posts and render them -->
       <% posts.forEach((post) => { %>
-        <p class="Poppins"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></p>
-        <pre><%= post.date %></pre><br>
-
+        <div class="title"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></div>
+		<div class="subtitle"><%= post.date %></div>
       <% }) %>
     </div>
     

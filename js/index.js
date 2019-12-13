@@ -44,6 +44,10 @@ console.timestamp = function () {
   console.log(args.join(' '));
 }
 
+app.get('/bicis', (req, res) => {
+	res.render('views/select-city')
+})
+
 // Get individual stations by name
 app.get('/api/v1/prediction/*/*', (req, res) => {
 
@@ -97,6 +101,8 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 
 app.get('/api/v1/today/*/*', (req, res) => {
 
+	console.log(req)
+
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1].toUpperCase()
 
@@ -129,6 +135,9 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 		decoded_data = JSON.parse(decoded_data)
+
+		console.log(decoded_data)
+		process.exit()
 		
 		var payload = {};
 		payload['values'] = decoded_data;
@@ -140,6 +149,52 @@ app.get('/api/v1/today/*/*', (req, res) => {
 	})
 })
 
+var apiPreLogIn = function(city) {
+
+
+	console.log("LOGGIN IN " + city)
+	
+	const options = {
+    url: 'https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/', 
+    method: 'GET',
+    headers: {
+        'email': 'javierdemartin@me.com',
+	'password': 'zXF2AbQt7L6#',
+	'X-ApiKey': '76eb9ed5-25b6-4e57-a905-71d4ac2ecdf2',
+	'X-ClientId': 'f64bb631-8b03-426d-a1e3-9939a571003a'
+    }
+};
+
+	return new Promise(function(resolve, reject) {
+	
+		if (city !== "madrid") {
+			resolve("")
+			return 
+		} else {
+			request.get(options, (error, res, body) => {
+		
+			if (error) {
+				console.error(error)
+				reject(error)
+			}
+						
+			if (body) {
+
+			
+				let data = JSON.parse(body)['data'][0]['accessToken']
+				
+				console.log(data)
+				resolve(data)
+			
+			} else {
+				reject()
+			}
+		})
+		}	
+	})
+}
+
+
 app.get('/api/v1/today/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
@@ -149,64 +204,99 @@ app.get('/api/v1/today/*', (req, res) => {
 	// render `home.ejs` with the list of posts
 	let url = cityParsers[city]
 
-	request({
-		url: url,
-		json: true
-	}, async function (error, response, body) {
 
-		var stationsList = []
-		var stationsDict = []
+	apiPreLogIn(city).then(accessToken => {
+		console.log(accessToken)
 		
-		if (city === "bilbao") {
-			stationsList = body.countries[0].cities[0].places
-			
-			for(i = 0; i < stationsList.length; i++) {
-			
-				var name = stationsList[i].name.replace(/^\d\d-/g, '')
-			
-				gotStationsList.push(name)
-				stationsDict[name] = name
-			}			
-			
-		} else if (city === "madrid") {
+		var options = {
+    		url: url, 
+    		method: 'GET',
+    		json:true
+    		}
+    
+		if (city === 'madrid') {
 		
-			stationsList = body["network"]['stations']
-			
-			for (i = 0; i < stationsList.length; i++) {
-
-				gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
-				
-				stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
-			}
+			console.log(options)
+			options = {
+    		url: url, 
+    		method: 'GET',
+    		json:true,
+    		headers: {'accessToken': accessToken}
+    		}
 		}
+    
+		console.log(options)
 		
+		request(options, async function (error, response, body) {
 
-		var promises = [];
+			var stationsList = []
+			var stationsDict = []
 
-		   gotStationsList.forEach(async (item) => {
-
- 			// Queries for the ID
-			promises.push(queryForStation("Today", stationsDict[item], item))
+			console.log("-------------------------------------------------")			
+			console.log(body)
+			console.log("-------------------------------------------------")
+		
+			if (city === "bilbao") {
+				stationsList = body.countries[0].cities[0].places
 			
-		  })
-		  
-		  		var datetime = new Date();
+				for(i = 0; i < stationsList.length; i++) {
+			
+					var name = stationsList[i].name.replace(/^\d\d-/g, '')
+			
+					gotStationsList.push(name)
+					stationsDict[name] = name
+				}			
+			
+			} else if (city === "madrid") {
+			
+				console.log(body)
 		
-		Promise.all(promises)
-		  .then(data => {
-		  	
-			var payload = {};
-			payload['values'] = data;
-			payload['donate'] = donationLink;
-			payload['license'] = license_message
-			payload['last_updated'] = datetime
-			res.json(payload);
-		  }).catch(err => {
-			console.log("*************************")
-			console.log(err)
+				stationsList = body["data"]
+			
+				for (i = 0; i < stationsList.length; i++) {
+
+					gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
+				
+					stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
+				}
+			}
+		
+
+			var promises = [];
+
+			   gotStationsList.forEach(async (item) => {
+
+				// Queries for the ID
+				promises.push(queryForStation("Today", stationsDict[item], item))
+			
+			  })
 		  
-		  })
+			var datetime = new Date();
+		
+			Promise.all(promises)
+			  .then(data => {
+			
+				var payload = {};
+				payload['values'] = data;
+				payload['donate'] = donationLink;
+				payload['license'] = license_message
+				payload['last_updated'] = datetime
+				
+				console.log(payload)
+				
+				res.json(payload);
+			  }).catch(err => {
+				console.log("*************************")
+				console.log(err)
+		  
+			  })
+		})
 	})
+	
+	
+
+
+
 })
 
 app.get('/api/v1/prediction/*', (req, res) => {
@@ -217,14 +307,35 @@ app.get('/api/v1/prediction/*', (req, res) => {
 	
 	// render `home.ejs` with the list of posts
 	let url = cityParsers[city]
+	
+	apiPreLogIn(city).then(accessToken => {
+		console.log(accessToken)
+		
+		var options = {
+    		url: url, 
+    		method: 'GET',
+    		json:true
+    		}
+    
+		if (city === 'madrid') {
+		
+			console.log(options)
+			options = {
+    		url: url, 
+    		method: 'GET',
+    		json:true,
+    		headers: {'accessToken': accessToken}
+    		}
+		}
+    
+		console.log(options)
 
-	request({
-		url: url,
-		json: true
-	}, async function (error, response, body) {
+	request(options, async function (error, response, body) {
 
 		var stationsList = []
 		var stationsDict = []
+		
+		console.log(body)
 		
 		if (city === "bilbao") {
 			stationsList = body.countries[0].cities[0].places
@@ -240,13 +351,13 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			
 		} else if (city === "madrid") {
 		
-			stationsList = body["network"]['stations']
-			
+			stationsList = body["data"]
+		
 			for (i = 0; i < stationsList.length; i++) {
 
-				gotStationsList.push(stationsList[i]["name"].replace(/(^\d\d-)/g, ''))
-				
-				stationsDict[String(stationsList[i]["name"].replace(/(^\d\d-)/g, ''))] = stationsList[i]["id"]
+				gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
+			
+				stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
 			}
 		}
 		
@@ -276,6 +387,8 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			console.log(err)
 		  
 		  })
+	})
+	
 	})
 })
 
@@ -398,13 +511,16 @@ app.get('/blog/*', (req, res) => {
 })
 
 let cityParsers = {
-	"madrid": "http://api.citybik.es/v2/networks/bicimad",
+	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
 	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532"
 }
+
+
 
 var queryCityFromApi = function(typeOfQuery, city) {
 
 	let apiUrl = "http://javierdemart.in/api/v1/" + typeOfQuery + "/" + city
+	console.log(apiUrl)
 
 	return new Promise(function(resolve, reject) {
 	
@@ -433,20 +549,36 @@ app.get('/bicis/*', (req, res) => {
 	
 	let urlToParse = cityParsers[city]
 	
-	console.log(urlToParse)
+	apiPreLogIn(city).then(accessToken => {
+		console.log(accessToken)
+		
+		var options = {
+    		url: urlToParse, 
+    		method: 'GET',
+    		json:true
+    		}
+    
+		if (city === 'madrid') {
+		
+			console.log(options)
+			options = {
+    		url: urlToParse, 
+    		method: 'GET',
+    		json:true,
+    		headers: {'accessToken': accessToken}
+    		}
+		}
 	
-	
-	request({
-		url: urlToParse,
-		json: true
-	}, async function (error, response, body) {
-	
-		console.log(body)
+	request(options, async function (error, response, body) {
 		
 		
 		var centerLatitude = 0.0; 
 		var centerLongitude = 0.0; 
 		var dataToEjsView = []
+		
+		console.log("-------------------------------------------------")			
+		console.log(body)
+		console.log("-------------------------------------------------")
 		
 		if (city === "bilbao") {
 		
@@ -466,13 +598,15 @@ app.get('/bicis/*', (req, res) => {
 		} else if (city === "madrid") {
 			
 			
-			let stations = body["network"]['stations']
-			centerLatitude = body["network"]['location']['latitude']
-			centerLongitude = body["network"]['location']['longitude']
+			let stations = body["data"]
+			centerLatitude =  40.4165000
+			centerLongitude = -3.7025600
 			
 			for (i = 0; i< stations.length; i++) { 
 		
-				let data = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "name": stations[i]["name"]}
+				console.log(stations[i])
+		
+				let data = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "name": stations[i]["name"]}
 		
 				dataToEjsView.push(data)
 			}
@@ -504,23 +638,16 @@ app.get('/bicis/*', (req, res) => {
 					actual: resultTodayDict,
 					available: [], 
 					total: 0})
-			
 			})
 		
-			
 		}).catch(err => {
 		
 		})
 	})
+	
+	})
 })
 
-
-app.get('/bicis', (req, res) => {
-
-	console.timestamp('>>>> start delay', 0);
-
-	res.render('views/select-city')
-})
 
 module.exports = app
 
