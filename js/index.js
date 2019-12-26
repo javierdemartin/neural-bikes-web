@@ -52,7 +52,7 @@ app.get('/bicis', (req, res) => {
 app.get('/api/v1/prediction/*/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
-	let station = req.params[1].toUpperCase()
+	let station = req.params[1]//.toUpperCase()
 
 	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
 		json: {
@@ -100,7 +100,9 @@ app.get('/api/v1/today/*/*', (req, res) => {
 
 
 	let city = req.params[0].toLowerCase()
-	let station = req.params[1].toUpperCase()
+	let station = req.params[1]//.toUpperCase()
+	
+	console.log("> " + city + " " + station)
 
 	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
 		json: {
@@ -127,12 +129,15 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		}
 		
 		var datetime = new Date();
+		
 
 		var b64 = body['records'][0]['fields']['values']['value']
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
-		decoded_data = JSON.parse(decoded_data)
 
-		process.exit()
+		decoded_data = JSON.parse(decoded_data)
+		console.log(decoded_data)
+
+
 		
 		var payload = {};
 		payload['values'] = decoded_data;
@@ -147,38 +152,44 @@ app.get('/api/v1/today/*/*', (req, res) => {
 var apiPreLogIn = function(city) {
 	
 	const options = {
-    url: 'https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/', 
-    method: 'GET',
-    headers: {
-        'email': 'javierdemartin@me.com',
-	'password': 'zXF2AbQt7L6#',
-	'X-ApiKey': '76eb9ed5-25b6-4e57-a905-71d4ac2ecdf2',
-	'X-ClientId': 'f64bb631-8b03-426d-a1e3-9939a571003a'
-    }
-};
+		url: 'https://openapi.emtmadrid.es/v1/mobilitylabs/user/login/', 
+		method: 'GET',
+		headers: {
+			'email': 'javierdemartin@me.com',
+		'password': 'zXF2AbQt7L6#',
+		'X-ApiKey': '76eb9ed5-25b6-4e57-a905-71d4ac2ecdf2',
+		'X-ClientId': 'f64bb631-8b03-426d-a1e3-9939a571003a'
+		}
+	};
 
 	return new Promise(function(resolve, reject) {
 	
 		if (city !== "madrid") {
-			resolve("")
-			return 
+			resolve()
+
 		} else {
 			request.get(options, (error, res, body) => {
 		
 			if (error) {
+				console.log("****---------------------")
 				console.error(error)
+				console.log("---------------------")
 				reject(error)
+
 			}
 						
 			if (body) {
+			
+
+				let accessToken = JSON.parse(body)['data'][0]['accessToken']
+				
+				resolve(accessToken)
 
 			
-				let data = JSON.parse(body)['data'][0]['accessToken']
-				
-				resolve(data)
-			
 			} else {
+				console.log("---------------------")
 				reject()
+
 			}
 		})
 		}	
@@ -194,6 +205,7 @@ app.get('/api/v1/today/*', (req, res) => {
 	
 	// render `home.ejs` with the list of posts
 	let url = cityParsers[city]
+
 
 
 	apiPreLogIn(city).then(accessToken => {
@@ -218,6 +230,9 @@ app.get('/api/v1/today/*', (req, res) => {
 
 			var stationsList = []
 			var stationsDict = []
+			
+			console.log(body)
+
 		
 			if (city === "bilbao") {
 				stationsList = body.countries[0].cities[0].places
@@ -238,6 +253,16 @@ app.get('/api/v1/today/*', (req, res) => {
 
 					gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
 				
+					stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
+				}
+			} else if (city === "newyork") {
+		
+				stationsList = body["network"]["stations"]
+		
+				for (i = 0; i < stationsList.length; i++) {
+
+					gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
+			
 					stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
 				}
 			}
@@ -305,7 +330,6 @@ app.get('/api/v1/prediction/*', (req, res) => {
     		}
 		}
     
-
 	request(options, async function (error, response, body) {
 
 		var stationsList = []
@@ -326,7 +350,19 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			
 		} else if (city === "madrid") {
 		
+			console.log(body)
+		
 			stationsList = body["data"]
+		
+			for (i = 0; i < stationsList.length; i++) {
+
+				gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
+			
+				stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
+			}
+		} else if (city === "newyork") {
+		
+			stationsList = body["network"]["stations"]
 		
 			for (i = 0; i < stationsList.length; i++) {
 
@@ -481,67 +517,87 @@ app.get('/blog/*', (req, res) => {
 
 let cityParsers = {
 	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
-	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532"
+	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
+	"newyork": "http://api.citybik.es/v2/networks/citi-bike-nyc"
 }
 
+var queryCityFromApi = function(baseUrl, typeOfQuery, city) {
 
+	var apiUrl = ""
 
-var queryCityFromApi = function(typeOfQuery, city) {
+	if(baseUrl.indexOf("localhost") > -1) {
+		apiUrl += "http://"
+	}
 
-	let apiUrl = "http://javierdemart.in/api/v1/" + typeOfQuery + "/" + city
-
-	return new Promise(function(resolve, reject) {
+	apiUrl += baseUrl + "/api/v1/" + typeOfQuery + "/" + city
 	
-		request.get(apiUrl, (error, res, body) => {
+	console.log(apiUrl)
+	
+	return new Promise(function(resolve, reject) {
 		
-			if (error) {
+		request.get(apiUrl, (error, res, body) => {
+				
+			if (error !== null) {
+				console.log("QUERY CITY -----------------------")
 				console.error(error)
+				console.log("-----------------------")
 				reject(error)
-			}
-						
-			if (body) {
+			} else if (body !== null) {
 			
+				console.log("HEY EL BODY")
+				console.log(body)
+				console.log("$$$$$$$$$$$$$")
 				let data = JSON.parse(body)['values']
 				resolve(data)
 			
-			} else {
-				reject()
-			}
+			} 
+			
+			// else {
+// 			
+// 			console.log("QUERY LOLO -----------------------")
+// 				reject()
+// 			}
+			
+			})
 		})
-	})
+// 	})
 }
+
+var centerLatitude = 0.0; 
+var centerLongitude = 0.0; 
+var dataToEjsView = {}
+var stationIdDict = {};
 
 app.get('/bicis/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
 	
-	let urlToParse = cityParsers[city]
+	console.log(req.params)
 	
+	let urlToParse = cityParsers[city]
+		
 	apiPreLogIn(city).then(accessToken => {
 		
 		var options = {
     		url: urlToParse, 
     		method: 'GET',
     		json:true
-    		}
+    	}
     
 		if (city === 'madrid') {
 		
 			options = {
-    		url: urlToParse, 
-    		method: 'GET',
-    		json:true,
-    		headers: {'accessToken': accessToken}
+				url: urlToParse, 
+				method: 'GET',
+				json:true,
+				headers: {'accessToken': accessToken}
     		}
+    		
+    		console.log(options)
 		}
 	
 	request(options, async function (error, response, body) {
-		
-		
-		var centerLatitude = 0.0; 
-		var centerLongitude = 0.0; 
-		var dataToEjsView = []
-		
+			
 		if (city === "bilbao") {
 		
 			centerLatitude = body['countries'][0]['lat']
@@ -550,59 +606,136 @@ app.get('/bicis/*', (req, res) => {
 			
 			let stations = body['countries'][0]['cities'][0]['places']
 			
+			console.log("HAY " + stations.length)
+			
 			for (i = 0; i< stations.length; i++) { 
 		
-				let data = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "name": stations[i]["name"].replace(/(^\d\d-)/g, '')}
+// 				let data = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "name": stations[i]["name"].replace(/(^\d\d-)/g, '')}
+				let data = {}
+				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"]}
+				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
+				
+				console.log(data)
 		
-				dataToEjsView.push(data)
+// 				dataToEjsView.push(data)
 			}
 			
 		} else if (city === "madrid") {
 			
 			
 			let stations = body["data"]
+			
+			console.log("-------------------")
+			console.log(body)
+			console.log("-------------------")
+
+
 			centerLatitude =  40.4165000
 			centerLongitude = -3.7025600
 			
-			for (i = 0; i< stations.length; i++) { 
+			console.log("HEHEH " + stations)
+						
+			for (i = 0; i < stations.length; i++) { 
 				
-				let data = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "name": stations[i]["name"]}
+// 				let data = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "name": stations[i]["name"], "id": stations[i]["id"]}
+				
+				let data = {}
+				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "id": stations[i]["id"]}
 		
-				dataToEjsView.push(data)
+				
+		
+// 				dataToEjsView.push(data)
+			}
+		} else if (city === "newyork") {
+		
+
+			let stations = body["network"]['stations']
+			centerLatitude =  body["network"]["location"]["latitude"]
+			centerLongitude = body["network"]["location"]["longitude"]
+			
+			for (i = 0; i< stations.length; i++) { 
+			
+				
+				let data = {}
+				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"]}
+				
+// 				let data = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "name": stations[i]["name"], "id": stations[i]["id"]}
+				
+				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
+				
+
+		
+// 				dataToEjsView.push(data)
 			}
 		}
 						
 		var resultTodayDict = {};
 		var resultPredictionDict = {};
+
+		var promiseArray = [];
+
+		// promiseArray.push(queryCityFromApi(req.headers.host, "today", city).then(function(result) {
+// 		
+// 				console.log(result)
+// 
+// 				for (i = 0; i < result.length; i++) {
+// 					resultTodayDict[Object.keys(result[i])[0]] = Object.values(result[i])[0]
+// 				}
+// 				
+// 				console.log("> Size of today's JSON " + JSON.stringify(resultTodayDict).length/1000000)
+// 			})
+// 		)
+// 		
+// 		promiseArray.push(queryCityFromApi(req.headers.host, "prediction", city).then(function(resultPred) {
+// 		
+// 				console.log(resultPred)
+// 		
+// 				for (i = 0; i < resultPred.length; i++) {
+// 					resultPredictionDict[Object.keys(resultPred[i])[0]] = Object.values(resultPred[i])[0]
+// 				}
+// 				
+// 				console.log("> Size of prediction's JSON " + JSON.stringify(resultPredictionDict).length/1000000)
+// 			})
+// 		)
+
+
+			console.log(dataToEjsView)
 		
-		queryCityFromApi("today", city).then(function(result) {
-		
-			for (i = 0; i < result.length; i++) {
-				
-				resultTodayDict[Object.keys(result[i])[0]] = Object.values(result[i])[0]
-			}
+					var payload = { 
+			lat: centerLatitude, 
+			lng: centerLongitude, 
+			zoom: 13, 
+			city: city,
+			data: dataToEjsView, 
+			prediction: {}, 
+			actual: {},
+			dict: {},
+			available: [], 
+			total: 0}
 			
-			queryCityFromApi("prediction", city).then(function(resultPred) {
-		
-				for (i = 0; i < resultPred.length; i++) {
-				
-					resultPredictionDict[Object.keys(resultPred[i])[0]] = Object.values(resultPred[i])[0]
-				}
+			console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
 			
-				res.render('views/home', { 
-					lat: centerLatitude, 
-					lng: centerLongitude, 
-					zoom: 13, 
-					data: dataToEjsView, 
-					prediction: resultPredictionDict, 
-					actual: resultTodayDict,
-					available: [], 
-					total: 0})
-			})
+			res.render('views/home', payload)
 		
-		}).catch(err => {
+		// Promise.all(promiseArray).then(vals => {
+// 		
+// 			var payload = { 
+// 			lat: centerLatitude, 
+// 			lng: centerLongitude, 
+// 			zoom: 13, 
+// 			data: dataToEjsView, 
+// 			prediction: resultPredictionDict, 
+// 			actual: resultTodayDict,
+// 			dict: stationIdDict,
+// 			available: [], 
+// 			total: 0}
+// 			
+// 			console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
+// 			
+// 			res.render('views/home', payload)
+// 		})
+
 		
-		})
 	})
 	
 	})
@@ -612,4 +745,4 @@ app.get('/bicis/*', (req, res) => {
 module.exports = app
 
 
-app.listen()
+app.listen(3000)

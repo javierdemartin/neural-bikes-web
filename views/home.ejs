@@ -1,6 +1,8 @@
 <html>
 <head>
 
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "/>
+
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
 	<script>
@@ -18,6 +20,7 @@
 	<style>
 
 	</style>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 
@@ -166,11 +169,15 @@
     }
     
     var myLineChart = undefined;
+    
+    function Get(yourUrl){
+		var Httpreq = new XMLHttpRequest(); // a new request
+		Httpreq.open("GET",yourUrl,false);
+		Httpreq.send(null);
+		return Httpreq.responseText;          
+	}
 
     function onClick(e) {
-    	
-        var prediction = <%- JSON.stringify(prediction) %>;
-        var actual = <%- JSON.stringify(actual) %>;
         
         mymap.setView([e.latlng.lat, e.latlng.lng]);
         
@@ -189,14 +196,34 @@
         var popup = e.target.getPopup();
         var content = popup.getContent().replace(/(^\d\d-)/g, '');
         
-        var prediction_values = prediction[content]
+        var currentStation = content;
         
-        var actual_values = actual[content]
+        if (currentCity !== 'bilbao') {
+        	currentStation = data[content]['id']
+        }
         
-		var indexes = Object.keys(prediction_values)
+        var json_obj = JSON.parse(Get("http://localhost:3000/api/v1/prediction/" + currentCity + "/" + currentStation))["values"];
+		console.log(json_obj);
+		
+		
+		
+        var prediction = json_obj // <%- JSON.stringify(prediction) %>;
+        
+        var actual = JSON.parse(Get("http://localhost:3000/api/v1/today/"+ currentCity + "/" + currentStation))["values"]; // <%- JSON.stringify(actual) %>;
+        
+	    console.log(content);
+	    console.log(dict[content])
+	    
+	    console.log(data[content])
+        
+//         var prediction_values = prediction[content]
+        
+//         var actual_values = actual[content]
+        
+		var indexes = Object.keys(prediction)
 
-		actual_values = Object.values(actual_values)		
-		prediction_values = Object.values(prediction_values)
+		actual_values = Object.values(actual)		
+		prediction_values = Object.values(prediction)
 
         var datitos = {
 
@@ -234,10 +261,12 @@
             maintainAspectRatio: false,
             type: 'line',
             data: datitos,
+
             options: chartOptions
         });
     }
-        
+
+		
     function selectedPrediction() {
     
 		let ctx = document.getElementById('myChart').getContext('2d');
@@ -276,10 +305,12 @@
         alert("Bicis es una utilidad para consultar el servicio de préstamo de bicicletas de Bilbao, Bilbao Bizi. Muestra para cada estación su historial de uso durante el día y una predicción estimada del uso que tendrá.")
     }
     
+    
 	function init() {
 	
 		loadMapPins()
 		showStartMessage()
+		dict = <%- JSON.stringify(dict) %>;
 	}
 
 	function showStartMessage() {
@@ -295,7 +326,7 @@
 		mymap.setView([latitude, longitude], 17);
 
     }
-
+    
     function loadMapPins() {
     
     	console.log("Hey! Thanks for using Neural Bikes, if you consider this useful contribute donating money to cover the development and server costs. Thanks, @javierdemartin")
@@ -326,7 +357,14 @@
         var lat  = "<%= lat %>"; // Where to center the map
         var lng  = "<%= lng %>";
         var zoom = "<%= zoom %>";
-        var data       = <%- JSON.stringify(data) %>;
+        var city = "<%= city %>";
+        data       = <%- JSON.stringify(data) %>;
+        
+        currentCity = city;
+        
+        console.log("HOLA " + currentCity);
+        
+        console.log(data)
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
 
@@ -340,16 +378,20 @@
                 "attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             ).addTo(mymap);
 
-        for(var i = 0; i < data.length; i++) {
 
-            var lat  = data[i]['lat']
-            var lng  = data[i]['lng']
-            var name = data[i]['name']
+		Object.keys(data).forEach(function(stationName) {
+		
+			console.log(stationName)
+			
+			console.log(data[stationName])
+			
+			var lat  = data[stationName]['lat']
+            var lng  = data[stationName]['lng']
+            var name = stationName
 
             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
                  autoClose: true
              }).setContent(name.replace(/(^\d\d-)/g, ""));
-            
             
             var marker = new L.circleMarker([lat, lng],
                 {"bubblingMouseEvents": true, "color": "#3395DE", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3395DE", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
@@ -357,9 +399,30 @@
             
             LamMarker.push(marker);
             
-			LamMarker[i].addTo(mymap).bindPopup(popup).on('click', onClick);
-        }
+			marker.addTo(mymap).bindPopup(popup).on('click', onClick);
+		})
+		
+        // for(var i = 0; i < data.length; i++) {
+//         
+//             var lat  = Object.values(data[i])[0]['lat']
+//             var lng  = Object.values(data[i])[0]['lng']
+//             var name = Object.keys(data[i])[0]
+// 
+//             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
+//                  autoClose: true
+//              }).setContent(name.replace(/(^\d\d-)/g, ""));
+//             
+//             var marker = new L.circleMarker([lat, lng],
+//                 {"bubblingMouseEvents": true, "color": "#3395DE", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3395DE", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+//             )
+//             
+//             LamMarker.push(marker);
+//             
+// 			LamMarker[i].addTo(mymap).bindPopup(popup).on('click', onClick);
+//         }
     }
+    
+    var currentCity = ""
     </script>
 
 </head>
