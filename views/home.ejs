@@ -49,124 +49,78 @@
 	var mymap = undefined;
 	
 	var LamMarker = [];
-	
-	var cluster_color = {0: "#cf455c", 1: "#00a79d", 2: "#2d3561", 3: "#f3826f"}
-	
-	var stations_clusters = {
-		"ABANDO":1,
-		"AMETZOLA":0,
-		"ANSELMO CLAVE":1,
-		"ARANGOIT":3,
-		"ARANGOITI":0,
-		"AREILTZA":2,
-		"ARRIAGA":3,
-		"ASKATASUNA":0,
-		"ASTILLERO":0,
-		"AYUNTAMIENTO":0,
-		"BASARRATE":0,
-		"BLAS OTERO":3,
-		"BOLUETA":2,
-		"CORAZÓN MARIA":3,
-		"EGAÑA":2,
-		"EGUILLOR":1,
-		"EPALZA":3,
-		"ESKURTZE":0,
-		"ESTRADA CALEROS":0,
-		"ETXEBARRIA":0,
-		"GABRIEL ARESTI":0,
-		"HEROS":1,
-		"IBAIZABAL":0,
-		"INDAUTXU":3,
-		"KARMELO":0,
-		"LEIZAOLA":1,
-		"LEVANTE":0,
-		"MERCADO RIBERA":3,
-		"MOYUA":1,
-		"OLABEAGA":0,
-		"OTXARKOAGA":0,
-		"PLAZA ENCARNACIÓN":0,
-		"POLIDEPORTIVO ZORROZA":2,
-		"RAMÓN RUBIAL":1,
-		"REKALDE":0,
-		"SABINO ARANA":2,
-		"SAN NICOLAS":3,
-		"SAN PEDRO":3,
-		"SARRIKO":0,
-		"TERMIBUS":1,
-		"ZORROZAURRE":2
-	}
 
 	
-	function onClickCluster(e) {
-	
-	    var prediction = <%- JSON.stringify(prediction) %>;
-	    var actual = <%- JSON.stringify(actual) %>;
-        	
-    	var popup = e.target.getPopup();
-        var content = popup.getContent().replace(/(^\d\d-)/g, "");
-        
-        
-        var prediction_values = JSON.parse(prediction[content])
-        prediction_values = Object.values(prediction_values)
-
-        var actual_values = JSON.parse(actual[content])
-
-        actual_values = Object.values(actual_values)        
-
-        var indexes = Object.keys(JSON.parse(prediction[content]))
-        
-        
-        cluster_data = clusters[stations_clusters[content]].map(function(x) { return x * Math.max.apply(Math, prediction_values);; });
-   
-		
-		new_cluster_data = []
-		
-		for(var i = 0; i < cluster_data.length; i++) {
-		
-			for(var j=0; j < prediction_values.length / cluster_data.length; j++) {
-				
-				new_cluster_data.push(cluster_data[i])
-				
-			}
-		}
-		        
-        var datitos = {
-
-            labels: indexes,
-            datasets: [
-            {
-                label:"Ahora",
-                data: actual_values,
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                borderColor: 'rgba(0, 0, 0, 0.1)',
-                borderDash: [5, 5],
-                pointStyle: 'line',
-                fill: true,
-                pointRadius: 0
-            },
-            {
-                label: "Agrupación",
-                data: new_cluster_data,
-                backgroundColor: cluster_color[stations_clusters[content]] + '50',
-                borderColor: cluster_color[stations_clusters[content]],
-                pointStyle: 'line',
-                fill: true,
-                pointRadius: 0
-
-            }
-            ]
-        }
-        
-        let ctx = document.getElementById('myChart').getContext('2d');
-
-        var myLineChart = new Chart(ctx, {
-            responsive: true,
-            maintainAspectRatio: false,
-            type: 'line',
-            data: datitos,
-            options: chartOptions
-        });
-    }
+	// function onClickCluster(e) {
+// 	
+// 	    var prediction = <%- JSON.stringify(prediction) %>;
+// 	    var actual = <%- JSON.stringify(actual) %>;
+//         	
+//     	var popup = e.target.getPopup();
+//         var content = popup.getContent().replace(/(^\d\d-)/g, "");
+//         
+//         
+//         var prediction_values = JSON.parse(prediction[content])
+//         prediction_values = Object.values(prediction_values)
+// 
+//         var actual_values = JSON.parse(actual[content])
+// 
+//         actual_values = Object.values(actual_values)        
+// 
+//         var indexes = Object.keys(JSON.parse(prediction[content]))
+//         
+//         
+//         cluster_data = clusters[stations_clusters[content]].map(function(x) { return x * Math.max.apply(Math, prediction_values);; });
+//    
+// 		
+// 		new_cluster_data = []
+// 		
+// 		for(var i = 0; i < cluster_data.length; i++) {
+// 		
+// 			for(var j=0; j < prediction_values.length / cluster_data.length; j++) {
+// 				
+// 				new_cluster_data.push(cluster_data[i])
+// 				
+// 			}
+// 		}
+// 		        
+//         var datitos = {
+// 
+//             labels: indexes,
+//             datasets: [
+//             {
+//                 label:"Ahora",
+//                 data: actual_values,
+//                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
+//                 borderColor: 'rgba(0, 0, 0, 0.1)',
+//                 borderDash: [5, 5],
+//                 pointStyle: 'line',
+//                 fill: true,
+//                 pointRadius: 0
+//             },
+//             {
+//                 label: "Agrupación",
+//                 data: new_cluster_data,
+//                 backgroundColor: cluster_color[stations_clusters[content]] + '50',
+//                 borderColor: cluster_color[stations_clusters[content]],
+//                 pointStyle: 'line',
+//                 fill: true,
+//                 pointRadius: 0
+// 
+//             }
+//             ]
+//         }
+//         
+//         let ctx = document.getElementById('myChart').getContext('2d');
+// 
+//         var myLineChart = new Chart(ctx, {
+//             responsive: true,
+//             maintainAspectRatio: false,
+//             type: 'line',
+//             data: datitos,
+//             options: chartOptions
+//         });
+//     }
     
     var myLineChart = undefined;
     
@@ -201,24 +155,10 @@
         if (currentCity !== 'bilbao') {
         	currentStation = data[content]['id']
         }
+
+        var prediction = JSON.parse(Get("https://javierdemart.in/api/v1/prediction/" + currentCity + "/" + currentStation))["values"]; 
         
-        var json_obj = JSON.parse(Get("http://localhost:3000/api/v1/prediction/" + currentCity + "/" + currentStation))["values"];
-		console.log(json_obj);
-		
-		
-		
-        var prediction = json_obj // <%- JSON.stringify(prediction) %>;
-        
-        var actual = JSON.parse(Get("http://localhost:3000/api/v1/today/"+ currentCity + "/" + currentStation))["values"]; // <%- JSON.stringify(actual) %>;
-        
-	    console.log(content);
-	    console.log(dict[content])
-	    
-	    console.log(data[content])
-        
-//         var prediction_values = prediction[content]
-        
-//         var actual_values = actual[content]
+        var actual = JSON.parse(Get("https://javierdemart.in/api/v1/today/"+ currentCity + "/" + currentStation))["values"]; // <%- JSON.stringify(actual) %>;
         
 		var indexes = Object.keys(prediction)
 
@@ -230,7 +170,7 @@
             labels: indexes,
             datasets: [
             {
-                label:"Predicción",
+                label:"Prediction",
                 data: prediction_values,
                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
                 borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -240,7 +180,7 @@
                 pointRadius: 0
             },
             {
-                label: "Ahora",
+                label: "Now",
                 data: actual_values,
                 backgroundColor: 'rgba(139,157,195, 0.8)',
                 borderColor: 'rgba(139,157,195, 0.8)',
