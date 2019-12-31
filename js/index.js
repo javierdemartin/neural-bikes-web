@@ -214,7 +214,7 @@ app.get('/api/v1/today/*', (req, res) => {
     		url: url, 
     		method: 'GET',
     		json:true
-    		}
+    	}
     
 		if (city === 'madrid') {
 		
@@ -230,10 +230,7 @@ app.get('/api/v1/today/*', (req, res) => {
 
 			var stationsList = []
 			var stationsDict = []
-			
-			console.log(body)
-
-		
+					
 			if (city === "bilbao") {
 				stationsList = body.countries[0].cities[0].places
 			
@@ -270,12 +267,11 @@ app.get('/api/v1/today/*', (req, res) => {
 
 			var promises = [];
 
-			   gotStationsList.forEach(async (item) => {
-
+			gotStationsList.forEach(async (item) => {
 				// Queries for the ID
 				promises.push(queryForStation("Today", stationsDict[item], item))
-			
-			  })
+
+			})
 		  
 			var datetime = new Date();
 		
@@ -296,11 +292,6 @@ app.get('/api/v1/today/*', (req, res) => {
 			  })
 		})
 	})
-	
-	
-
-
-
 })
 
 app.get('/api/v1/prediction/*', (req, res) => {
@@ -471,8 +462,8 @@ app.get('/blog', (req, res) => {
 				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
 	
 				const { data, content } = frontmatter(raw);
-				
-				var tituloPost = data.title.replace(/\ /g, "_")
+								
+				var tituloPost = data.title.toString().replace(/\ /g, "_")
 				
 				var aux = frontmatter(raw);
 	
@@ -488,6 +479,7 @@ app.get('/blog', (req, res) => {
 				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
 				
 				posts.unshift(post)
+				
 			}
 		  });
 		  
@@ -630,11 +622,6 @@ app.get('/bicis/*', (req, res) => {
 			
 			
 			let stations = body["data"]
-			
-			console.log("-------------------")
-			console.log(body)
-			console.log("-------------------")
-
 
 			centerLatitude =  40.4165000
 			centerLongitude = -3.7025600
@@ -680,48 +667,24 @@ app.get('/bicis/*', (req, res) => {
 
 		var promiseArray = [];
 
-		// promiseArray.push(queryCityFromApi(req.headers.host, "today", city).then(function(result) {
-// 		
-// 				console.log(result)
-// 
-// 				for (i = 0; i < result.length; i++) {
-// 					resultTodayDict[Object.keys(result[i])[0]] = Object.values(result[i])[0]
-// 				}
-// 				
-// 				console.log("> Size of today's JSON " + JSON.stringify(resultTodayDict).length/1000000)
-// 			})
-// 		)
-// 		
-// 		promiseArray.push(queryCityFromApi(req.headers.host, "prediction", city).then(function(resultPred) {
-// 		
-// 				console.log(resultPred)
-// 		
-// 				for (i = 0; i < resultPred.length; i++) {
-// 					resultPredictionDict[Object.keys(resultPred[i])[0]] = Object.values(resultPred[i])[0]
-// 				}
-// 				
-// 				console.log("> Size of prediction's JSON " + JSON.stringify(resultPredictionDict).length/1000000)
-// 			})
-// 		)
 
+		console.log(dataToEjsView)
 
-			console.log(dataToEjsView)
-		
-					var payload = { 
-			lat: centerLatitude, 
-			lng: centerLongitude, 
-			zoom: 13, 
-			city: city,
-			data: dataToEjsView, 
-			prediction: {}, 
-			actual: {},
-			dict: {},
-			available: [], 
-			total: 0}
-			
-			console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
-			
-			res.render('views/home', payload)		
+				var payload = { 
+		lat: centerLatitude, 
+		lng: centerLongitude, 
+		zoom: 13, 
+		city: city,
+		data: dataToEjsView, 
+		prediction: {}, 
+		actual: {},
+		dict: {},
+		available: [], 
+		total: 0}
+	
+		console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
+	
+		res.render('views/home', payload)		
 	})
 	
 	})
