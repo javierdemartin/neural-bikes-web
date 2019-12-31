@@ -474,9 +474,15 @@ app.get('/blog', (req, res) => {
 				
 				var tituloPost = data.title.replace(/\ /g, "_")
 				
+				var aux = frontmatter(raw);
+	
+				const markdown = ejs.render(content, data);
+				const html = marked.parse(markdown);
+				
 				var post = {
 					date: data.date,
-					title: tituloPost
+					title: tituloPost,
+					content: html
 				}
 				
 				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
