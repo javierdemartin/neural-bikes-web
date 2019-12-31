@@ -243,10 +243,10 @@ and (min-width : 321px) {
 and (max-width : 320px) {
   /* Styles */
     .wrapper {
-    width: 95%;
-    max-width: 95%;
-    margin-left: 2.5%;
- 	margin-right: 2.5%;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0%;
+ 	margin-right: 0%;
    }
 }
 

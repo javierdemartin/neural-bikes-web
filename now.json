@@ -4,7 +4,6 @@
 	"version": 2,
 	"alias": "javierdemart.in",
 "builds": [
-    { "src": "bicis.png", "use": "@now/static" },
     { "src": "resources/*", "use": "@now/static" },
     { "src": "*.html", "use": "@now/static" },
 	{ "src": "*.css", "use": "@now/static" },

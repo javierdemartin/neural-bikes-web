@@ -24,6 +24,10 @@ body {
     color:#857769
 }
 
+p {
+	text-align: left;
+}
+
 .temporal-positions {
     margin-top:40pt
 }

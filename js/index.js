@@ -715,27 +715,7 @@ app.get('/bicis/*', (req, res) => {
 			
 			console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
 			
-			res.render('views/home', payload)
-		
-		// Promise.all(promiseArray).then(vals => {
-// 		
-// 			var payload = { 
-// 			lat: centerLatitude, 
-// 			lng: centerLongitude, 
-// 			zoom: 13, 
-// 			data: dataToEjsView, 
-// 			prediction: resultPredictionDict, 
-// 			actual: resultTodayDict,
-// 			dict: stationIdDict,
-// 			available: [], 
-// 			total: 0}
-// 			
-// 			console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
-// 			
-// 			res.render('views/home', payload)
-// 		})
-
-		
+			res.render('views/home', payload)		
 	})
 	
 	})
@@ -745,4 +725,4 @@ app.get('/bicis/*', (req, res) => {
 module.exports = app
 
 
-app.listen(3000)
+app.listen()
