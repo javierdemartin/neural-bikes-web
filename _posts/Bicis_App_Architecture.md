@@ -25,11 +25,6 @@ Some time later I realized that an average value is not as useful for the user. 
 
 I started reading and learning how to perform Machine Learning predictions to predict the availability. I upgraded my server setup to an old Mac Mini server because of the new requirements. After some months of learning (and exams) I shipped the update so I had the complete iOS app with a Machine Learning backend.
 
-</br>
-
-![/_posts/resources/Bicis-App.PNG](/_posts/resources/Bicis-App.PNG)
-</br>
-
 Open the app and get the map with all the stations and for each one a graph with the expected availability and a history of that day's availability. How does this work as of now in production? 
 
 At midnight every day a script is called, it queries [InfluxDB](https://www.influxdata.com/products/influxdb-overview/), a time series database, and calls a script that makes the prediction using the previously trained model. After that a Node.JS script uploads the predictions to a database in iCloud. After that, every ten minutes a cron job is run on my server that gathers data from the availability feed and saves it to a time series database, InfluxDB. After the data has been added it's uploaded to iCloud using CloudKit.JS so the users have the historic availability of each station to compare with the prediction.
