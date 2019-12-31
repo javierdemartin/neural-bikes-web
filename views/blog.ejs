@@ -30,6 +30,9 @@
       <% posts.forEach((post) => { %>
         <div class="title"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></div>
 		<div class="subtitle"><%= post.date %></div>
+		<div class="Poppins">
+			<%- content %>
+		</div>
       <% }) %>
     </div>
     
