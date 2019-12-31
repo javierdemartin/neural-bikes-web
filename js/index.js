@@ -608,14 +608,8 @@ app.get('/bicis/*', (req, res) => {
 			
 			for (i = 0; i< stations.length; i++) { 
 		
-// 				let data = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "name": stations[i]["name"].replace(/(^\d\d-)/g, '')}
-				let data = {}
 				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"]}
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
-				
-				console.log(data)
-		
-// 				dataToEjsView.push(data)
 			}
 			
 		} else if (city === "madrid") {
@@ -625,19 +619,10 @@ app.get('/bicis/*', (req, res) => {
 
 			centerLatitude =  40.4165000
 			centerLongitude = -3.7025600
-			
-			console.log("HEHEH " + stations)
-						
+									
 			for (i = 0; i < stations.length; i++) { 
 				
-// 				let data = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "name": stations[i]["name"], "id": stations[i]["id"]}
-				
-				let data = {}
 				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "id": stations[i]["id"]}
-		
-				
-		
-// 				dataToEjsView.push(data)
 			}
 		} else if (city === "newyork") {
 		
@@ -648,17 +633,9 @@ app.get('/bicis/*', (req, res) => {
 			
 			for (i = 0; i< stations.length; i++) { 
 			
-				
-				let data = {}
 				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"]}
-				
-// 				let data = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "name": stations[i]["name"], "id": stations[i]["id"]}
-				
+								
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
-				
-
-		
-// 				dataToEjsView.push(data)
 			}
 		}
 						

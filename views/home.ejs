@@ -2,17 +2,7 @@
 <head>
 
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "/>
-
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-
-	  gtag('config', 'UA-140485405-1');
-	</script>
-
+    
 	  <title>Bike Sharing Predictions</title>
 	  	<link rel="stylesheet" href="../resources/styles-map.css">
 
@@ -20,15 +10,11 @@
 	<style>
 
 	</style>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 
-
-
 	    <meta charset="utf-8">
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-      
     	
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
@@ -49,78 +35,6 @@
 	var mymap = undefined;
 	
 	var LamMarker = [];
-
-	
-	// function onClickCluster(e) {
-// 	
-// 	    var prediction = <%- JSON.stringify(prediction) %>;
-// 	    var actual = <%- JSON.stringify(actual) %>;
-//         	
-//     	var popup = e.target.getPopup();
-//         var content = popup.getContent().replace(/(^\d\d-)/g, "");
-//         
-//         
-//         var prediction_values = JSON.parse(prediction[content])
-//         prediction_values = Object.values(prediction_values)
-// 
-//         var actual_values = JSON.parse(actual[content])
-// 
-//         actual_values = Object.values(actual_values)        
-// 
-//         var indexes = Object.keys(JSON.parse(prediction[content]))
-//         
-//         
-//         cluster_data = clusters[stations_clusters[content]].map(function(x) { return x * Math.max.apply(Math, prediction_values);; });
-//    
-// 		
-// 		new_cluster_data = []
-// 		
-// 		for(var i = 0; i < cluster_data.length; i++) {
-// 		
-// 			for(var j=0; j < prediction_values.length / cluster_data.length; j++) {
-// 				
-// 				new_cluster_data.push(cluster_data[i])
-// 				
-// 			}
-// 		}
-// 		        
-//         var datitos = {
-// 
-//             labels: indexes,
-//             datasets: [
-//             {
-//                 label:"Ahora",
-//                 data: actual_values,
-//                 backgroundColor: 'rgba(0, 0, 0, 0.1)',
-//                 borderColor: 'rgba(0, 0, 0, 0.1)',
-//                 borderDash: [5, 5],
-//                 pointStyle: 'line',
-//                 fill: true,
-//                 pointRadius: 0
-//             },
-//             {
-//                 label: "Agrupación",
-//                 data: new_cluster_data,
-//                 backgroundColor: cluster_color[stations_clusters[content]] + '50',
-//                 borderColor: cluster_color[stations_clusters[content]],
-//                 pointStyle: 'line',
-//                 fill: true,
-//                 pointRadius: 0
-// 
-//             }
-//             ]
-//         }
-//         
-//         let ctx = document.getElementById('myChart').getContext('2d');
-// 
-//         var myLineChart = new Chart(ctx, {
-//             responsive: true,
-//             maintainAspectRatio: false,
-//             type: 'line',
-//             data: datitos,
-//             options: chartOptions
-//         });
-//     }
     
     var myLineChart = undefined;
     
@@ -205,56 +119,11 @@
             options: chartOptions
         });
     }
-
-		
-    function selectedPrediction() {
-    
-		let ctx = document.getElementById('myChart').getContext('2d');
-
-        myLineChart.destroy();
-        
-        myLineChart = new Chart(ctx, {
-            responsive: true,
-            maintainAspectRatio: false,
-            type: 'line',
-            data: [],
-            options: chartOptions
-        });
-    	
-    	var parent = document.getElementById('wrapper');
-        
-        parent.style.display = "none"
-
-        var lat  = "<%= lat %>"; // Where to center the map
-        var lng  = "<%= lng %>";
-        var zoom = "<%= zoom %>";
-        var data       = <%- JSON.stringify(data) %>;
-        var prediction = <%- JSON.stringify(prediction) %>;
-        var actual     = <%- JSON.stringify(actual) %>;
-
-        for(var i = 0; i < LamMarker.length; i++) {
-			
-			mymap.removeLayer(LamMarker[i]);
-			
-			LamMarker[i].options.color = "#3395DE"
-			LamMarker[i].options.fillColor = "#3395DE"
-
-			LamMarker[i].addTo(mymap).on('click', onClick);
-        }
-        
-        alert("Bicis es una utilidad para consultar el servicio de préstamo de bicicletas de Bilbao, Bilbao Bizi. Muestra para cada estación su historial de uso durante el día y una predicción estimada del uso que tendrá.")
-    }
-    
     
 	function init() {
 	
 		loadMapPins()
-		showStartMessage()
 		dict = <%- JSON.stringify(dict) %>;
-	}
-
-	function showStartMessage() {
-	
 	}
 	
 	function showMap(position) {
@@ -302,9 +171,6 @@
         
         currentCity = city;
         
-        console.log("HOLA " + currentCity);
-        
-        console.log(data)
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
 
@@ -318,12 +184,7 @@
                 "attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             ).addTo(mymap);
 
-
 		Object.keys(data).forEach(function(stationName) {
-		
-			console.log(stationName)
-			
-			console.log(data[stationName])
 			
 			var lat  = data[stationName]['lat']
             var lng  = data[stationName]['lng']
@@ -341,25 +202,6 @@
             
 			marker.addTo(mymap).bindPopup(popup).on('click', onClick);
 		})
-		
-        // for(var i = 0; i < data.length; i++) {
-//         
-//             var lat  = Object.values(data[i])[0]['lat']
-//             var lng  = Object.values(data[i])[0]['lng']
-//             var name = Object.keys(data[i])[0]
-// 
-//             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
-//                  autoClose: true
-//              }).setContent(name.replace(/(^\d\d-)/g, ""));
-//             
-//             var marker = new L.circleMarker([lat, lng],
-//                 {"bubblingMouseEvents": true, "color": "#3395DE", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3395DE", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-//             )
-//             
-//             LamMarker.push(marker);
-//             
-// 			LamMarker[i].addTo(mymap).bindPopup(popup).on('click', onClick);
-//         }
     }
     
     var currentCity = ""
@@ -375,8 +217,6 @@
 	</div>
 
         <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
-           
-
         
 	 	<div class="wrapper" id="wrapper" >
 			<canvas id="myChart"></canvas>
