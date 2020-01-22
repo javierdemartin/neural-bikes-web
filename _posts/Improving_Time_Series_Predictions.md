@@ -1,7 +1,7 @@
 ---
 title: Improving Time Series Predictions
 author: Javier de Martín
-date: 2019-11-08
+date: 2019-01-22
 published: true
 ---
 
