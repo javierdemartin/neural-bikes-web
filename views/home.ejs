@@ -1,5 +1,16 @@
 <html>
 <head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140485405-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-140485405-1');
+</script>
+
+
 
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "/>
     
@@ -38,14 +49,20 @@
     
     var myLineChart = undefined;
     
-    function Get(yourUrl){
-		var Httpreq = new XMLHttpRequest(); // a new request
-		Httpreq.open("GET",yourUrl,false);
-		Httpreq.send(null);
-		return Httpreq.responseText;          
-	}
-
+    // function Get(yourUrl){
+// 		var Httpreq = new XMLHttpRequest(); // a new request
+// 		Httpreq.open("GET",yourUrl,false);
+// 		Httpreq.send(null);
+// 		return Httpreq.responseText;          
+// 	}
+	
+	
+	var jsonFeed = {};
+	
     function onClick(e) {
+    
+    
+    	var myUrl = window.location;
         
         mymap.setView([e.latlng.lat, e.latlng.lng]);
         
@@ -69,55 +86,73 @@
         if (currentCity !== 'bilbao') {
         	currentStation = data[content]['id']
         }
+        
+        var urlio =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/prediction/" + currentCity + "/" + encodeURIComponent(currentStation)
+        var urlioToday =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/today/" + currentCity + "/" + encodeURIComponent(currentStation)
+        
+		Promise.all([
+		  fetch(urlio).then(response => response.json()),
+		  fetch(urlioToday).then(response => response.json())
+		]).then(allResponses => {
 
-        var prediction = JSON.parse(Get("https://javierdemart.in/api/v1/prediction/" + currentCity + "/" + currentStation))["values"]; 
-        
-        var actual = JSON.parse(Get("https://javierdemart.in/api/v1/today/"+ currentCity + "/" + currentStation))["values"]; // <%- JSON.stringify(actual) %>;
-        
-		var indexes = Object.keys(prediction)
+		console.log(allResponses)
+		  const prediction = allResponses[0]['values']
+		  const actual = allResponses[1]['values']
+		  
+		  console.log(prediction)
+		  console.log(actual)
+		  
+		  		var indexes = Object.keys(prediction)
 
 		actual_values = Object.values(actual)		
 		prediction_values = Object.values(prediction)
+		
+			error = [];	
 
-        var datitos = {
+			for(var i = 0;i<=actual_values.length-1;i++){
+			  error.push(actual_values[i] - prediction_values[i]);
+			  }
+		
+			let ctx = document.getElementById('myChart').getContext('2d');
+
+			myLineChart.destroy();
+			
+			var datitos = {
 
             labels: indexes,
-            datasets: [
-            {
-                label:"Prediction",
-                data: prediction_values,
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                borderColor: 'rgba(0, 0, 0, 0.1)',
-                borderDash: [5, 5],
-                pointStyle: 'line',
-                fill: true,
-                pointRadius: 0
-            },
-            {
-                label: "Now",
-                data: actual_values,
-                backgroundColor: 'rgba(139,157,195, 0.8)',
-                borderColor: 'rgba(139,157,195, 0.8)',
-                pointStyle: 'line',
-                fill: true,
-                pointRadius: 0
+				datasets: [
+				{
+					label:"Prediction",
+					data: prediction_values,
+					backgroundColor: 'rgba(0, 0, 0, 0.1)',
+					borderColor: 'rgba(0, 0, 0, 0.1)',
+					borderDash: [5, 5],
+					pointStyle: 'line',
+					fill: true,
+					pointRadius: 0
+				},
+				{
+					label: "Now",
+					data: actual_values,
+					backgroundColor: 'rgba(139,157,195, 0.8)',
+					borderColor: 'rgba(139,157,195, 0.8)',
+					pointStyle: 'line',
+					fill: true,
+					pointRadius: 0
 
-            }
-            ]
-        }
-        
-        let ctx = document.getElementById('myChart').getContext('2d');
+				}
+				]
+			}
+		
+			myLineChart = new Chart(ctx, {
+				responsive: true,
+				maintainAspectRatio: false,
+				type: 'line',
+				data: datitos,
 
-        myLineChart.destroy();
-        
-        myLineChart = new Chart(ctx, {
-            responsive: true,
-            maintainAspectRatio: false,
-            type: 'line',
-            data: datitos,
-
-            options: chartOptions
-        });
+				options: chartOptions
+			});
+		})
     }
     
 	function init() {

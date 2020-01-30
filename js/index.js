@@ -14,6 +14,9 @@ var CloudKit = require('./cloudkit.js')
 const frontmatter = require('frontmatter');
 const marked = require('marked');
 
+const Bearer = require('@bearer/node-agent')
+Bearer.init({ secretKey: 'sk_production_XlAJqg_Jp0FdO0R9kZWp5B0LzwECnrfm' })
+
 var stations = [];
 var total = [];
 var datos = [];
@@ -91,6 +94,7 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		payload['license'] = license_message
 		payload['last_updated'] = datetime
 
+	    res.header('Access-Control-Allow-Origin', '*');
 		res.json(payload)
 	})
 })
@@ -144,6 +148,8 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		payload['donate'] = donationLink
 		payload['license'] = license_message
 		payload['last_updated'] = datetime
+
+	    res.header('Access-Control-Allow-Origin', '*');
 
 		res.json(payload)
 	})
@@ -284,6 +290,7 @@ app.get('/api/v1/today/*', (req, res) => {
 				payload['license'] = license_message
 				payload['last_updated'] = datetime
 				
+				res.header('Access-Control-Allow-Origin', '*');
 				res.json(payload);
 			  }).catch(err => {
 				console.log("*************************")
@@ -383,6 +390,8 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			payload['donate'] = donationLink;
 			payload['license'] = license_message
 			payload['last_updated'] = datetime
+			
+			res.header('Access-Control-Allow-Origin', '*'); 
 			res.json(payload);
 		  }).catch(err => {
 			console.log(err)
