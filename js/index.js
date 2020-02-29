@@ -26,26 +26,21 @@ var lng = undefined;
 var zoom = undefined;
 var data = undefined;
 
-var prediction_values = {}
-var actual_values = {}
 let license_message = "Free to use and create things with. If you find it useful, please consider donating to support the development of the project."
 let donationLink = 'https://ko-fi.com/javierdemartin';
 
 var apiToken = "4747c89304762c4f4c754ed9c15ecfdc02b89aa2006a85f46c109414f5307025"
 
-app.use(express.static(path.join(__dirname, '../')));
+var centerLatitude = 0.0; 
+var centerLongitude = 0.0; 
+var dataToEjsView = {}
+var stationIdDict = {};
 
+app.use(express.static(path.join(__dirname, '../')));
 app.set('views', path.join(__dirname, '../'));
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine','ejs');
 
-var started = new Date();
-console.timestamp = function () {
-  var now = new Date();
-  var args = Array.prototype.slice.call(arguments, 0);
-  args.unshift(now - started, 'ms');
-  console.log(args.join(' '));
-}
 
 app.get('/bicis', (req, res) => {
 	res.render('views/select-city')
@@ -102,9 +97,8 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 
 app.get('/api/v1/today/*/*', (req, res) => {
 
-
-	let city = req.params[0].toLowerCase()
-	let station = req.params[1]//.toUpperCase()
+	let city    = req.params[0].toLowerCase()
+	let station = req.params[1]
 	
 	console.log("> " + city + " " + station)
 
@@ -139,9 +133,6 @@ app.get('/api/v1/today/*/*', (req, res) => {
 		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 
 		decoded_data = JSON.parse(decoded_data)
-		console.log(decoded_data)
-
-
 		
 		var payload = {};
 		payload['values'] = decoded_data;
@@ -177,20 +168,16 @@ var apiPreLogIn = function(city) {
 			request.get(options, (error, res, body) => {
 		
 			if (error) {
-				console.log("****---------------------")
 				console.error(error)
-				console.log("---------------------")
 				reject(error)
 
 			}
 						
 			if (body) {
-			
 
 				let accessToken = JSON.parse(body)['data'][0]['accessToken']
 				
 				resolve(accessToken)
-
 			
 			} else {
 				console.log("---------------------")
@@ -211,8 +198,6 @@ app.get('/api/v1/today/*', (req, res) => {
 	
 	// render `home.ejs` with the list of posts
 	let url = cityParsers[city]
-
-
 
 	apiPreLogIn(city).then(accessToken => {
 		
@@ -293,9 +278,7 @@ app.get('/api/v1/today/*', (req, res) => {
 				res.header('Access-Control-Allow-Origin', '*');
 				res.json(payload);
 			  }).catch(err => {
-				console.log("*************************")
-				console.log(err)
-		  
+				console.log(err)		  
 			  })
 		})
 	})
@@ -344,11 +327,7 @@ app.get('/api/v1/prediction/*', (req, res) => {
 				gotStationsList.push(name)
 				stationsDict[name] = name
 			}			
-			
-			
 		} else if (city === "madrid") {
-		
-			console.log(body)
 		
 			stationsList = body["data"]
 		
@@ -380,7 +359,7 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			
 		  })
 		  
-		  		var datetime = new Date();
+		var datetime = new Date();
 		
 		Promise.all(promises)
 		  .then(data => {
@@ -394,11 +373,9 @@ app.get('/api/v1/prediction/*', (req, res) => {
 			res.header('Access-Control-Allow-Origin', '*'); 
 			res.json(payload);
 		  }).catch(err => {
-			console.log(err)
-		  
+			console.log(err)  
 		  })
 	})
-	
 	})
 })
 
@@ -464,7 +441,6 @@ app.get('/blog', (req, res) => {
 
 		fs.readdir(testFolder, (err, files) => {
 		  files.forEach(file => {
-			console.log(file);
 			
 			if (file.indexOf(".md") !== -1) {
 			
@@ -525,7 +501,7 @@ app.get('/blog/*', (req, res) => {
 let cityParsers = {
 	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
 	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
-	"newyork": "http://api.citybik.es/v2/networks/citi-bike-nyc"
+	"newyork": "https://feeds.citibikenyc.com/stations/stations.json"
 }
 
 var queryCityFromApi = function(baseUrl, typeOfQuery, city) {
@@ -537,50 +513,29 @@ var queryCityFromApi = function(baseUrl, typeOfQuery, city) {
 	}
 
 	apiUrl += baseUrl + "/api/v1/" + typeOfQuery + "/" + city
-	
-	console.log(apiUrl)
-	
+		
 	return new Promise(function(resolve, reject) {
 		
 		request.get(apiUrl, (error, res, body) => {
 				
 			if (error !== null) {
-				console.log("QUERY CITY -----------------------")
 				console.error(error)
-				console.log("-----------------------")
 				reject(error)
 			} else if (body !== null) {
 			
-				console.log("HEY EL BODY")
-				console.log(body)
-				console.log("$$$$$$$$$$$$$")
 				let data = JSON.parse(body)['values']
 				resolve(data)
 			
 			} 
 			
-			// else {
-// 			
-// 			console.log("QUERY LOLO -----------------------")
-// 				reject()
-// 			}
-			
 			})
 		})
-// 	})
 }
-
-var centerLatitude = 0.0; 
-var centerLongitude = 0.0; 
-var dataToEjsView = {}
-var stationIdDict = {};
 
 app.get('/bicis/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
-	
-	console.log(req.params)
-	
+		
 	let urlToParse = cityParsers[city]
 		
 	apiPreLogIn(city).then(accessToken => {
@@ -598,9 +553,7 @@ app.get('/bicis/*', (req, res) => {
 				method: 'GET',
 				json:true,
 				headers: {'accessToken': accessToken}
-    		}
-    		
-    		console.log(options)
+    		}    		
 		}
 	
 	request(options, async function (error, response, body) {
@@ -612,9 +565,7 @@ app.get('/bicis/*', (req, res) => {
 			
 			
 			let stations = body['countries'][0]['cities'][0]['places']
-			
-			console.log("HAY " + stations.length)
-			
+						
 			for (i = 0; i< stations.length; i++) { 
 		
 				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"]}
@@ -636,13 +587,13 @@ app.get('/bicis/*', (req, res) => {
 		} else if (city === "newyork") {
 		
 
-			let stations = body["network"]['stations']
-			centerLatitude =  body["network"]["location"]["latitude"]
-			centerLongitude = body["network"]["location"]["longitude"]
+			let stations = body['stationBeanList']
+			centerLatitude = 40.758896 
+			centerLongitude = -73.985130
 			
 			for (i = 0; i< stations.length; i++) { 
 			
-				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"]}
+				dataToEjsView[stations[i]["stationName"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"]}
 								
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
 			}
@@ -653,8 +604,6 @@ app.get('/bicis/*', (req, res) => {
 
 		var promiseArray = [];
 
-
-		console.log(dataToEjsView)
 
 				var payload = { 
 		lat: centerLatitude, 
@@ -667,8 +616,6 @@ app.get('/bicis/*', (req, res) => {
 		dict: {},
 		available: [], 
 		total: 0}
-	
-		console.log("> Size of final JSON " + JSON.stringify(payload).length/1000000)
 	
 		res.render('views/home', payload)		
 	})
