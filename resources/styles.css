@@ -29,26 +29,55 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+/*   justify-content: center; */
   align-items: center;
-  text-align: center;
-  min-height: 90vh;
+/*   text-align: center; */
+/*   min-height: 90vh; */
+}
+
+.inner {
+
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+}​
+
+@media (min-width: 600px) {
+  
+  .inner {
+    width: 580px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+@media (min-width: 800px) {
+
+  .inner {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 h1 { 
-  font-size: 5em;
+/*   font-size: 5em; */
 }
 
 .title {
     margin-top: 100pt;
-    font-size:1em;
+/*     font-size:1em; */
+    text-align: left;
 }
 
 .subtitle {
     margin-top: 6pt;
-    max-width: 550pt;
-    font-size: 12pt;
-    color:#857769
+    max-width: 500pt;
+/*     font-size: 12pt; */
+    color:#857769;
+    text-align: left;
+    
 }
 
 p, li, ul {
@@ -69,7 +98,7 @@ p, li, ul {
 .temporality {
     color: #fa3c5a;
     width: 100pt;
-    font-size: 9pt;
+/*     font-size: 9pt; */
     letter-spacing: 3.06px;
     line-height:12pt
 }
@@ -79,14 +108,15 @@ p, li, ul {
 }
 
 .position {
-    font-size: 12pt;
+/*     font-size: 12pt; */
     margin-bottom:4pt
 }
 
 .position-detail {
-    font-size: 12pt;
+/*     font-size: 12pt; */
     margin-bottom: 7pt;
-    color:#857769
+    color:#857769;
+	text-align: left;   
 }
 
 .position-spacing {

@@ -20,24 +20,30 @@
     <script>
     </script>
 </head>
- <body class="body" id="boo">
+ <body class="body">
 
 	 <div class="inner">
-	 
-	 <div class="title">Blog</div>
-	 
-	 <p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support me & my projects on Ko-fi ☕️</a></p>
+	 	 
+		 <div class="header">
+				<div class="title">
+					<strong>Blog</strong>
+				</div>
+						 <p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support me & my projects on Ko-fi ☕️</a></p>
+				<div>
+				</div>
 
-    <div class="list-group">
-      <!-- loop over blog posts and render them -->
-      <% posts.forEach((post) => { %>
-        <div class="title"><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></div>
-		<div class="subtitle"><%= post.date %></div>
-		<div>
-			<%- post.content %>
+
+
+		<div class="list-group">
+		  <!-- loop over blog posts and render them -->
+		  <% posts.forEach((post) => { %>
+		  <div class="title"><strong><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></strong></div>
+			<div class="subtitle"><%= post.date %></div>
+			<div>
+				<%- post.content %>
+			</div>
+		  <% }) %>
 		</div>
-      <% }) %>
-    </div>
     
     </div>
 <!-- 	<%- include('partials/footer') %> -->

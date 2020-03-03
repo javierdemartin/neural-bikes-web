@@ -21,7 +21,7 @@
 	{"src" : "/bicis/(.*)", "dest": "/js/index.js"},
 	{"src" : "/bicis", "dest": "/js/index.js"},
 	{"src": "/bicis/(.*)", "dest": "/js/index.js"},
-	{ "src": "/bicis-app", "status": 200, "dest": "https://apps.apple.com/es/app/bicis-consulta-y-predicción/id1275889928"},
+	{ "src": "/bicis-app", "status": 200, "dest": "https://apps.apple.com/app/id1275889928"},
 	{"src" : "/cluster/newyork", "dest": "/views/newyork_cluster.html"},
 	{"src" : "/cluster", "dest": "/cluster.html"},
 	{"src": "/cv", "dest": "/resources/Javier_de_Martin_resume.pdf"}]
