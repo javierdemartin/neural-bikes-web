@@ -34,18 +34,19 @@
 
 
 
-		<div class="list-group">
+		<div>
 		  <!-- loop over blog posts and render them -->
 		  <% posts.forEach((post) => { %>
 		  <div class="title"><strong><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></strong></div>
 			<div class="subtitle"><%= post.date %></div>
+<!-- 
 			<div>
 				<%- post.content %>
 			</div>
+ -->
 		  <% }) %>
 		</div>
     
     </div>
-<!-- 	<%- include('partials/footer') %> -->
 </body>
 </html>
