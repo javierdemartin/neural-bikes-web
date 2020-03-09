@@ -48,15 +48,7 @@
 	var LamMarker = [];
     
     var myLineChart = undefined;
-    
-    // function Get(yourUrl){
-// 		var Httpreq = new XMLHttpRequest(); // a new request
-// 		Httpreq.open("GET",yourUrl,false);
-// 		Httpreq.send(null);
-// 		return Httpreq.responseText;          
-// 	}
-	
-	
+    	
 	var jsonFeed = {};
 	
     function onClick(e) {
@@ -90,8 +82,22 @@
         var urlio =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/prediction/" + currentCity + "/" + encodeURIComponent(currentStation)
         var urlioToday =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/today/" + currentCity + "/" + encodeURIComponent(currentStation)
         
+        var payload = {
+			a: 1,
+			b: 2
+		};
+
+		var data = new FormData();
+		data.append( "json", JSON.stringify( payload ) );
+        
+        
 		Promise.all([
-		  fetch(urlio).then(response => response.json()),
+		  fetch(urlio,
+			{
+				method: "GET",
+				body: data
+			}
+		  ).then(response => response.json()),
 		  fetch(urlioToday).then(response => response.json())
 		]).then(allResponses => {
 
