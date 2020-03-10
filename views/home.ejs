@@ -94,8 +94,7 @@
 		Promise.all([
 		  fetch(urlio,
 			{
-				method: "GET",
-				body: data
+				method: "GET"
 			}
 		  ).then(response => response.json()),
 		  fetch(urlioToday).then(response => response.json())
