@@ -59,17 +59,13 @@
         mymap.setView([e.latlng.lat, e.latlng.lng]);
         
         var canvas = document.getElementById("myChart");
-
         var map = document.getElementById("mapid");
         map.style.height = "100%";
         map.style.display = "block";
-
         var parent = document.getElementById('wrapper');
         parent.style.display = "block";
-
         canvas.width = parent.offsetWidth;
         canvas.height = parent.offsetHeight;
-
         var popup = e.target.getPopup();
         var content = popup.getContent().replace(/(^\d\d-)/g, '');
         
@@ -82,24 +78,10 @@
         var urlio =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/prediction/" + currentCity + "/" + encodeURIComponent(currentStation)
         var urlioToday =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/today/" + currentCity + "/" + encodeURIComponent(currentStation)
         
-        var payload = {
-			a: 1,
-			b: 2
-		};
-
-		var data = new FormData();
-		data.append( "json", JSON.stringify( payload ) );
-        
-        
 		Promise.all([
-		  fetch(urlio,
-			{
-				method: "GET"
-			}
-		  ).then(response => response.json()),
+		  fetch(urlio).then(response => response.json()),
 		  fetch(urlioToday).then(response => response.json())
 		]).then(allResponses => {
-
 		console.log(allResponses)
 		  const prediction = allResponses[0]['values']
 		  const actual = allResponses[1]['values']
@@ -108,22 +90,18 @@
 		  console.log(actual)
 		  
 		  		var indexes = Object.keys(prediction)
-
 		actual_values = Object.values(actual)		
 		prediction_values = Object.values(prediction)
 		
 			error = [];	
-
 			for(var i = 0;i<=actual_values.length-1;i++){
 			  error.push(actual_values[i] - prediction_values[i]);
 			  }
 		
 			let ctx = document.getElementById('myChart').getContext('2d');
-
 			myLineChart.destroy();
 			
 			var datitos = {
-
             labels: indexes,
 				datasets: [
 				{
@@ -144,7 +122,6 @@
 					pointStyle: 'line',
 					fill: true,
 					pointRadius: 0
-
 				}
 				]
 			}
@@ -154,7 +131,6 @@
 				maintainAspectRatio: false,
 				type: 'line',
 				data: datitos,
-
 				options: chartOptions
 			});
 		})
