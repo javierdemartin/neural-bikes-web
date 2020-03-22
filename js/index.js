@@ -563,12 +563,11 @@ app.get('/bicis/*', (req, res) => {
 			centerLatitude = body['countries'][0]['lat']
 			centerLongitude = body['countries'][0]['lng']
 			
-			
 			let stations = body['countries'][0]['cities'][0]['places']
 						
 			for (i = 0; i< stations.length; i++) { 
 		
-				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"]}
+				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "free_bikes": stations[i]["bikes"], 'total_docks': stations[i]['bike_racks']}
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
 			}
 			
@@ -582,7 +581,7 @@ app.get('/bicis/*', (req, res) => {
 									
 			for (i = 0; i < stations.length; i++) { 
 				
-				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "id": stations[i]["id"]}
+				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["geometry"]["coordinates"][1], "lng": stations[i]["geometry"]["coordinates"][0], "id": stations[i]["id"], "free_bikes": stations[i]["dock_bikes"], 'total_docks': stations[i]['total_bases']}
 			}
 		} else if (city === "newyork") {
 		
@@ -593,7 +592,7 @@ app.get('/bicis/*', (req, res) => {
 			
 			for (i = 0; i< stations.length; i++) { 
 			
-				dataToEjsView[stations[i]["stationName"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"]}
+				dataToEjsView[stations[i]["stationName"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"], "free_bikes": stations[i]["availableBikes"], 'total_docks': stations[i]['totalDocks']}
 								
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
 			}

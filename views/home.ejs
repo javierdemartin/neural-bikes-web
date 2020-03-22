@@ -152,6 +152,8 @@
 
     }
     
+    const availabilityPinColors = {'high': '#34c759', 'medium': '#ff9500', 'low': '#ff3b30'}
+    
     function loadMapPins() {
     
     	console.log("Hey! Thanks for using Neural Bikes, if you consider this useful contribute donating money to cover the development and server costs. Thanks, @javierdemartin")
@@ -189,6 +191,8 @@
         
         var prediction = <%- JSON.stringify(prediction) %>;
         var actual     = <%- JSON.stringify(actual) %>;
+        
+        console.log(prediction)
 
         mymap = L.map('mapid').setView([lat, lng], zoom);
 
@@ -205,13 +209,30 @@
 			var lat  = data[stationName]['lat']
             var lng  = data[stationName]['lng']
             var name = stationName
+			
+			const stationAvailability = (data[stationName]['free_bikes'] / data[stationName]['total_docks']) * 100.0;
+			
+			var color = "#3395DE"
+			
+			switch(true) {
+				case (stationAvailability > 66.66):
+					color = availabilityPinColors['high']
+					break;
+				case (stationAvailability < 66.66 && stationAvailability > 33.33):
+					color = availabilityPinColors['medium']
+					break;
+				case (stationAvailability < 33.33):
+					color = availabilityPinColors['low']
+					break;
+					
+			}
 
             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
                  autoClose: true
              }).setContent(name.replace(/(^\d\d-)/g, ""));
             
             var marker = new L.circleMarker([lat, lng],
-                {"bubblingMouseEvents": true, "color": "#3395DE", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3395DE", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+                {"bubblingMouseEvents": true, "color": color, "dashArray": null, "dashOffset": null, "fill": true, "fillColor": color, "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
             )
             
             LamMarker.push(marker);
