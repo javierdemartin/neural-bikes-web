@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="">
         <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css">
     
     <script>
 
@@ -40,7 +41,14 @@
             labels: {
               boxWidth: 10
             }
-          }
+          },
+          scales: {
+			yAxes: [{
+			ticks: {
+			min: 0,
+			}
+        }]
+    }
         }
     
 	var mymap = undefined;
@@ -74,29 +82,45 @@
         if (currentCity !== 'bilbao') {
         	currentStation = data[content]['id']
         }
+
+        console.log("Selected " + currentStation)
         
         var urlio =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/prediction/" + currentCity + "/" + encodeURIComponent(currentStation)
         var urlioToday =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/today/" + currentCity + "/" + encodeURIComponent(currentStation)
+
+        var maURL =  myUrl.protocol + "//" + myUrl.hostname + ":" + myUrl.port +   "/api/v1/all/" + currentCity + "/" + encodeURIComponent(currentStation)
+
+        fetch(maURL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(result) {
+      console.log(result['values'])
+
+		const prediction = result['values']['prediction']
+		const actual = allResponses[1]['values']['today']
+    });
         
 		Promise.all([
 		  fetch(urlio).then(response => response.json()),
 		  fetch(urlioToday).then(response => response.json())
 		]).then(allResponses => {
 		console.log(allResponses)
-		  const prediction = allResponses[0]['values']
-		  const actual = allResponses[1]['values']
-		  
-		  console.log(prediction)
-		  console.log(actual)
-		  
-		  		var indexes = Object.keys(prediction)
-		actual_values = Object.values(actual)		
-		prediction_values = Object.values(prediction)
+			const prediction = allResponses[0]['values']
+			const actual = allResponses[1]['values']
+
+			console.log(prediction)
+			console.log(actual)
+
+			var indexes = Object.keys(prediction)
+			actual_values = Object.values(actual)		
+			prediction_values = Object.values(prediction)
 		
 			error = [];	
+
 			for(var i = 0;i<=actual_values.length-1;i++){
-			  error.push(actual_values[i] - prediction_values[i]);
-			  }
+				error.push(actual_values[i] - prediction_values[i]);
+			}
 		
 			let ctx = document.getElementById('myChart').getContext('2d');
 			myLineChart.destroy();
@@ -224,7 +248,6 @@
 				case (stationAvailability < 33.33):
 					color = availabilityPinColors['low']
 					break;
-					
 			}
 
             var popup = L.popup({"maxWidth": "100%", closeOnClick: true,
@@ -248,22 +271,19 @@
 <body onload="init()">    
 
     <div class="container">
-    
-    <div class="segmented_control_wrapper">
-		<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me!', '#29abe0', 'H2H814TXG');kofiwidget2.draw();</script> 
-	</div>
+		
 
-        <div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
-        
-	 	<div class="wrapper" id="wrapper" >
-			<canvas id="myChart"></canvas>
+		<div class="segmented_control_wrapper">
+			<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me!', '#29abe0', 'H2H814TXG');kofiwidget2.draw();</script> 
 		</div>
 
-        
-        
+		<div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
+
+		
+
+		<div class="wrapper" id="wrapper" >
+			<canvas id="myChart"></canvas>
+		</div>
     </div>
-
-
-
 </body>
 </html>

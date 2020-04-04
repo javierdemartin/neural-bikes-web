@@ -42,9 +42,147 @@ app.engine('ejs', require('ejs').renderFile);
 app.set('view engine','ejs');
 
 
+
+app.get('/bicis/privacy', (req, res) => {
+
+	const fileFolder = path.join(__dirname, '../texts/privacy.md');
+
+	var raw = fs.readFileSync(fileFolder, 'utf8');
+
+			const { data, content } = frontmatter(raw);
+										
+			var aux = frontmatter(raw);
+
+			const markdown = ejs.render(content, data);
+			const html = marked.parse(markdown);
+
+			res.render('views/bicis/privacy', {
+			body: html
+		  })
+
+})
+
 app.get('/bicis', (req, res) => {
 	res.render('views/select-city')
 })
+
+// MARK: API
+
+app.get('/api/v1/all/*/*', (req, res) => {
+
+	let currentUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/today/")
+	let predictionUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/prediction/")
+
+	var promises = [];
+
+	promises.push(new Promise(function(resolve, reject) {
+
+		request.get({
+			url: currentUrl,
+			json: true,
+			headers: {'User-Agent': 'request'}
+		}, (err, res, data) => {
+		if (err) {
+			console.log('Error:', err);
+		} else if (res.statusCode !== 200) {
+			console.log('Status:', res.statusCode);
+			console.log(res)
+			console.log(data)
+		} else {
+			// data is already parsed as JSON:
+			console.log(data.html_url);
+			resolve(data)
+		}
+		});
+
+	}))
+
+	promises.push(new Promise(function(resolve, reject) {
+
+		request.get({
+			url: predictionUrl,
+			json: true,
+			headers: {'User-Agent': 'request'}
+		}, (err, res, data) => {
+		if (err) {
+			console.log('Error:', err);
+		} else if (res.statusCode !== 200) {
+			console.log('Status:', res.statusCode);
+		} else {
+			// data is already parsed as JSON:
+			resolve(data)
+		}
+		});
+	}))
+
+	Promise.all(promises)
+	.then(data => {
+
+		// Every interval spans 10'
+		let backwardIntervalLook = 3
+
+		let nowData = Object.values(data[0]['values'])
+		let predictionData = Object.values(data[1]['values']).slice(0, nowData.length)
+
+		let nowDataTrimmedOldest = nowData.slice(backwardIntervalLook,-backwardIntervalLook)
+		let nowDataTrimmedLatest = nowData.slice(-backwardIntervalLook)
+		let nowDataTrimmed = nowData.slice(0,-backwardIntervalLook)
+
+		var refillMessage = {}
+		var dischargeMessage = {}
+
+		let nowDataTrimmedOldestMedian = median(nowDataTrimmedOldest)
+		let nowDataTrimmedLatestMedian = median(nowDataTrimmedLatest)
+		let nowDataTrimmedMedian = median(nowDataTrimmed)
+
+		// Refill condition:
+		// 	- Mean has increased && overall mean is lower than newest mean
+		if (nowDataTrimmedOldestMedian < nowDataTrimmedLatestMedian && nowDataTrimmedLatestMedian > nowDataTrimmedMedian) {
+			refillMessage["happened"] = true
+			refillMessage['when'] = {}
+			refillMessage['when']['units'] = 'minutes'
+			refillMessage['when']['quantity'] = backwardIntervalLook * 10
+		} 
+		// Discharge condition:
+		// 	- Mean has decreased && overall mean is higher than newest mean
+		else if (nowDataTrimmedOldestMedian > nowDataTrimmedLatestMedian && nowDataTrimmedLatestMedian < nowDataTrimmedMedian) {
+
+		}
+
+		var datetime = new Date();
+
+		var payload = {};
+		payload['values'] = {};
+		payload['values']['today'] = data[0].values;
+		payload['values']['prediction'] = data[1].values;
+		// Refils
+		payload['refill'] = refillMessage
+		// Discharges
+		payload['discharges'] = dischargeMessage
+		payload['donate'] = donationLink
+		payload['license'] = license_message
+		payload['last_updated'] = datetime
+
+	    res.header('Access-Control-Allow-Origin', '*');
+
+		res.json(payload)
+	})
+})
+
+function median(values){
+  if(values.length ===0) return 0;
+
+  values.sort(function(a,b){
+    return a-b;
+  });
+
+  var half = Math.floor(values.length / 2);
+
+  if (values.length % 2)
+    return values[half];
+
+  return (values[half - 1] + values[half]) / 2.0;
+}
 
 // Get individual stations by name
 app.get('/api/v1/prediction/*/*', (req, res) => {
@@ -93,7 +231,6 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 		res.json(payload)
 	})
 })
-
 
 app.get('/api/v1/today/*/*', (req, res) => {
 
@@ -532,6 +669,7 @@ var queryCityFromApi = function(baseUrl, typeOfQuery, city) {
 		})
 }
 
+
 app.get('/bicis/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
@@ -572,7 +710,6 @@ app.get('/bicis/*', (req, res) => {
 			}
 			
 		} else if (city === "madrid") {
-			
 			
 			let stations = body["data"]
 

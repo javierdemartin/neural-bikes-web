@@ -27,7 +27,9 @@ body {
   width: 100%;
   height: 100%;
   position:relative;
+  z-index: 0;
 }
+
 
 .available-bikes {
 	vertical-align: middle;
@@ -37,7 +39,6 @@ body {
 }
 
 .inner {
-
   padding: 5%;
 }
 
@@ -56,109 +57,75 @@ a {
 /* Layout */
 
 .wrapper {
-    height: 20%;
-    width: 65%;
-    max-width: 65%;
-    max-height: 25%;
-    border-radius: 15px;
-	background-color:white;
-	position:absolute;
-	margin: auto;
-	bottom:20px;
-	display:none;
- 	opacity:0.95;
-	margin-left: 17.5%;
- 	margin-right: 17.5%;
- 		
- 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+  height: 20%;
+  width: 65%;
+  max-width: 65%;
+  max-height: 25%;
+  border-radius: 15px;
+  background-color:white;
+  position:absolute;
+  margin: auto;
+  bottom:20px;
+  display:none;
+  opacity:0.98;
+  margin-left: 17.5%;
+  margin-right: 17.5%;
+
+  -webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
 }
 
 #myChart {
-
 	display:none;
 }
 
 .segmented_control_wrapper {
-
-/* 
+/*
 	height: 60px;
     width: 200px;
     max-width: 200px;
-    max-height: 60px;
- */
-
-	position:relative;
-    margin:0 auto;
-    clear:left;
-    height:auto;
+    max-height: 60px;*/
     z-index: 10;
-    top: 20px;
-    
-    text-align:center;/* Add This*/
-	
-/* 
-	top:0px;
-	display:block;
-	margin-left: calc(50% - 100px);
- 	margin-right: calc(50% - 100px);
- 	opacity:0.95;
-	z-index:10;
- */
-}
+/*    text-align: center;
+    padding: 20px;
 
-.Flex {
-  display: flex;
-}
 
-.segmented-control {
-
- 	-webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-	box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
-    display: table;
-    width: 100%;
-/*     margin: 2em 0; */
-    padding: 0;
-}
-
-.segmented-control__item {
     display: table-cell;
-    margin: 0;
-    padding: 0;
+    vertical-align: middle;
+    text-align:center;/* Add This*/*/
 
-    background-color: #A8A8A8;
-    list-style-type: none;
-}
-
-.segmented-control__input {
-
-    position: absolute;
-    visibility: hidden;
-}
-
-.segmented-control__label {
-    display: block;
-    margin: 0 -1px -1px 0; /* -1px margin removes double-thickness borders between items */
-    padding: 1em .25em;
-    border: 1px solid #ddd;
-	color: white;
-    font: 14px/1.5 sans-serif; 
-    text-align: center;  
-    cursor: pointer;
+    display: flex;
+   align-items: center; 
+   justify-content: center;
 }
 
 
+.grid-container {
+  /*display: grid;*/
+  grid-template-columns: auto auto auto;
+  background-color: #2196F3;
+  /*display: inline-block;*/
 
-.segmented-control__label:hover {
-    background: #fafafa;
-    color: gray;
+  border-radius: 15px;
+  background-color:white;
+  /*position:absolute;*/
+  /*margin: auto;*/
+  bottom:20px;
+  /*display:none;*/
+  margin-left: 17.5%;
+  margin-right: 17.5%;
+
+  -webkit-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 44px 0px rgba(0,0,0,0.75);
 }
-
-.segmented-control__input:checked + .segmented-control__label {
-    background: #EBEBEB;
-    color: #333;
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
 }
 
 /* Smartphones (portrait and landscape) ----------- */
