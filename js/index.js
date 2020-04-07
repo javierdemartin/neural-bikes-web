@@ -157,7 +157,6 @@ app.get('/api/v1/all/*/*', (req, res) => {
 
 		console.log(data[0].values)
 		console.log(data[1].values)
-		process.exit()
 
 		var payload = {};
 		payload['values'] = {};
@@ -288,6 +287,7 @@ app.get('/api/v1/today/*/*', (req, res) => {
 	    res.header('Access-Control-Allow-Origin', '*');
 
 		res.json(payload)
+
 	})
 })
 
