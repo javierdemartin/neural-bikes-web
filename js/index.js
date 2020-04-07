@@ -118,47 +118,55 @@ app.get('/api/v1/all/*/*', (req, res) => {
 	Promise.all(promises)
 	.then(data => {
 
-		// Every interval spans 10'
-		let backwardIntervalLook = 3
-
 		let nowData = Object.values(data[0]['values'])
-		let predictionData = Object.values(data[1]['values']).slice(0, nowData.length)
+		let predictionData = Object.values(data[1]['values']).slice(0, nowData.length);
 
-		let nowDataTrimmedOldest = nowData.slice(backwardIntervalLook,-backwardIntervalLook)
-		let nowDataTrimmedLatest = nowData.slice(-backwardIntervalLook)
-		let nowDataTrimmed = nowData.slice(0,-backwardIntervalLook)
+		var slicedArray = []
 
-		var refillMessage = {}
-		var dischargeMessage = {}
+		let windowMedian = median(predictionData)
+		let overallMean = median(Object.values(data[1]['values']))
 
-		let nowDataTrimmedOldestMedian = median(nowDataTrimmedOldest)
-		let nowDataTrimmedLatestMedian = median(nowDataTrimmedLatest)
-		let nowDataTrimmedMedian = median(nowDataTrimmed)
+		var i,j,temparray,chunk = 3;
+		for (i=0,j=Object.values(data[1]['values']).length; i<j; i+=chunk) {
+			temparray = Object.values(data[1]['values']).slice(i,i+chunk);
+			slicedArray.push(median(temparray))
+		}
 
-		// Refill condition:
-		// 	- Mean has increased && overall mean is lower than newest mean
-		if (nowDataTrimmedOldestMedian < nowDataTrimmedLatestMedian && nowDataTrimmedLatestMedian > nowDataTrimmedMedian) {
-			refillMessage["happened"] = true
-			refillMessage['when'] = {}
-			refillMessage['when']['units'] = 'minutes'
-			refillMessage['when']['quantity'] = backwardIntervalLook * 10
-		} 
-		// Discharge condition:
-		// 	- Mean has decreased && overall mean is higher than newest mean
-		else if (nowDataTrimmedOldestMedian > nowDataTrimmedLatestMedian && nowDataTrimmedLatestMedian < nowDataTrimmedMedian) {
+		var discharges = []
+		var refills = []		
 
+		let trigger = parseInt(Math.max.apply(Math, Object.values(data[1]['values'])) * 0.35, 10)
+
+		for (i=0; i < slicedArray.length - 1; i++) {
+
+			if (i % 2 == 0) {
+				currentTime = i/2 + ":00"
+			}	
+			else if ((i+1) % 2 == 0) {
+				currentTime = parseInt(i/2,10) + ":30"
+			}
+
+			if (((slicedArray[i] - slicedArray[i+1]) < 0) && (Math.abs(slicedArray[i] - slicedArray[i+1])) > trigger) {
+				refills.push(currentTime)
+			} else if (((slicedArray[i] - slicedArray[i+1]) > 0) && (Math.abs(slicedArray[i] - slicedArray[i+1])) > trigger) {
+				discharges.push(currentTime)
+			}
 		}
 
 		var datetime = new Date();
+
+		console.log(data[0].values)
+		console.log(data[1].values)
+		process.exit()
 
 		var payload = {};
 		payload['values'] = {};
 		payload['values']['today'] = data[0].values;
 		payload['values']['prediction'] = data[1].values;
 		// Refils
-		payload['refill'] = refillMessage
+		payload['refill'] = refills
 		// Discharges
-		payload['discharges'] = dischargeMessage
+		payload['discharges'] = discharges
 		payload['donate'] = donationLink
 		payload['license'] = license_message
 		payload['last_updated'] = datetime

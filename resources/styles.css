@@ -62,10 +62,6 @@ body {
   }
 }
 
-h1 { 
-/*   font-size: 5em; */
-}
-
 .title {
     margin-top: 50pt;
 /*     font-size:1em; */
@@ -171,7 +167,8 @@ img {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  max-width: 100%;
 /*   width: 80%; */
-  height: 550px;
+  /*height: 550px;*/
 
 }
