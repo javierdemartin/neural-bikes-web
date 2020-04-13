@@ -1,0 +1,61 @@
+<html>
+<head>
+<title><%= data.title %></title>
+<link href="/resources/styles.css" rel="stylesheet" type="text/css">
+    	    
+</head>
+ <body class="body">
+
+<div class="inner">	 	 
+  <div class="header">
+    <div class="title">
+		<h2><%= data.name.toUpperCase() %></h2>
+    </div>
+<div class="subtitle"><%= data.latest_update %></div>
+
+<br></br>
+
+<p>This entire website has been generated from <a href="<%- data.source %>">this</a> constantly updated JSON file.</p>
+
+<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support me & my projects on Ko-Fi!</a></p>
+
+<div>
+<% Object.keys(data.social_media).forEach(function(key){ %>
+<strong>▸ </strong><a href="<%- data.social_media[key] %>"><strong><%- key %></strong></a>
+<% }); %>
+</div>
+
+<br></br>
+
+<div>
+	<% Object.keys(data.things).forEach(function(key){ %>
+		<strong><%- key %></strong>
+
+		<% data.things[key].forEach((vals) => { %>
+		<% console.log(vals) %>
+
+		<p> ☞ <a href="<%- vals.link %>"><%- vals.what %></a> @ <%- vals.where %> (<%- vals.started %> - <%- vals.ended %>)</p> 
+		<span><%= vals.subtitle %></span><br></br>
+
+		<q><%= vals.description %></q>
+
+
+		<% }) %>
+
+		
+		<!-- <% Object.keys(data.things[key]).forEach(function(item){ %>
+		<% console.log(item) %>
+			<p><%- data.things[key][item] %></p><br>
+		<% }); %> -->	
+
+		<br></br>
+	<% }); %>
+</div>
+
+</div>
+
+
+</div>
+
+</body>
+</html>

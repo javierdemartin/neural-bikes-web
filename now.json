@@ -11,6 +11,7 @@
 	{ "src": "/js/*.js", "use": "@now/node-server" }
   ],
  "routes": [
+  	{"src": "/", "dest": "/js/index.js"},
   	{"src": "/api/v1/prediction/(.*)", "dest": "/js/index.js"},
  	{"src": "/api/v1/today/(.*)", "dest": "/js/index.js"},
  	{"src": "/api/v1/prediction/(.*)/(.*)", "dest": "/js/index.js"},

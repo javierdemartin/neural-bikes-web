@@ -42,6 +42,17 @@ app.engine('ejs', require('ejs').renderFile);
 app.set('view engine','ejs');
 
 
+app.get('/', (req, res) => {
+
+
+	const jsonFile = path.join(__dirname, '../resources/now.json')
+
+	var raw = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+
+	res.render('views/index.ejs', {data: raw})
+
+})
+
 
 app.get('/bicis/privacy', (req, res) => {
 

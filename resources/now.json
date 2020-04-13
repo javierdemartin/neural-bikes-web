@@ -1,0 +1,60 @@
+{
+	"name": "Javier de Martín",
+	"latest_update":"April 12th 2020",
+	"source":"/resources/now.json",
+	"social_media": {
+		"email": "javierdemartin@me.com",
+		"twitter":"https://twitter.com/javierdemartin",
+		"linkedin":"http://linkedin.com/in/javierdemartin",
+		"blog":"http://javierdemart.in/blog"
+	},
+	"things": {
+		"future": [{
+			"what":"Looking for jobs! ☺︎",
+			"where":"Anywhere",
+			"subtitle":"",
+			"description":"Available to relocate, looking for mid-level iOS development roles that intersect with Machine Learning. Graduating in July 2020 from my MSc in Telecommunications Engineering.",
+			"link":"mailto:javierdemartin@me.com",
+			"started":"July 2020",
+			"ended":"Indefinite"
+			}
+		],
+		"now": [{
+			"what":"neural-bikes",
+			"where":"bilbao",
+			"subtitle":"Bike sharing predictions with Machine Learning for iOS devices",
+			"link":"http://neural.bike",
+			"description": "Improving predictions",
+			"started":"July 2020",
+			"ended":""
+		},
+		{
+			"what":"cloudy (Bytek)",
+			"where":"bilbao",
+			"subtitle":"",
+			"link":"https://bytek.info/cloudy_en",
+			"description": "iOS app to provision and configure a developing eHealth patform with Alexa",
+			"started":"February 2020",
+			"ended":"May 2020"
+		}
+		],
+		"past": [{
+			"what":"CiberAlarma",
+			"where":"remote",
+			"subtitle":"Hired as a freelance developer",
+			"link":"https://apps.apple.com/es/app/ciberalarma-navegación-segura/id1400113000",
+			"description": "Always-on VPN for iOS devoces. Installs a OpenVPN profile downloaded from a remote server.",
+			"started":"August 2019",
+			"ended":"March 2020"
+		},{
+			"what":"AholabTTS",
+			"where":"bilbao",
+			"subtitle":"Part-time",
+			"link":"",
+			"description": "Spanish and basque text to speech synthetiser for iOS devices",
+			"started":"April 2018",
+			"ended":"July 2018"
+		}]
+			
+	}
+}

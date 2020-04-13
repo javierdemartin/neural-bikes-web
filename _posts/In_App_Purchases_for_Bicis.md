@@ -5,13 +5,13 @@ date: 2020-04-07
 published: true
 ---
 
-The last update for Bicis dropped all support for Google's AdMob. I had introduced it a year-ish ago with hopes to make the system somehow profitable. Even if that only meant some cents a month. It turns out I am not able to cash the 10 euros I had earned because the first payment can only be done after reaching seventy euros. Long story short, I have been serving ads for free for a year...
+I recently dropped all support for advertisements in my app. I didn't fully enjoy the idea and didn't work at all for me. Probably my userbase is not as big as it needs to be. If you want to support in any other way I have a [Ko-Fi](https://ko-fi.com/javierdemartin) profile set up just for that.
 
-While the app will remain freesome more things that are being added are going to be unlocked after an initial payment. As of now, the predictions and live availability graph are free. They are also accesible via the public API if that's your thing or want to create something with it. 
+I am now introducing new features and In App Purchases for the first time. As of now, the predictions and live availability graph are free. They are also accesible via the public API if that's your thing or want to create something with it. 
 
 This new version introduces what I am calling the *route planner*. Not only availability is a problem in bike sharing systems in terms of rebalancing but also docking availability. When starting a trip to your destination station you are not able to know the available docks that will be at your expected arrival time. By taking advantage of the prediction system it's easy to know the available docks on a station.
 
-There are algo some other new exciting features like detecting when a station is going to be refilled or discharged by service operators as shown in the next screenshot. 
+There are also some other new exciting features like detecting when a station is going to be refilled or discharged by service operators as shown in the next screenshot. And many more to come. If you have ideas or features that you would like to see implemented [ping me](mailto:javierdemartin@me.com).
 
 ![Bicis version 2020.4.1](https://javierdemart.in/_posts/resources/bicis_2020_4_1.PNG)
 
@@ -27,7 +27,7 @@ Full changelog for version 2020.4.1:
 * Added indicator of the accuracy of the predictions based on RMSE differences between the prediction and history
 * Added color coding to the pins in the map to show at a glance the current availability of the system
 
-Celebratory promo codes for this launch.
+Celebratory promo codes for this launch. The App Store is having problem processing payments and redeeming promo codes. Please be patient.
 
 * RLR374A9AYN9
 * 3XNNY3JX4T46

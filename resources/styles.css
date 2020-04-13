@@ -20,7 +20,7 @@
   a:link {
     color: green;
     text-decoration:underline;
-}
+  }
 }
 
 html {
@@ -30,10 +30,7 @@ html {
 body {
   display: flex;
   flex-direction: column;
-/*   justify-content: center; */
   align-items: center;
-/*   text-align: center; */
-/*   min-height: 90vh; */
 }
 
 .inner {
@@ -42,90 +39,20 @@ body {
   display: flex;
   -webkit-flex-flow: row wrap;
   flex-flow: row wrap;
+  margin-left: 10px;
+  margin-right: 10px; 
 }​
 
 @media (min-width: 600px) {
   
   .inner {
-    width: 580px;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-}
-
-@media (min-width: 800px) {
-
-  .inner {
-    width: 800px;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
   }
 }
 
-.title {
-    margin-top: 50pt;
-/*     font-size:1em; */
-    text-align: left;
-}
-
-.subtitle {
-    margin-top: 6pt;
-    max-width: 500pt;
-/*     font-size: 12pt; */
-
-    text-align: left;
-    
-}
-
-p, li, ul {
-	text-align: left;
-}
-
-.temporal-positions {
-    margin-top:40pt
-}
-
-.temporal-position {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom:4pt
-}
-
-.temporality {
-    color: #fa3c5a;
-    width: 100pt;
-/*     font-size: 9pt; */
-    letter-spacing: 3.06px;
-    line-height:12pt
-}
-
-.temporality-text {
-    vertical-align:middle
-}
-
-.position {
-/*     font-size: 12pt; */
-    margin-bottom:4pt
-}
-
-.position-detail {
-/*     font-size: 12pt; */
-    margin-bottom: 7pt;
-    color:#857769;
-	text-align: left;   
-}
-
-.position-spacing {
-    margin-bottom:12pt
-}
-
-a:link, a:visited {
-    color: #398F9B;
-    text-decoration:underline
-}
-
-@media (max-width: 600pt) {
+/*@media (max-width: 600pt) {
     body {
         text-align:center
     }
@@ -143,6 +70,43 @@ a:link, a:visited {
     .position {
         margin-bottom: 5pt
     }
+}*/
+
+@media (min-width: 800px) {
+
+  .inner {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.title {
+    margin-top: 60pt;
+    text-align: left;
+}
+
+.subtitle {
+    margin-top: 10pt;
+    /*max-width: 500pt;*/
+    text-align: left;
+    
+}
+
+p, li, ul {
+	text-align: left;
+}
+
+.temporal-position {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom:4pt
+}
+
+a:link, a:visited {
+    color: #398F9B;
+    text-decoration:underline
 }
 
 /* Pattern styles */
@@ -151,24 +115,9 @@ a:link, a:visited {
   width: 100%;
 }
 
-.left-half {
-  position: absolute;
-  left: 0px;
-  width: 50%;
-}
-
-.right-half {
-  position: absolute;
-  right: 0px;
-  width: 50%;
-}
-
 img {
   display: block;
   margin-left: auto;
   margin-right: auto;
   max-width: 100%;
-/*   width: 80%; */
-  /*height: 550px;*/
-
 }
