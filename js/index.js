@@ -84,6 +84,8 @@ app.get('/api/v1/all/*/*', (req, res) => {
 	let currentUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/today/")
 	let predictionUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/prediction/")
 
+	// Add the query for the prediction and the availability endpoints
+	// to an array of Promises
 	var promises = [];
 
 	promises.push(new Promise(function(resolve, reject) {
@@ -93,17 +95,17 @@ app.get('/api/v1/all/*/*', (req, res) => {
 			json: true,
 			headers: {'User-Agent': 'request'}
 		}, (err, res, data) => {
-		if (err) {
-			console.log('Error:', err);
-		} else if (res.statusCode !== 200) {
-			console.log('Status:', res.statusCode);
-			console.log(res)
-			console.log(data)
-		} else {
-			// data is already parsed as JSON:
-			console.log(data.html_url);
-			resolve(data)
-		}
+			if (err) {
+				console.log('Error:', err);
+			} else if (res.statusCode !== 200) {
+				console.log('Status:', res.statusCode);
+				console.log(res)
+				console.log(data)
+			} else {
+				// data is already parsed as JSON:
+				console.log(data.html_url);
+				resolve(data)
+			}
 		});
 
 	}))
@@ -115,67 +117,63 @@ app.get('/api/v1/all/*/*', (req, res) => {
 			json: true,
 			headers: {'User-Agent': 'request'}
 		}, (err, res, data) => {
-		if (err) {
-			console.log('Error:', err);
-		} else if (res.statusCode !== 200) {
-			console.log('Status:', res.statusCode);
-		} else {
-			// data is already parsed as JSON:
-			resolve(data)
-		}
+			if (err) {
+				console.log('Error:', err);
+			} else if (res.statusCode !== 200) {
+				console.log('Status:', res.statusCode);
+			} else {
+				// data is already parsed as JSON:
+				resolve(data)
+			}
 		});
 	}))
 
-	Promise.all(promises)
-	.then(data => {
+	// When both endpoints have finished their tasks start format the data for the new API &
+	// calculate the statistics
+	Promise.all(promises).then(data => {
 
-		let nowData = Object.values(data[0]['values'])
-		let predictionData = Object.values(data[1]['values']).slice(0, nowData.length);
+		var meanArrayOfIntervals = []
 
-		var slicedArray = []
+		var i,j,chunk = 3;
 
-		let windowMedian = median(predictionData)
-		let overallMean = median(Object.values(data[1]['values']))
+		let predictionArray = data[1]['values']
+		// let availabilityArray = 
 
-		var i,j,temparray,chunk = 3;
-		for (i=0,j=Object.values(data[1]['values']).length; i<j; i+=chunk) {
-			temparray = Object.values(data[1]['values']).slice(i,i+chunk);
-			slicedArray.push(median(temparray))
+		// Divide the prediction array in 30' intervals and calculate the median of each interval
+		for (i=0,j=Object.values(predictionArray).length; i<j; i+=chunk) {
+			meanArrayOfIntervals.push(median(Object.values(predictionArray).slice(i,i+chunk)))
 		}
 
 		var discharges = []
 		var refills = []		
 
-		let trigger = parseInt(Math.max.apply(Math, Object.values(data[1]['values'])) * 0.35, 10)
+		// Define a baseline mean value that will trigger the event detection
+		let trigger = parseInt(Math.max.apply(Math, Object.values(predictionArray)) * 0.35, 10)
 
-		for (i=0; i < slicedArray.length - 1; i++) {
+		for (i=0; i < meanArrayOfIntervals.length - 1; i++) {
 
+			// Generate the string representing the time interval in which the event
+			// has been detected
 			if (i % 2 == 0) {
 				currentTime = i/2 + ":00"
-			}	
-			else if ((i+1) % 2 == 0) {
+			} else if ((i+1) % 2 == 0) {
 				currentTime = parseInt(i/2,10) + ":30"
 			}
 
-			if (((slicedArray[i] - slicedArray[i+1]) < 0) && (Math.abs(slicedArray[i] - slicedArray[i+1])) > trigger) {
+			if (((meanArrayOfIntervals[i] - meanArrayOfIntervals[i+1]) < 0) && (Math.abs(meanArrayOfIntervals[i] - meanArrayOfIntervals[i+1])) > trigger) {
 				refills.push(currentTime)
-			} else if (((slicedArray[i] - slicedArray[i+1]) > 0) && (Math.abs(slicedArray[i] - slicedArray[i+1])) > trigger) {
+			} else if (((meanArrayOfIntervals[i] - meanArrayOfIntervals[i+1]) > 0) && (Math.abs(meanArrayOfIntervals[i] - meanArrayOfIntervals[i+1])) > trigger) {
 				discharges.push(currentTime)
 			}
 		}
 
 		var datetime = new Date();
 
-		console.log(data[0].values)
-		console.log(data[1].values)
-
 		var payload = {};
 		payload['values'] = {};
 		payload['values']['today'] = data[0].values;
 		payload['values']['prediction'] = data[1].values;
-		// Refils
 		payload['refill'] = refills
-		// Discharges
 		payload['discharges'] = discharges
 		payload['donate'] = donationLink
 		payload['license'] = license_message
