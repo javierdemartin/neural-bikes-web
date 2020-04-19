@@ -3,10 +3,11 @@
 	"latest_update":"April 12th 2020",
 	"source":"/resources/now.json",
 	"social_media": {
-		"email": "javierdemartin@me.com",
+		"email": "javierdemartin@gmail.com",
 		"twitter":"https://twitter.com/javierdemartin",
 		"linkedin":"http://linkedin.com/in/javierdemartin",
-		"blog":"http://javierdemart.in/blog"
+		"blog":"http://javierdemart.in/blog",
+		"cv":"https://javierdemart.in/cv"
 	},
 	"things": {
 		"future": [{
@@ -14,7 +15,7 @@
 			"where":"Anywhere",
 			"subtitle":"",
 			"description":"Available to relocate, looking for mid-level iOS development roles that intersect with Machine Learning. Graduating in July 2020 from my MSc in Telecommunications Engineering.",
-			"link":"mailto:javierdemartin@me.com",
+			"link":"mailto:javierdemartin@gmail.com",
 			"started":"July 2020",
 			"ended":"Indefinite"
 			}
