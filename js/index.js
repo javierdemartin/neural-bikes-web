@@ -230,9 +230,24 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 			return
 		}
 
-		var b64 = body['records'][0]['fields']['values']['value']
-		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
-		decoded_data = JSON.parse(decoded_data)
+		// if (typeof )
+
+		// console.log("-------")
+		// console.log(body['records'])
+		// console.log("-------")
+
+		// No records found, station is new and predictions have not been created
+		if (body['records'].length > 0) {
+			var b64 = body['records'][0]['fields']['values']['value']
+			var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
+			decoded_data = JSON.parse(decoded_data)
+
+			console.log(decoded_data)
+		} else {
+			decoded_data = {};
+		}
+
+		
 		
 		var datetime = new Date();
 		
