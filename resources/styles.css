@@ -40,6 +40,31 @@
   }
 }
 
+.passive {
+  font-weight: normal;
+  color: #C8CACA;
+}
+
+.section {
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #4B4B4B;
+  font-weight: bold;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.meta {
+  font-family: 'Roboto Mono', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    font-size: 12px;
+    letter-spacing: 1px;
+  color: #4B4B4B;
+  text-transform: uppercase;
+}
+
 @media (prefers-color-scheme: light) {
 
 

@@ -8,25 +8,29 @@
 </head>
  <body onload="init()" class="body">
 
-	 <div class="inner">
-	 
-	 		 <div class="header">
-				<div class="title">
-					<h2><%= data.title %></h2>
-				</div>
-						<div class="subtitle"><%= data.date %></div>
-						
-							<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects on Ko-Fi!️</a></p>
-				</div>
-		
-	<div>
+	<div class="inner">
 
-</div>
+		<div class="header">
+		<!-- <div class="title">
+		<h2><%= data.title %></h2>
+		</div> -->
 
-		<div class="Poppins">
-			<%- content %>
+		<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+			<%= data.title %>
 		</div>
-    </div>
+		<p class="meta"><%= data.date %></p>
+
+		<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects on Ko-Fi!️</a></p>
+		</div>
+
+		<div>
+
+		</div>
+
+		<div>
+		<%- content %>
+		</div>
+	</div>
 
 
 	

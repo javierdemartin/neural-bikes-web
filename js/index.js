@@ -616,6 +616,11 @@ app.get('/blog', (req, res) => {
 				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
 	
 				const { data, content } = frontmatter(raw);
+
+				// Skip draft posts
+				if (data.published === false) {
+					return;
+				}
 								
 				var tituloPost = data.title.toString().replace(/\ /g, "_")
 				
@@ -637,6 +642,7 @@ app.get('/blog', (req, res) => {
 			}
 		  });
 		  
+		  // Sort the posts by date
 		  posts = posts.sort((a, b) => b.date.localeCompare(a.date));
 	  
 		  res.render('views/blog', {
@@ -794,4 +800,4 @@ app.get('/bicis/*', (req, res) => {
 
 module.exports = app
 
-app.listen()
+app.listen(3000)

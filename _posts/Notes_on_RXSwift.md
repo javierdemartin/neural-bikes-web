@@ -2,7 +2,7 @@
 title: Notes on RXSwift
 author: Javier de Martín
 date: 2020-04-20
-published: false
+published: true
 ---
 
 This post does not pretend to be a tutorial in any way. These are my notes my learning process of learning RxSwift using [Ray Wenderlich's](https://store.raywenderlich.com/products/rxswift) incredible book as a guide.

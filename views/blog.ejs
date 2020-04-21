@@ -24,9 +24,14 @@
 		<div>
 		  <!-- loop over blog posts and render them -->
 		  <% posts.forEach((post) => { %>
+
+
+
 		  <div class="title">
 		  	<strong><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></strong></div>
-			<p class="subtitle"><%= post.date %></p>
+			<!-- <p class="subtitle"><%= post.date %></p> -->
+			<p class="meta"><%= post.date %></p>
+			<!-- <div class="section"><%= post.date %></div> -->
 		  <% }) %>
 		</div>
     
