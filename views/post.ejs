@@ -6,7 +6,7 @@
     <script>	
     </script>
 </head>
- <body onload="init()" class="body">
+	<body class="body">
 
 	<div class="inner">
 
@@ -15,24 +15,23 @@
 		<h2><%= data.title %></h2>
 		</div> -->
 
+
 		<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
-			<%= data.title %>
+		<%= data.title %>
 		</div>
-		<p class="meta"><%= data.date %></p>
+		<div class="meta">
+		<%= data.date %> × <%= data.location %>
+		</div>
 
 		<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects on Ko-Fi!️</a></p>
 		</div>
 
-		<div>
-
 		</div>
 
-		<div>
-		<%- content %>
-		</div>
+
+
+		<div><%- content %></div>
 	</div>
 
-
-	
-</body>
+	</body>
 </html>

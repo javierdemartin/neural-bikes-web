@@ -200,24 +200,35 @@ function median(values){
   return (values[half - 1] + values[half]) / 2.0;
 }
 
-// Get individual stations by name
-app.get('/api/v1/prediction/*/*', (req, res) => {
+app.get('/api/v1/:param/*/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1]//.toUpperCase()
+
+	console.log(req.params)
+
+	const apiEndpoints = {"today": "Today", "prediction": "Prediction"}
+
+	console.log("> QUERY " + apiEndpoints[req.params.param])
+
+	var addQuery = ""
+
+	if (req.params.param == "today") {
+		addQuery = "_TODAY"
+	}
 
 	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
 		json: {
 			"zoneID": { "zoneName": "_defaultZone"},
 			"query": {
-			"recordType": "Prediction",
+			"recordType": apiEndpoints[req.params.param],
 			"filterBy": [
 				{
 				"systemFieldName": "recordName",
 				"comparator": "EQUALS", 
 				"fieldValue": { 
 					"value": { 
-						"recordName": station
+						"recordName": station + addQuery
 					}
 				}
 				}]
@@ -229,12 +240,6 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 			console.error(error)
 			return
 		}
-
-		// if (typeof )
-
-		// console.log("-------")
-		// console.log(body['records'])
-		// console.log("-------")
 
 		// No records found, station is new and predictions have not been created
 		if (body['records'].length > 0) {
@@ -263,57 +268,7 @@ app.get('/api/v1/prediction/*/*', (req, res) => {
 	})
 })
 
-app.get('/api/v1/today/*/*', (req, res) => {
 
-	let city    = req.params[0].toLowerCase()
-	let station = req.params[1]
-	
-	console.log("> " + city + " " + station)
-
-	request.post('https://api.apple-cloudkit.com/database/1/iCloud.com.javierdemartin.bici/production/public/records/query?ckAPIToken=' + apiToken, {
-		json: {
-			"zoneID": { "zoneName": "_defaultZone"},
-			"query": {
-			"recordType": "Today",
-			"filterBy": [
-				{
-				"systemFieldName": "recordName",
-				"comparator": "EQUALS", 
-				"fieldValue": { 
-					"value": { 
-						"recordName": station + "_TODAY"
-					}
-				}
-				}]
-			}
-		}
-	}, (error, response, body) => {
-	  
-		if (error) {
-			console.error(error)
-			return
-		}
-		
-		var datetime = new Date();
-		
-
-		var b64 = body['records'][0]['fields']['values']['value']
-		var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
-
-		decoded_data = JSON.parse(decoded_data)
-		
-		var payload = {};
-		payload['values'] = decoded_data;
-		payload['donate'] = donationLink
-		payload['license'] = license_message
-		payload['last_updated'] = datetime
-
-	    res.header('Access-Control-Allow-Origin', '*');
-
-		res.json(payload)
-
-	})
-})
 
 var apiPreLogIn = function(city) {
 	
@@ -358,7 +313,6 @@ var apiPreLogIn = function(city) {
 	})
 }
 
-
 app.get('/api/v1/today/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
@@ -395,6 +349,8 @@ app.get('/api/v1/today/*', (req, res) => {
 				stationsList = body.countries[0].cities[0].places
 			
 				for(i = 0; i < stationsList.length; i++) {
+
+					console.log(stationsList[i])
 			
 					var name = stationsList[i].name.replace(/^\d\d-/g, '')
 			
@@ -600,66 +556,144 @@ var queryForStation = function(typeOfQuery, stationName, resolveName) {
 	return promise
 }
 
+var getBlogFloderStructure = function(filePath, callback) {
+
+	lista = {};
+
+	fs.readdir(filePath, function (err, files) {
+
+			if (err) {
+				return console.log('Unable to scan directory: ' + err);
+			} 
+
+			files.forEach(function (year) {
+			
+				if (fs.statSync(filePath + '/' + year).isDirectory()) {
+
+					fs.readdir(filePath + '/' + year, function (err, files) {
+
+						files.forEach(function (month) {
+
+							if (fs.statSync(filePath + '/' + year + '/' + month).isDirectory()) {
+
+								fs.readdir(filePath + '/' + year + '/' + month, function (err, files) {
+									lista[year] = {}
+									lista[year][month] = files
+									console.log(lista)
+									
+									callback(lista)
+									
+								})
+							}
+						})
+
+					})
+
+
+				}
+
+
+			});
+
+			console.log("-----------------------")
+			console.log(lista)
+			console.log("-----------------------")			
+// 			resolve(lista)
+		})
+		
+}
+
+
 app.get('/blog', (req, res) => {
 
 	const testFolder = path.join(__dirname, '../_posts')
 	
-	if (req.originalUrl === '/blog' || req.originalUrl === '/blog/') {
+	getBlogFloderStructure(testFolder, function(stucture) {
 	
-		posts = [];
+		console.log("$$$$$$$$$$$$$$$")
+		console.log(stucture)
+		console.log("$$$$$$$$$$$$$$$")
 
-		fs.readdir(testFolder, (err, files) => {
-		  files.forEach(file => {
-			
-			if (file.indexOf(".md") !== -1) {
-			
-				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
-	
-				const { data, content } = frontmatter(raw);
+		res.render('views/blog', {
+		posts: stucture
+		})
+	})
 
-				// Skip draft posts
-				if (data.published === false) {
-					return;
-				}
-								
-				var tituloPost = data.title.toString().replace(/\ /g, "_")
-				
-				var aux = frontmatter(raw);
+
+});
 	
-				const markdown = ejs.render(content, data);
-				const html = marked.parse(markdown);
-				
-				var post = {
-					date: data.date,
-					title: tituloPost,
-					content: html
-				}
-				
-				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
-				
-				posts.unshift(post)
-				
-			}
-		  });
-		  
-		  // Sort the posts by date
-		  posts = posts.sort((a, b) => b.date.localeCompare(a.date));
-	  
-		  res.render('views/blog', {
-			posts: posts
-		  })
-		});
-	}
-})
+// 	if (req.originalUrl === '/blog' || req.originalUrl === '/blog/') {
+// 	
+// 		posts = [];
+// 
+// 		fs.readdir(testFolder, (err, files) => {
+// 		
+// 			console.log(files)
+// 		
+// 		  files.forEach(file => {
+// 		  
+// 		  console.log(file.isDirectory())
+// 			
+// 			if (file.indexOf(".md") !== -1) {
+// 			
+// 				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
+// 	
+// 				const { data, content } = frontmatter(raw);
+// 
+// 				// Skip draft posts
+// 				if (data.published === false) {
+// 					return;
+// 				}
+// 								
+// 				var tituloPost = data.title.toString().replace(/\ /g, "_")
+// 				
+// 				var aux = frontmatter(raw);
+// 	
+// 				const markdown = ejs.render(content, data);
+// 				const html = marked.parse(markdown);
+// 				
+// 				var post = {
+// 					date: data.date,
+// 					title: tituloPost,
+// 					content: html
+// 				}
+// 				
+// 				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
+// 				
+// 				posts.unshift(post)
+// 				
+// 			}
+// 		  });
+// 		  
+// 		  // Sort the posts by date
+// 		  posts = posts.sort((a, b) => b.date.localeCompare(a.date));
+// 	  
+// 		  res.render('views/blog', {
+// 			posts: posts
+// 		  })
+// 		});
+// 	}
+// })
 
 app.get('/blog/*', (req, res) => {
 
-		
 	const testFolder = path.join(__dirname, '../_posts')
-		
+
+
+	console.log("RENDERING POST")
+	
+	console.log(req.originalUrl)
+
+				
 	var file = req.originalUrl.replace('/blog/', '')
 	
-	var raw = fs.readFileSync(testFolder + '/' + file + ".md", 'utf8');
+	var fileUrl = testFolder + req.originalUrl.replace('/blog', '') + ".md"
+	
+	console.log(fileUrl)
+	
+	var raw = fs.readFileSync(fileUrl, 'utf8');
+	
+	console.log(raw)
 	
 	const { data, content } = frontmatter(raw);
 	
@@ -677,34 +711,6 @@ let cityParsers = {
 	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
 	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
 	"newyork": "https://feeds.citibikenyc.com/stations/stations.json"
-}
-
-var queryCityFromApi = function(baseUrl, typeOfQuery, city) {
-
-	var apiUrl = ""
-
-	if(baseUrl.indexOf("localhost") > -1) {
-		apiUrl += "http://"
-	}
-
-	apiUrl += baseUrl + "/api/v1/" + typeOfQuery + "/" + city
-		
-	return new Promise(function(resolve, reject) {
-		
-		request.get(apiUrl, (error, res, body) => {
-				
-			if (error !== null) {
-				console.error(error)
-				reject(error)
-			} else if (body !== null) {
-			
-				let data = JSON.parse(body)['values']
-				resolve(data)
-			
-			} 
-			
-			})
-		})
 }
 
 
@@ -800,4 +806,4 @@ app.get('/bicis/*', (req, res) => {
 
 module.exports = app
 
-app.listen(3000)
+app.listen()

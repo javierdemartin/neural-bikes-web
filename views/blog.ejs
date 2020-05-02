@@ -17,22 +17,31 @@
 				<div class="title">
 					<strong>Blog</strong>
 				</div>
-						 <p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support me!</a></p>
+						 <p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
 				<div>
 				</div>
 
 		<div>
-		  <!-- loop over blog posts and render them -->
-		  <% posts.forEach((post) => { %>
+		  
+		  <% Object.keys(posts).forEach((year) => { %>
+		  		  <% console.log(year) %>
+		  		  <% console.log(posts[year]) %>
+		  		
+					
+					<% Object.keys(posts[year]).forEach((month) => { %> 					
+						<div class="section" style="padding-top: 0px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+						<%- year %> × <%- month %>
+												</div>
+							<% Object.values(posts[year][month]).forEach((post) => { %> 		    
 
+							<a href="/blog/<%- year %>/<%- month %>/<%- post.replace(".md","") %>"><%- post.replace(".md","") %></a></br></br>
+							
+							<% }) %>				
 
+					<% }) %>					
 
-		  <div class="title">
-		  	<strong><a href="/blog/<%= post.title %>"><%= post.title.replace(/_/g, " ") %></a></strong></div>
-			<!-- <p class="subtitle"><%= post.date %></p> -->
-			<p class="meta"><%= post.date %></p>
-			<!-- <div class="section"><%= post.date %></div> -->
 		  <% }) %>
+
 		</div>
     
     </div>

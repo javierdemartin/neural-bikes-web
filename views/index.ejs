@@ -36,12 +36,9 @@
 	</div>
 
 		<% data.things[key].forEach((vals) => { %>
-			<% console.log(vals) %>
 
 			<p> <%= data.separator %><a href="<%- vals.link %>"><%- vals.what %></a> @ <%- vals.where %> (<%- vals.started %> - <%- vals.ended %>)</p> 
-			<span><%= vals.subtitle %></span><br></br>
-
-			<q><%= vals.description %></q>
+			<span><%= vals.subtitle %></span> <%= vals.description %>
 		<% }) %>
 
 		<br></br>
