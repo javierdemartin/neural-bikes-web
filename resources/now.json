@@ -1,14 +1,15 @@
 {
 	"name": "Javier de Martín",
 	"separator": "",
-	"latest_update":"May 1st 2020",
+	"latest_update":"May 16th 2020",
 	"source":"/resources/now.json",
+	"description": "Telecommunications engineer, iOS developer & some machine learning",
 	"social_media": {
-		"email": "javierdemartin@gmail.com",
+		"email": "javierdemartin@me.com",
 		"twitter":"https://twitter.com/javierdemartin",
-		"linkedin":"http://linkedin.com/in/javierdemartin",
 		"blog":"/blog",
-		"cv":"/cv"
+		"cv":"/cv",
+		"runs": "/runs"
 	},
 	"things": {
 		"future": [{
@@ -16,35 +17,26 @@
 			"where":"Anywhere",
 			"subtitle":"",
 			"description":"Available to relocate, looking for iOS development roles that intersect with Machine Learning. Graduating in July 2020 from my MSc in Telecommunications Engineering.",
-			"link":"mailto:javierdemartin@gmail.com",
+			"link":"mailto:javierdemartin@me.com",
 			"started":"August 2020",
 			"ended":"Indefinite"
 			}
 		],
 		"now": [{
 			"what":"neural-bikes",
-			"where":"bilbao",
-			"subtitle":"Bike sharing predictions with Machine Learning for iOS devices",
+			"where":"Bilbao",
+			"subtitle":"Automated bike sharing predictions with Machine Learning and app available for iOS devices.",
 			"link":"http://neural.bike",
-			"description": "Improving predictions",
+			"description": "",
 			"started":"July 2020",
 			"ended":""
 		},
 		{
-			"what":"cloudy (Bytek)",
-			"where":"bilbao",
-			"subtitle":"",
-			"link":"https://bytek.info/cloudy_en",
-			"description": "iOS app to provision and configure a developing eHealth patform with Alexa",
-			"started":"February 2020",
-			"ended":"May 2020"
-		},
-		{
-			"what":"CiberAlarma",
-			"where":"remote",
-			"subtitle":"Hired as a freelance developer",
-			"link":"https://apps.apple.com/es/app/ciberalarma-navegación-segura/id1400113000",
-			"description": "Always-on VPN for iOS devoces. Installs a OpenVPN profile downloaded from a remote server.",
+			"what":"Freelance iOS developer",
+			"where":"Remote",
+			"subtitle":"Doing clickety-clack on my computer to create apps",
+			"link":"",
+			"description": "",
 			"started":"August 2019",
 			"ended":"Now"
 		},
@@ -57,27 +49,6 @@
 			"started":"September 2018",
 			"ended":"July 2020"
 		}
-		],
-		"past": [
-		{
-			"what":"AholabTTS",
-			"where":"bilbao",
-			"subtitle":"Part-time",
-			"link":"",
-			"description": "Spanish and basque text to speech synthetiser for iOS devices",
-			"started":"April 2018",
-			"ended":"July 2018"
-		},
-		{
-			"what":"BSc in Telecommunications Engineering",
-			"where":"bilbao",
-			"subtitle":"University of the Basque Country",
-			"link":"",
-			"description": "",
-			"started":"September 2013",
-			"ended":"September 2018"
-		}
-		]
-			
+		]	
 	}
 }

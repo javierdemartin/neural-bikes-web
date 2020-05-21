@@ -1,7 +1,8 @@
 <html>
 <head>
-	  <title><%= data.title %></title>
+	  <title><%= data.title.replace(/_/g, " ") %></title>
 	<link href="/resources/styles.css" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
     <script>	
     </script>
@@ -11,26 +12,22 @@
 	<div class="inner">
 
 		<div class="header">
-		<!-- <div class="title">
-		<h2><%= data.title %></h2>
-		</div> -->
-
+		</div>
 
 		<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
-		<%= data.title %>
+			<%= data.title.replace(/_/g, " ") %>
 		</div>
+		
 		<div class="meta">
-		<%= data.date %> × <%= data.location %>
+			<%= data.date %> × <%= data.location %>
 		</div>
 
+
+
+		<div>
+		<%- content %>
 		<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects on Ko-Fi!️</a></p>
 		</div>
-
-		</div>
-
-
-
-		<div><%- content %></div>
 	</div>
 
 	</body>

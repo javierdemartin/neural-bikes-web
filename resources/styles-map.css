@@ -19,7 +19,6 @@ body {
     top: 0px;
     left: 0px;
 	z-index:0;
-/*     opacity: 0.5; */
 }
 
 .container {
@@ -29,6 +28,7 @@ body {
   position:relative;
   z-index: 0;
 }
+
 
 
 .available-bikes {
@@ -55,6 +55,17 @@ a {
 }
 
 /* Layout */
+
+.kofi {
+	position:absolute;
+	z-index: 1;
+	top:20px;
+	margin-left: 45%;
+}
+
+.map {
+	z-index: 0;
+}
 
 .wrapper {
   height: 20%;

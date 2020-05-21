@@ -2,12 +2,8 @@
 <head>
 	  <title>Blog</title>
 	<link href="/resources/styles.css" rel="stylesheet" type="text/css">
-	  	<style>
-
-	  	</style>
-    	    
-    <script>
-    </script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
  <body class="body">
 
@@ -23,19 +19,17 @@
 
 		<div>
 		  
-		  <% Object.keys(posts).forEach((year) => { %>
+		  <% Object.keys(posts).reverse().forEach((year) => { %>
 		  		  <% console.log(year) %>
 		  		  <% console.log(posts[year]) %>
 		  		
 					
-					<% Object.keys(posts[year]).forEach((month) => { %> 					
+					<% Object.keys(posts[year]).reverse().forEach((month) => { %> 					
 						<div class="section" style="padding-top: 0px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 						<%- year %> × <%- month %>
 												</div>
 							<% Object.values(posts[year][month]).forEach((post) => { %> 		    
-
-							<a href="/blog/<%- year %>/<%- month %>/<%- post.replace(".md","") %>"><%- post.replace(".md","") %></a></br></br>
-							
+								<a href="/blog/<%- year %>/<%- month %>/<%- post.replace(".md","") %>"><%- post.replace(".md","").replace(/_/g, " ") %></a></br></br>
 							<% }) %>				
 
 					<% }) %>					

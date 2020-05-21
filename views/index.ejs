@@ -2,7 +2,7 @@
 <head>
 <title><%= data.title %></title>
 <link href="/resources/styles.css" rel="stylesheet" type="text/css">
-    	    
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
  <body class="body">
 
@@ -11,13 +11,10 @@
     <div class="title">
 		<h2><%= data.name.toUpperCase() %></h2>
     </div>
-<div class="section"><%= data.latest_update %></div>
 
-<br></br>
+<span class="section"><%- data.description %></span>
 
-<p>This entire website has been generated from <a href="<%- data.source %>">this</a> constantly updated JSON file.</p>
-
-<p><a href='https://ko-fi.com/H2H814TXG'>Support me!</a></p>
+</br></br>
 
 <div>
 <% Object.keys(data.social_media).forEach(function(key){ %>
@@ -46,6 +43,8 @@
 </div>
 
 </div>
+
+<p><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
 
 
 </div>

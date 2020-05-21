@@ -2,12 +2,16 @@
 	"version": 2,
 	"alias": "javierdemart.in",
 "builds": [
+
     { "src": "resources/*", "use": "@now/static" },
+    { "src": "_posts/*/*/*", "use": "@now/static" },
     { "src": "*.html", "use": "@now/static" },
-	{ "src": "*.css", "use": "@now/static" },
 	{ "src": "_posts/resources/*", "use": "@now/static" },
 	{ "src": "/js/*.js", "use": "@now/node-server" }
   ],
+  "env": {
+    "airtable_api_key": "@airtable_api_key"
+  },
  "routes": [
   	{"src": "/", "dest": "/js/index.js"},
   	{"src": "/api/v1/prediction/(.*)", "dest": "/js/index.js"},
@@ -17,8 +21,9 @@
 	{"src": "/api/v1/today/(.*)/(.*)", "dest": "/js/index.js"},
 	{"src": "/blog", "dest": "/js/index.js"},
 	{"src": "/blog/", "dest": "/js/index.js"},
-	{"src": "/blog/([^/]+)", "dest": "/js/index.js"},
+	{"src": "/blog/(.*)", "dest": "/js/index.js"},
 	{"src" : "/bicis/(.*)", "dest": "/js/index.js"},
 	{"src" : "/bicis", "dest": "/js/index.js"},
+	{"src" : "/runs", "dest": "/js/index.js"},
 	{"src": "/cv", "dest": "/resources/Javier_de_Martin_resume.pdf"}]
 }

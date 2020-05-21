@@ -6,6 +6,7 @@
 	  	<link rel="stylesheet" href="../resources/styles-map.css">
 
 		<meta name="description" content="Bike Sharing Predictions">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 
 	</style>
@@ -65,11 +66,9 @@
         var popup = e.target.getPopup();
         var content = popup.getContent().replace(/(^\d\d-)/g, '');
         
-        var currentStation = content;
+        console.log(data)
         
-        if (currentCity !== 'bilbao') {
-        	currentStation = data[content]['id']
-        }
+        var currentStation = data[content]['id'];
 
         console.log("Selected " + currentStation)
         
@@ -260,12 +259,18 @@
 
     <div class="container">
 		
+	
 
-		<div class="segmented_control_wrapper">
-			<script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me!', '#29abe0', 'H2H814TXG');kofiwidget2.draw();</script> 
+		<div class="kofi">
+<a href='https://ko-fi.com/H2H814TXG' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi5.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 		</div>
 
-		<div id="mapid" class="leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0"></div>
+
+		<div id="mapid" class="map leaflet-container leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag" tabindex="0">
+		
+		</div>
+
+	
 
 		
 

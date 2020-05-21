@@ -8,6 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@bearer/node-agent": "^1.0.2",
+    "airtable": "^0.8.1",
     "async": "^2.6.2",
     "ejs": "2.6.1",
     "encoding": "^0.1.12",
@@ -16,7 +17,7 @@
     "html": "1.0.0",
     "marked": "^0.7.0",
     "node-fetch": "^2.6.0",
-    "now": "^16.5.2",
+    "now": "^16.7.3",
     "request": "^2.88.0"
   },
   "scripts": {

@@ -3,3 +3,5 @@ resources/*.pdf
 .DS_STORE
 yarn.lock
 node_modules/
+
+.now

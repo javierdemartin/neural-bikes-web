@@ -44,6 +44,8 @@ app.set('view engine','ejs');
 
 app.get('/', (req, res) => {
 
+	getIpInfo(req)
+
 
 	const jsonFile = path.join(__dirname, '../resources/now.json')
 
@@ -55,6 +57,8 @@ app.get('/', (req, res) => {
 
 
 app.get('/bicis/privacy', (req, res) => {
+
+	getIpInfo(req)
 
 	const fileFolder = path.join(__dirname, '../texts/privacy.md');
 
@@ -74,12 +78,15 @@ app.get('/bicis/privacy', (req, res) => {
 })
 
 app.get('/bicis', (req, res) => {
+	getIpInfo(req)
 	res.render('views/select-city')
 })
 
 // MARK: API
 
 app.get('/api/v1/all/*/*', (req, res) => {
+
+		getIpInfo(req)
 
 	let currentUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/today/")
 	let predictionUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/prediction/")
@@ -99,11 +106,8 @@ app.get('/api/v1/all/*/*', (req, res) => {
 				console.log('Error:', err);
 			} else if (res.statusCode !== 200) {
 				console.log('Status:', res.statusCode);
-				console.log(res)
-				console.log(data)
 			} else {
 				// data is already parsed as JSON:
-				console.log(data.html_url);
 				resolve(data)
 			}
 		});
@@ -202,14 +206,12 @@ function median(values){
 
 app.get('/api/v1/:param/*/*', (req, res) => {
 
+	getIpInfo(req)
+
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1]//.toUpperCase()
 
-	console.log(req.params)
-
 	const apiEndpoints = {"today": "Today", "prediction": "Prediction"}
-
-	console.log("> QUERY " + apiEndpoints[req.params.param])
 
 	var addQuery = ""
 
@@ -246,8 +248,6 @@ app.get('/api/v1/:param/*/*', (req, res) => {
 			var b64 = body['records'][0]['fields']['values']['value']
 			var decoded_data = new Buffer.from(b64, 'base64').toString('utf-8')
 			decoded_data = JSON.parse(decoded_data)
-
-			console.log(decoded_data)
 		} else {
 			decoded_data = {};
 		}
@@ -304,7 +304,6 @@ var apiPreLogIn = function(city) {
 				resolve(accessToken)
 			
 			} else {
-				console.log("---------------------")
 				reject()
 
 			}
@@ -315,13 +314,15 @@ var apiPreLogIn = function(city) {
 
 app.get('/api/v1/today/*', (req, res) => {
 
+		getIpInfo(req)
+
 	let city = req.params[0].toLowerCase()
 	
 	var gotStationsList = []
 	
 	// render `home.ejs` with the list of posts
 	let url = cityParsers[city]
-
+	
 	apiPreLogIn(city).then(accessToken => {
 		
 		var options = {
@@ -349,10 +350,10 @@ app.get('/api/v1/today/*', (req, res) => {
 				stationsList = body.countries[0].cities[0].places
 			
 				for(i = 0; i < stationsList.length; i++) {
-
-					console.log(stationsList[i])
 			
 					var name = stationsList[i].name.replace(/^\d\d-/g, '')
+					
+					console.log(stationsList[i])
 			
 					gotStationsList.push(name)
 					stationsDict[name] = name
@@ -410,6 +411,8 @@ app.get('/api/v1/today/*', (req, res) => {
 })
 
 app.get('/api/v1/prediction/*', (req, res) => {
+
+		getIpInfo(req)
 
 	let city = req.params[0].toLowerCase()
 	
@@ -506,6 +509,8 @@ app.get('/api/v1/prediction/*', (req, res) => {
 
 var queryForStation = function(typeOfQuery, stationName, resolveName) {
 
+	getIpInfo(req)
+
 	let recordNameSuffix = ""
 	
 	if (typeOfQuery === "Today") {
@@ -556,64 +561,58 @@ var queryForStation = function(typeOfQuery, stationName, resolveName) {
 	return promise
 }
 
+function getDirectories(path) {
+  return fs.readdirSync(path).filter(function (file) {
+    return fs.statSync(path+'/'+file).isDirectory();
+  });
+}
+
+function getFilesIn(path) {
+  return fs.readdirSync(path).filter(function (file) {
+    return fs.statSync(path+'/'+file).isFile();
+  });
+}
+
+
 var getBlogFloderStructure = function(filePath, callback) {
 
 	lista = {};
+	current_year = -1;
+	
+	years = getDirectories(filePath)
+	
+	years.forEach(function(year) {
+	
+		months	= getDirectories(filePath + "/"  + year)
 
-	fs.readdir(filePath, function (err, files) {
-
-			if (err) {
-				return console.log('Unable to scan directory: ' + err);
-			} 
-
-			files.forEach(function (year) {
-			
-				if (fs.statSync(filePath + '/' + year).isDirectory()) {
-
-					fs.readdir(filePath + '/' + year, function (err, files) {
-
-						files.forEach(function (month) {
-
-							if (fs.statSync(filePath + '/' + year + '/' + month).isDirectory()) {
-
-								fs.readdir(filePath + '/' + year + '/' + month, function (err, files) {
-									lista[year] = {}
-									lista[year][month] = files
-									console.log(lista)
-									
-									callback(lista)
-									
-								})
-							}
-						})
-
-					})
+			lista[year] = {}
 
 
-				}
-
-
-			});
-
-			console.log("-----------------------")
 			console.log(lista)
-			console.log("-----------------------")			
-// 			resolve(lista)
-		})
+			
+			months.forEach(function(month) {
 		
+			
+				console.log(getFilesIn(filePath + "/" + year + "/" + month))
+				
+				lista[year][month] = getFilesIn(filePath + "/" + year + "/" + month)
+			})
+	})		
+	
+	console.log("DONE")
+	
+	callback(lista)
 }
 
 
 app.get('/blog', (req, res) => {
 
+	getIpInfo(req)
+
 	const testFolder = path.join(__dirname, '../_posts')
 	
 	getBlogFloderStructure(testFolder, function(stucture) {
 	
-		console.log("$$$$$$$$$$$$$$$")
-		console.log(stucture)
-		console.log("$$$$$$$$$$$$$$$")
-
 		res.render('views/blog', {
 		posts: stucture
 		})
@@ -621,79 +620,18 @@ app.get('/blog', (req, res) => {
 
 
 });
-	
-// 	if (req.originalUrl === '/blog' || req.originalUrl === '/blog/') {
-// 	
-// 		posts = [];
-// 
-// 		fs.readdir(testFolder, (err, files) => {
-// 		
-// 			console.log(files)
-// 		
-// 		  files.forEach(file => {
-// 		  
-// 		  console.log(file.isDirectory())
-// 			
-// 			if (file.indexOf(".md") !== -1) {
-// 			
-// 				var raw = fs.readFileSync(testFolder + '/' + file, 'utf8');
-// 	
-// 				const { data, content } = frontmatter(raw);
-// 
-// 				// Skip draft posts
-// 				if (data.published === false) {
-// 					return;
-// 				}
-// 								
-// 				var tituloPost = data.title.toString().replace(/\ /g, "_")
-// 				
-// 				var aux = frontmatter(raw);
-// 	
-// 				const markdown = ejs.render(content, data);
-// 				const html = marked.parse(markdown);
-// 				
-// 				var post = {
-// 					date: data.date,
-// 					title: tituloPost,
-// 					content: html
-// 				}
-// 				
-// 				post.date = post.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
-// 				
-// 				posts.unshift(post)
-// 				
-// 			}
-// 		  });
-// 		  
-// 		  // Sort the posts by date
-// 		  posts = posts.sort((a, b) => b.date.localeCompare(a.date));
-// 	  
-// 		  res.render('views/blog', {
-// 			posts: posts
-// 		  })
-// 		});
-// 	}
-// })
 
 app.get('/blog/*', (req, res) => {
 
+	getIpInfo(req)
+
 	const testFolder = path.join(__dirname, '../_posts')
-
-
-	console.log("RENDERING POST")
-	
-	console.log(req.originalUrl)
-
 				
 	var file = req.originalUrl.replace('/blog/', '')
 	
 	var fileUrl = testFolder + req.originalUrl.replace('/blog', '') + ".md"
-	
-	console.log(fileUrl)
-	
+		
 	var raw = fs.readFileSync(fileUrl, 'utf8');
-	
-	console.log(raw)
 	
 	const { data, content } = frontmatter(raw);
 	
@@ -713,12 +651,45 @@ let cityParsers = {
 	"newyork": "https://feeds.citibikenyc.com/stations/stations.json"
 }
 
+var getIpInfo = function(req) {
+
+	var ip = req.headers['x-forwarded-for'] || 
+	 req.connection.remoteAddress || 
+	 req.socket.remoteAddress ||
+	 (req.connection.socket ? req.connection.socket.remoteAddress : null);
+
+
+	url = 'https://freegeoip.app/json/' + ip
+
+	request.get(url, (error, response, body) => {
+	
+		if (!error && response.statusCode == 200) {
+			ip_info = JSON.parse(body)
+			
+			var latitude = ip_info['latitude']
+			var longitude = ip_info['longitude']
+			
+			var log = req.url  + " " + ip_info['country_name'] + " " + ip_info['city'] 
+			
+			if (latitude !== 0) {
+				log += " (" + ip_info['latitude'] + "," + ip_info['longitude'] + ")"
+			}
+	
+			console.log(log)
+		}
+	})	
+}
+
 
 app.get('/bicis/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
 		
 	let urlToParse = cityParsers[city]
+	
+
+	
+	getIpInfo(req)
 		
 	apiPreLogIn(city).then(accessToken => {
 		
@@ -748,8 +719,7 @@ app.get('/bicis/*', (req, res) => {
 			let stations = body['countries'][0]['cities'][0]['places']
 						
 			for (i = 0; i< stations.length; i++) { 
-		
-				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "free_bikes": stations[i]["bikes"], 'total_docks': stations[i]['bike_racks']}
+				dataToEjsView[stations[i]["name"].replace(/(^\d\d-)/g, '')] = {"lat": stations[i]["lat"], "lng": stations[i]["lng"], "free_bikes": stations[i]["bikes"],  "id": stations[i]["uid"],'total_docks': stations[i]['bike_racks']}
 				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
 			}
 			
@@ -801,6 +771,96 @@ app.get('/bicis/*', (req, res) => {
 	})
 	
 	})
+})
+
+////////////////////////////
+
+
+var Airtable = require('airtable');
+var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
+
+app.get('/runs', (req, res) => {
+
+	var promises = [];
+	
+	promises.push(new Promise(function(resolve, reject) {
+
+		base('Run').select({
+			// Selecting the first 3 records in Monthly:
+			maxRecords: 7,
+			sort: [
+        {field: 'Date', direction: 'desc'}
+        ],
+			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration']
+			}).eachPage(function page(records, fetchNextPage) {
+			
+				records.forEach(function(rec) {
+				
+					console.log(rec)
+				})
+
+				fetchNextPage();
+			
+				resolve(records)
+
+		}, function done(err) {
+			if (err) { console.error(err); return; }
+		});
+
+	}))
+
+	promises.push(new Promise(function(resolve, reject) {
+
+		base('Shoes').select({
+			// Selecting the first 3 records in Monthly:
+			maxRecords: 100,
+						sort: [
+        {field: 'Start', direction: 'desc'}
+        ],
+			fields: ['Model', 'Distance', 'Start', 'Usage']
+			}).eachPage(function page(records, fetchNextPage) {
+
+				fetchNextPage();
+			
+				resolve(records)
+
+		}, function done(err) {
+			if (err) { console.error(err); return; }
+		});
+
+	}))
+
+	promises.push(new Promise(function(resolve, reject) {
+
+		base('Workout Type').select({
+			// Selecting the first 3 records in Monthly:
+			maxRecords: 100,
+			fields: ['Name', 'Pace', 'AvHR', 'MaxHR', 'Distance', 'AvgCal']
+
+			}).eachPage(function page(records, fetchNextPage) {
+			
+				fetchNextPage();
+			
+				resolve(records)
+
+		}, function done(err) {
+			if (err) { console.error(err); return; }
+		});
+
+	}))
+
+	// When both endpoints have finished their tasks start format the data for the new API &
+	// calculate the statistics
+	Promise.all(promises).then(data => {
+	
+		let shoes = data[1];
+		
+
+		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2]}
+
+		res.render('views/runs.ejs', {data: raw})
+	})
+
 })
 
 
