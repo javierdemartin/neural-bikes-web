@@ -23,18 +23,26 @@
 					Latest <%- data.runs.length %> runs.
 					<div class="grid-container">
 					
-			<div class="boxWrapper">
-			<div class="box passive">Date</div>
-			<div class="box passive">Distance</div>
-			<div class="box passive">Duration</div>
-			<div class="box passive">Average HR</div>
+			<div class="runsWrapper">
+			<div>Date</div>
+			<div>Distance <span class="passive">km</span></div>
+			<div>Duration <span class="passive">min</span></div>
+			<div>Average HR</div>
+			<div>Max HR</div>
+			<div>RHR</div>
+			<div>Vert</div>
+			<div>VO2Max</div>
+			
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
-				<div class="box a"><span class="passive"><%- data.runs[run].fields.Date.split("T")[0] %> @ <%- data.runs[run].fields.Date.split("T")[1].replace(":00.000Z", "") %></span></div>
-				<div class="box a"><%- data.runs[run].fields.Distance %> <span class="passive">km</span></div>
-				<div class="box a"><%- Math.floor(data.runs[run].fields.Duration / 60)%>:<%- Math.floor(data.runs[run].fields.Duration - Math.floor(data.runs[run].fields.Duration / 60) * 60) %> min</div>
-				
+				<div class="box a"><span class="passive"><%- data.runs[run].fields.Date.split("T")[0] %></div>
+				<div class="box a"><%- data.runs[run].fields.Distance %></div>
+				<div class="box a"><%- Math.floor(data.runs[run].fields.Duration / 60)%>:<%- Math.floor(data.runs[run].fields.Duration - Math.floor(data.runs[run].fields.Duration / 60) * 60) %></div>
 				<div class="box a"><%- data.runs[run].fields['Average HR'] %></div>
+				<div class="box a"><%- data.runs[run].fields['Max HR'] %></div>
+				<div class="box a"><%- data.runs[run].fields['RHR'] %></div>
+				<div class="box a"><%- data.runs[run].fields['Vertical Gain'] %></div>
+				<div class="box a"><%- data.runs[run].fields['VO2Max'] %></div>
 			<% }) %>
 		</div>	
 				</div>					

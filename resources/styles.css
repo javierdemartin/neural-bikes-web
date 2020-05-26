@@ -207,9 +207,7 @@ img {
 
 .grid-container {
   display: grid;
-  grid-gap: 5px;
-/*   grid-template-columns: auto auto auto; */
-/*   background-color: #2196F3; */
+  grid-gap: 0px;
   padding: 5px;
 }
 
@@ -219,8 +217,17 @@ img {
   grid-gap: 1px;
 }
 
+.runsWrapper {
+  display: grid;
+grid-template-columns: repeat( 8, minmax(100px, 0.8fr) );
+/*   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
+
+/*   grid-gap: 1px; */
+}
+
+
 .box {
 
-  padding: 10px;
+  padding: 3px;
 
 }

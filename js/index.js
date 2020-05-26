@@ -680,7 +680,6 @@ var getIpInfo = function(req) {
 	})	
 }
 
-
 app.get('/bicis/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
@@ -791,12 +790,11 @@ app.get('/runs', (req, res) => {
 			sort: [
         {field: 'Date', direction: 'desc'}
         ],
-			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration']
+			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration', 'Max HR', 'RHR', 'Vertical Gain', 'VO2Max']
 			}).eachPage(function page(records, fetchNextPage) {
 			
 				records.forEach(function(rec) {
 				
-					console.log(rec)
 				})
 
 				fetchNextPage();
