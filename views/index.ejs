@@ -22,26 +22,6 @@
 <% }); %>
 </div>
 
-<br></br>
-
-<div>
-	<% Object.keys(data.things).forEach(function(key){ %>
-
-	<div class="section" style="padding-top: 0px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
-		<!-- <span class="passive"><%- data.separator %></span> -->
-		<%- key %>
-	</div>
-
-		<% data.things[key].forEach((vals) => { %>
-
-			<p> <%= data.separator %><a href="<%- vals.link %>"><%- vals.what %></a> @ <%- vals.where %> (<%- vals.started %> - <%- vals.ended %>)</p> 
-			<span><%= vals.subtitle %></span> <%= vals.description %>
-		<% }) %>
-
-		<br></br>
-	<% }); %>
-</div>
-
 </div>
 
 <p><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
