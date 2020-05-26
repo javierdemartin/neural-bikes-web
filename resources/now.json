@@ -9,6 +9,7 @@
 		"twitter":"https://twitter.com/javierdemartin",
 		"blog":"/blog",
 		"cv":"/cv",
-		"runs": "/runs"
+		"runs": "/runs",
+		"neuralbikes": "neural.bike"
 	}
 }
