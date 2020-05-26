@@ -10,45 +10,5 @@
 		"blog":"/blog",
 		"cv":"/cv",
 		"runs": "/runs"
-	},
-	"things": {
-		"future": [{
-			"what":"Looking for jobs!",
-			"where":"Anywhere",
-			"subtitle":"",
-			"description":"Available to relocate, looking for iOS development roles that intersect with Machine Learning. Graduating in July 2020 from my MSc in Telecommunications Engineering.",
-			"link":"mailto:javierdemartin@me.com",
-			"started":"August 2020",
-			"ended":"Indefinite"
-			}
-		],
-		"now": [{
-			"what":"neural-bikes",
-			"where":"Bilbao",
-			"subtitle":"Automated bike sharing predictions with Machine Learning and app available for iOS devices.",
-			"link":"http://neural.bike",
-			"description": "",
-			"started":"July 2020",
-			"ended":""
-		},
-		{
-			"what":"Freelance iOS developer",
-			"where":"Remote",
-			"subtitle":"Doing clickety-clack on my computer to create apps",
-			"link":"",
-			"description": "",
-			"started":"August 2019",
-			"ended":"Now"
-		},
-		{
-			"what":"MSc in Telecommunications Engineering",
-			"where":"bilbao",
-			"subtitle":"University of the Basque Country",
-			"link":"",
-			"description": "",
-			"started":"September 2018",
-			"ended":"July 2020"
-		}
-		]	
 	}
 }
