@@ -219,10 +219,7 @@ img {
 
 .runsWrapper {
   display: grid;
-grid-template-columns: repeat( 8, minmax(100px, 0.8fr) );
-/*   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); */
-
-/*   grid-gap: 1px; */
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 

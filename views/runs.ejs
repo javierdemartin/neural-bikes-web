@@ -31,7 +31,6 @@
 			<div>Max HR</div>
 			<div>RHR</div>
 			<div>Vert</div>
-			<div>VO2Max</div>
 			
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
@@ -40,9 +39,7 @@
 				<div class="box a"><%- Math.floor(data.runs[run].fields.Duration / 60)%>:<%- Math.floor(data.runs[run].fields.Duration - Math.floor(data.runs[run].fields.Duration / 60) * 60) %></div>
 				<div class="box a"><%- data.runs[run].fields['Average HR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['Max HR'] %></div>
-				<div class="box a"><%- data.runs[run].fields['RHR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['Vertical Gain'] %></div>
-				<div class="box a"><%- data.runs[run].fields['VO2Max'] %></div>
 			<% }) %>
 		</div>	
 				</div>					
