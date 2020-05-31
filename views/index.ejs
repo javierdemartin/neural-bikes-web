@@ -18,7 +18,7 @@
 
 <div>
 <% Object.keys(data.social_media).forEach(function(key){ %>
-<strong>▸ </strong><a href="<%- data.social_media[key] %>"><strong><%- key %></strong></a>
+<div class="section"><strong>▸ </strong><a href="<%- data.social_media[key] %>"><strong><%- key %></strong></a></div>
 <% }); %>
 </div>
 

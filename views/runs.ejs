@@ -40,12 +40,12 @@
 					<div class="grid-container">
 					
 			<div class="runsWrapper">
-			<div>Date</div>
-			<div>Distance <span class="passive">km</span></div>
-			<div>Duration <span class="passive">min</span></div>
-			<div>Average HR</div>
-			<div>Max HR</div>
-			<div>Vert</div>
+			<div><b>Date</b></div>
+			<div><b>Distance</b> <span class="passive">km</span></div>
+			<div><b>Duration</b> <span class="passive">min</span></div>
+			<div><b>♡</b></div>
+			<div><b>♡↑</b></div>
+			<div><b>Gain</b> <span class="passive">m</span></div>
 			
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
@@ -69,15 +69,15 @@
 		<div class="boxWrapper">
 		<div><b>Shoe</b></div>
 		<div><b>Start Date</b></div>
-		<div><b>Distance</b></div>
-		<div><b>Usage</b></div>
+		<div><b>Distance</b> <span class="passive">km</span></div>
+		<div><b>Usage</b> <span class="passive">%</span></div>
 
 			<% Object.keys(data.shoes).forEach((shoe) => { %>
 
 					<div class="box a"><%- data.shoes[shoe].fields.Model %></div>
 					<div class="box a"><%- data.shoes[shoe].fields.Start %></div>
-					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance) %><span class="passive">km</span></div>
-					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Usage) %> <span class="passive">%</span></div>
+					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance)%></div>
+					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Usage) %></div>
 
 			<% }) %>
 		</div>
