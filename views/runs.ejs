@@ -10,7 +10,23 @@
 	<div class="inner">
 		<div class="header">
 			<div class="title"><h2>I like to run</h2></div>
-			<p>Instead of using Strava's social aspect of workout sharing I have created this personal dashboard that aggregates data from my running log on <a href="airtable.com">Airtable</a>.</p>
+			<p>I don't like socially sharing my runs on Strava. Instead I created this personal dashboard that loads my latest statistics from <a href="airtable.com">Airtable</a>.</p>
+		</div>
+		
+		<div>
+			<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+				Goals for this year
+				</div>
+				
+			<div>
+			<ul>
+			<li><s>Run at least one marathon in 2020 <span class="passive">Sevilla</span></s></li>
+			<li>Run 2020kms in 2020</li>
+			<li>Run <a href="https://www.everysinglestreet.com/why">every single street</a> in Bilbao</li>
+			<li>Run <a href="https://www.bilbao.eus/cs/Satellite?cid=3000076722&language=en&pagename=Bilbaonet%2FPage%2FBIO_contenidoFinal">Bilbao's Green Belt</a> <span class="passive">38 km / 1.400m+</span></li>
+			</ul>
+			</div>
+		
 		</div>
 
 		<div>
@@ -37,7 +53,7 @@
 			
 				<div class="box a"><span class="passive"><%- data.runs[run].fields.Date.split("T")[0] %></div>
 				<div class="box a"><%- data.runs[run].fields.Distance %></div>
-				<div class="box a"><%- Math.floor(data.runs[run].fields.Duration / 60)%>:<%- Math.floor(data.runs[run].fields.Duration - Math.floor(data.runs[run].fields.Duration / 60) * 60) %></div>
+				<div class="box a"><%- data.runs[run].fields.Duration %></div>
 				<div class="box a"><%- data.runs[run].fields['Average HR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['Max HR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['RHR'] %></div>
@@ -55,16 +71,16 @@
 		</div>
 
 		<div class="boxWrapper">
-		<div class="box passive">Shoe</div>
-		<div class="box passive">Start Date</div>
-		<div class="box passive">Distance</div>
-		<div class="box passive">Usage</div>
+		<div><b>Shoe</b></div>
+		<div><b>Start Date</b></div>
+		<div><b>Distance</b></div>
+		<div><b>Usage</b></div>
 
 			<% Object.keys(data.shoes).forEach((shoe) => { %>
 
 					<div class="box a"><%- data.shoes[shoe].fields.Model %></div>
 					<div class="box a"><%- data.shoes[shoe].fields.Start %></div>
-					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance) %> <span class="passive">km</span></div>
+					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance) %><span class="passive">km</span></div>
 					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Usage) %> <span class="passive">%</span></div>
 
 			<% }) %>
@@ -76,15 +92,15 @@
 		</div>
 
 		<div class="boxWrapper">
-		<div class="box passive">Type</div>
-		<div class="box passive">Distance</div>
-		<div class="box passive">Average Pace</div>
-		<div class="box passive">Average Heart Rate</div>
+		<div><b>Type</b></div>
+		<div><b>Distance</b><span class="passive"> km</span></div>
+		<div><b>Average Pace</b><span class="passive"> min/km</span></div>
+		<div><b>Average Heart Rate</b><span class="passive"> bpm</span></div>
 			<% Object.keys(data.workout).forEach((wo) => { %>
 				<div class="box a"><%- data.workout[wo].fields.Name %> </div>
-				<div class="box a"><%- Math.floor(data.workout[wo].fields.Distance) %>km</div>
-				<div class="box a"><%- Math.floor(data.workout[wo].fields.Pace / 60)%>:<%- Math.floor(data.workout[wo].fields.Pace - Math.floor(data.workout[wo].fields.Pace / 60) * 60) %> min/km</div>
-				<div class="box a"><%- Math.floor(data.workout[wo].fields['AvHR']) %></div>
+				<div class="box a"><%- Math.floor(data.workout[wo].fields.Distance)%></div>
+				<div class="box a"><%- data.workout[wo].fields.Pace %></div>
+				<div class="box a"><%- data.workout[wo].fields['AvHR'] %></div>
 			<% }) %>
 		</div>
 

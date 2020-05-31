@@ -774,7 +774,6 @@ app.get('/bicis/*', (req, res) => {
 
 ////////////////////////////
 
-
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
 
@@ -794,7 +793,12 @@ app.get('/runs', (req, res) => {
 			}).eachPage(function page(records, fetchNextPage) {
 			
 				records.forEach(function(rec) {
+
+					console.log(rec.fields)				
 				
+					rec.fields.Duration = new Date(1000 * rec.fields.Duration).toISOString().substr(11, 8)
+			
+					
 				})
 
 				fetchNextPage();
@@ -813,7 +817,7 @@ app.get('/runs', (req, res) => {
 			// Selecting the first 3 records in Monthly:
 			maxRecords: 100,
 						sort: [
-        {field: 'Start', direction: 'desc'}
+        {field: 'Distance', direction: 'desc'}
         ],
 			fields: ['Model', 'Distance', 'Start', 'Usage']
 			}).eachPage(function page(records, fetchNextPage) {
@@ -833,9 +837,37 @@ app.get('/runs', (req, res) => {
 		base('Workout Type').select({
 			// Selecting the first 3 records in Monthly:
 			maxRecords: 100,
+			        sort: [{field: 'Distance', direction: 'desc'}],
 			fields: ['Name', 'Pace', 'AvHR', 'MaxHR', 'Distance', 'AvgCal']
 
 			}).eachPage(function page(records, fetchNextPage) {
+			
+			
+				records.forEach(function(rec) {
+				
+					console.log(rec.fields)
+					
+// 					rec.fields.Pace = "-:--"
+					
+					console.log(typeof(rec.fields.Pace))
+					
+					
+					if (typeof(rec.fields.Pace) === 'number') {
+						rec.fields.Pace = new Date(1000 * rec.fields.Pace).toISOString().substr(14, 5)
+					} else {
+						rec.fields.Pace = "-:--"
+					}
+					
+					if (typeof(rec.fields['AvHR']) !== 'number') {
+						rec.fields['AvHR'] = "---"
+					} else {
+						rec.fields['AvHR'] = Math.floor(rec.fields['AvHR'])
+					}
+					
+					console.log(rec.fields)
+					
+					
+				})
 			
 				fetchNextPage();
 			
