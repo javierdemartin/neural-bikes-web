@@ -45,9 +45,7 @@
 			<div>Duration <span class="passive">min</span></div>
 			<div>Average HR</div>
 			<div>Max HR</div>
-			<div>RHR</div>
 			<div>Vert</div>
-			<div>VO2Max</div>
 			
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
@@ -56,9 +54,7 @@
 				<div class="box a"><%- data.runs[run].fields.Duration %></div>
 				<div class="box a"><%- data.runs[run].fields['Average HR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['Max HR'] %></div>
-				<div class="box a"><%- data.runs[run].fields['RHR'] %></div>
 				<div class="box a"><%- data.runs[run].fields['Vertical Gain'] %></div>
-				<div class="box a"><%- data.runs[run].fields['VO2Max'] %></div>
 			<% }) %>
 		</div>	
 				</div>					
