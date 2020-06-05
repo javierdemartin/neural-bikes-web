@@ -29,7 +29,6 @@
     color: #d1d1d1;
     page-break-inside: avoid;
     font-family: monospace;
-/*     font-size: 15px; */
     line-height: 1.6;
     margin-bottom: 1.6em;
     max-width: 100%;
@@ -119,7 +118,7 @@ body {
 
 @media (max-width: 600pt) {
     body {
-        text-align:center
+/*         text-align:center */
     }
 
     .temporal-position {
@@ -220,6 +219,10 @@ img {
 .runsWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+li{
+  margin: 10px 0;
 }
 
 

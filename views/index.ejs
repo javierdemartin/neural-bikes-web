@@ -12,21 +12,19 @@
 		<h2><%= data.name.toUpperCase() %></h2>
     </div>
 
+<br>
 <span class="section"><%- data.description %></span>
-
-</br></br>
+<br>
+<p><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
 
 <div>
+<span><%- data.bio %></span>
 <% Object.keys(data.social_media).forEach(function(key){ %>
-<div class="section"><strong>▸ </strong><a href="<%- data.social_media[key] %>"><strong><%- key %></strong></a></div>
+<div class="section"><strong>▸ </strong><a href="<%- data.social_media[key].link %>"><strong><%- key %></strong></a> <span><%- data.social_media[key].description %></span></div>
 <% }); %>
 </div>
 
 </div>
-
-<p><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
-
-
 </div>
 
 </body>

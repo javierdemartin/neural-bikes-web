@@ -9,28 +9,27 @@
 
 	 <div class="inner">
 	 	 
-		 <div class="header">
-				<div class="title"><strong>Blog</strong></div>
-				<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></p>
-		</div>
+
+
+
 
 		<div>
-		  
-		  <% Object.keys(posts).reverse().forEach((year) => { %>
-		  		  <% console.log(year) %>
-		  		  <% console.log(posts[year]) %>
-		  		
-					
-					<% Object.keys(posts[year]).reverse().forEach((month) => { %> 					
-						<div class="section" style="padding-top: 0px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+		
+						<div class="title">
+					<strong>Blog</strong>
+				</div>
+				<div>
+				<span><a href='https://ko-fi.com/H2H814TXG'>Support my projects!</a></span>
+				</div>
+			<% Object.keys(posts).reverse().forEach((year) => { %>		  		
+				<% Object.keys(posts[year]).reverse().forEach((month) => { %> 					
+					<div class="section" style="padding-top: 0px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 						<%- year %> × <%- month %>
-												</div>
-							<% Object.values(posts[year][month]).reverse().forEach((post) => { %> 		    
-								<a href="/blog/<%- year %>/<%- month %>/<%- post.replace(".md","") %>"><%- post.replace(".md","").replace(/_/g, " ") %></a></br></br>
-							<% }) %>				
-
-					<% }) %>					
-
+					</div>
+					<% Object.values(posts[year][month]).reverse().forEach((post) => { %> 		    
+						<a href="/blog/<%- year %>/<%- month %>/<%- post.replace(".md","") %>"><%- post.replace(".md","").replace(/_/g, " ") %></a></br></br>
+					<% }) %>				
+				<% }) %>					
 		  <% }) %>
 
 		</div>
