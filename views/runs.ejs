@@ -10,14 +10,13 @@
 	<div class="inner">
 		<div class="header">
 			<div class="title"><h2>I like to run</h2></div>
-			<p>I don't like socially sharing my runs on Strava. Instead I created this personal dashboard that loads my latest statistics from <a href="airtable.com">Airtable</a>.</p>
+			<p>I'm Javi, you probably discovered this because of... reasons. I love spending time on my feet, this is updated automatically whenever I run.</p>
 		</div>
 		
 		<div>
 			<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 				Goals for this year
 				</div>
-				
 			<div>
 			<ul>
 			<li><s>Run at least one marathon in 2020 <span class="passive">Sevilla</span></s></li>
@@ -26,14 +25,54 @@
 			<li>Run <a href="https://www.bilbao.eus/cs/Satellite?cid=3000076722&language=en&pagename=Bilbaonet%2FPage%2FBIO_contenidoFinal">Bilbao's Green Belt</a> <span class="passive">38 km / 1.400m+</span></li>
 			</ul>
 			</div>
-		
 		</div>
+		
+		<div>
+			<div>
+				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+				Statistics
+				</div>
+				<p>Latest grouped statistics.</p>
+				
+				<div>
+					<div class="grid-container">
+					
+			
+			
+			<div class="runsWrapper">
+			<div><b>Interval</b></div>
+			<div><b>Distance</b> <span class="passive">km</span></div>
+			<div><b>Time</b></div>
+			<div><b>♡</b></div>
+			<div><b>♡↑</b></div>
+			<div><b>Gain</b> <span class="passive">m</span></div>
+			
+			<% Object.keys(data.statistics).forEach((run) => { %>
+			
+				<div class="box a"><span class="passive"><%- run %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run].distance) %></div>
+				<div class="box a"><%- data.statistics[run].duration %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['avghr']) %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['maxhr']) %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['gain']) %></div>
+			<% }) %>
+		</div>	
+				</div>					
+				</div>
+			</div>
+		
+		
+		
+		
+		
+		
 
 		<div>
 			<div>
 				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 				Runs
 				</div>
+
 				
 				<div>
 					Latest <%- data.runs.length %> runs.

@@ -774,31 +774,34 @@ app.get('/bicis/*', (req, res) => {
 
 ////////////////////////////
 
+// var Airtable = require('airtable');
+// var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
+
 var Airtable = require('airtable');
-var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
+var base = new Airtable({apiKey: "keyBiLKFwcjErb7if"}).base('appZ1mj1OPiwONMYU');
 
 app.get('/runs', (req, res) => {
 
 	var promises = [];
 	
+	
+	
 	promises.push(new Promise(function(resolve, reject) {
 
+		var date = new Date(new Date().getFullYear(),0,1,1);
+		var date = date.toISOString();
+		
 		base('Run').select({
-			// Selecting the first 3 records in Monthly:
-			maxRecords: 7,
+ 			maxRecords: 14,
 			sort: [
         {field: 'Date', direction: 'desc'}
         ],
 			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration', 'Max HR', 'RHR', 'Vertical Gain', 'VO2Max']
 			}).eachPage(function page(records, fetchNextPage) {
 			
-				records.forEach(function(rec) {
-
-					console.log(rec.fields)				
+				records.forEach(function(rec) {			
 				
 					rec.fields.Duration = new Date(1000 * rec.fields.Duration).toISOString().substr(11, 8)
-			
-					
 				})
 
 				fetchNextPage();
@@ -843,14 +846,7 @@ app.get('/runs', (req, res) => {
 			}).eachPage(function page(records, fetchNextPage) {
 			
 			
-				records.forEach(function(rec) {
-				
-					console.log(rec.fields)
-					
-// 					rec.fields.Pace = "-:--"
-					
-					console.log(typeof(rec.fields.Pace))
-					
+				records.forEach(function(rec) {		
 					
 					if (typeof(rec.fields.Pace) === 'number') {
 						rec.fields.Pace = new Date(1000 * rec.fields.Pace).toISOString().substr(14, 5)
@@ -863,10 +859,6 @@ app.get('/runs', (req, res) => {
 					} else {
 						rec.fields['AvHR'] = Math.floor(rec.fields['AvHR'])
 					}
-					
-					console.log(rec.fields)
-					
-					
 				})
 			
 				fetchNextPage();
@@ -878,6 +870,140 @@ app.get('/runs', (req, res) => {
 		});
 
 	}))
+	
+	
+	var statistics = {
+		'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0},
+		'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0},
+		'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0}
+		};
+	
+	// Total statistics
+	promises.push(new Promise(function(resolve, reject) {	
+
+		var date = new Date(new Date().getFullYear(),0,1,1);
+		var date = date.toISOString();		
+		var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
+		var firstDayOfWeek = new Date(new Date().setDate(new Date().getDate() - new Date().getDay()));
+		
+		
+		var monthCounter = 0;
+		var weekCounter = 0;
+		
+
+		base('Run').select({
+			filterByFormula: `{Date} > "${date}"`,
+			sort: [
+        {field: 'Date', direction: 'desc'}
+        ],
+			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration', 'Max HR', 'RHR', 'Vertical Gain', 'VO2Max']
+			}).eachPage(function page(records, fetchNextPage) {
+			
+				records.forEach(function(rec) {	
+					
+					statistics.year.distance += rec.fields.Distance		
+					statistics.year.duration += rec.fields.Duration	
+					statistics.year.rhr += rec.fields.RHR
+					
+					if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
+						statistics.year.gain += rec.fields['Vertical Gain']
+					}
+					
+						
+					
+					
+					if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
+						statistics.year.calories += rec.fields.Calories
+					}
+					
+					if (typeof rec.fields['Average HR'] !== 'undefined') {
+						statistics.year.avghr += rec.fields['Average HR']
+					}
+					
+					if (typeof rec.fields['Max HR'] !== 'undefined') {
+						statistics.year.maxhr += rec.fields['Max HR']
+					}
+				
+					
+					var currentSample = new Date(rec.fields['Date'])
+					
+					if (currentSample > firstDayOfMonth) {
+						
+						monthCounter += 1
+						
+						statistics.month.distance += rec.fields.Distance		
+						statistics.month.duration += rec.fields.Duration	
+						statistics.month.rhr += rec.fields.RHR
+						statistics.month.maxhr += rec.fields['Max HR']
+					
+						if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
+							statistics.month.calories += rec.fields.Calories
+						}
+					
+						if (typeof rec.fields['Average HR'] !== 'undefined') {
+							statistics.month.avghr += rec.fields['Average HR']
+						}
+						
+						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
+							statistics.month.gain += rec.fields['Vertical Gain']
+						}
+					
+					}
+					
+					
+					if (currentSample > firstDayOfWeek) {
+						
+						statistics.week.distance += rec.fields.Distance		
+						statistics.week.duration += rec.fields.Duration	
+						statistics.week.rhr += rec.fields.RHR
+						statistics.week.maxhr += rec.fields['Max HR']
+					
+						if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
+							statistics.week.calories += rec.fields.Calories
+						}
+						
+						weekCounter += 1
+					
+						if (typeof rec.fields['Average HR'] !== 'undefined') {
+							statistics.week.avghr += rec.fields['Average HR']
+						}
+						
+						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
+							statistics.week.gain += rec.fields['Vertical Gain']
+						}
+					
+					}
+					
+					
+					
+					
+				})
+				
+				statistics.year.avghr /= records.length
+				statistics.week.avghr /= weekCounter
+				statistics.month.avghr /= monthCounter
+				
+				statistics.year.maxhr /= records.length
+				statistics.week.maxhr /= weekCounter
+				statistics.month.maxhr /= monthCounter
+				
+				statistics.year.duration = toHHMMSS(statistics.year.duration)
+				statistics.month.duration = toHHMMSS(statistics.month.duration)
+				statistics.week.duration = toHHMMSS(statistics.week.duration)
+				
+				console.log(statistics)
+				
+
+				fetchNextPage();
+			
+				resolve(records)
+
+		}, function done(err) {
+			if (err) { console.error(err); return; }
+		});
+		
+
+	}))
 
 	// When both endpoints have finished their tasks start format the data for the new API &
 	// calculate the statistics
@@ -886,7 +1012,7 @@ app.get('/runs', (req, res) => {
 		let shoes = data[1];
 		
 
-		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2]}
+		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics}
 
 		res.render('views/runs.ejs', {data: raw})
 	})
@@ -894,6 +1020,19 @@ app.get('/runs', (req, res) => {
 })
 
 
+var toHHMMSS = (secs) => {
+    var sec_num = parseInt(secs, 10)
+    var hours   = Math.floor(sec_num / 3600)
+    var minutes = Math.floor(sec_num / 60) % 60
+    var seconds = sec_num % 60
+
+    return [hours,minutes,seconds]
+        .map(v => v < 10 ? "0" + v : v)
+        .filter((v,i) => v !== "00" || i > 0)
+        .join(":")
+}
+
+
 module.exports = app
 
-app.listen()
+app.listen(3000)
