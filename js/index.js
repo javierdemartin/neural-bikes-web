@@ -884,8 +884,9 @@ app.get('/runs', (req, res) => {
 		var date = new Date(new Date().getFullYear(),0,1,1);
 		var date = date.toISOString();		
 		var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
-		var firstDayOfWeek = new Date(new Date().setDate(new Date().getDate() - new Date().getDay()));
-		
+
+		var firstDayOfWeek = new Date();
+		firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
 		
 		var monthCounter = 0;
 		var weekCounter = 0;
@@ -908,9 +909,6 @@ app.get('/runs', (req, res) => {
 					if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
 						statistics.year.gain += rec.fields['Vertical Gain']
 					}
-					
-						
-					
 					
 					if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
 						statistics.year.calories += rec.fields.Calories
@@ -951,7 +949,7 @@ app.get('/runs', (req, res) => {
 					}
 					
 					
-					if (currentSample > firstDayOfWeek) {
+					if (currentSample >= firstDayOfWeek) {
 						
 						statistics.week.distance += rec.fields.Distance		
 						statistics.week.duration += rec.fields.Duration	
@@ -1035,4 +1033,4 @@ var toHHMMSS = (secs) => {
 
 module.exports = app
 
-app.listen(3000)
+app.listen()
