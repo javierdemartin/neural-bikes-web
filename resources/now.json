@@ -1,13 +1,12 @@
 {
 	"name": "Javier de Martín",
 	"description": "Telecommunications engineer, iOS developer & some machine learning",
-	"bio": "Currently working as a freelance iOS developer while I finish my MSc on telecommunications engineering. I am currently looking for a job as an iOS developer where I can contribute and keep learning.",
+	"bio": "Probably running or coding",
 	"social_media": {
-		"email": { "link": "mailto:javierdemartin@gmail.com", "description": ""},
+		"email": { "link": "mailto:javierdemartin@me.com", "description": ""},
 		"twitter": { "link": "https://twitter.com/javierdemartin", "description": ""},
 		"blog":{ "link": "/blog", "description": ""},
-		"cv": { "link": "/cv", "description": ""},
 		"runs": { "link": "/runs", "description": "My own Strava"},
-		"neuralbikes": { "link": "/bicis", "description": "Bike sharing predictions"}
+		"Neural.Bikes": { "link": "/bicis", "description": "Bike sharing predictions"}
 	}
 }
