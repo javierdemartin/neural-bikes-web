@@ -32,20 +32,22 @@
 				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 				Statistics
 				</div>
-				<p>Latest grouped statistics.</p>
+				<p>Latest grouped statistics, checking possible improvements in the last year, month and week.</p>
 				
 				<div>
 					<div class="grid-container">
 					
 			
 			
-			<div class="runsWrapper">
-			<div><b>Interval</b></div>
-			<div><b>Distance</b> <span class="passive">km</span></div>
+			<div class="statisticsWrapper">
+			<div><b></b></div>
+			<div><b>km</b></div>
 			<div><b>Time</b></div>
 			<div><b>♡</b></div>
 			<div><b>♡↑</b></div>
-			<div><b>Gain</b> <span class="passive">m</span></div>
+			<div><b>♡↓</b></div>
+			<div><b>VO2</b></div>
+			<div><b>↑</b> <span class="passive">m</span></div>
 			
 			<% Object.keys(data.statistics).forEach((run) => { %>
 			
@@ -54,18 +56,14 @@
 				<div class="box a"><%- data.statistics[run].duration %></div>
 				<div class="box a"><%- Math.floor(data.statistics[run]['avghr']) %></div>
 				<div class="box a"><%- Math.floor(data.statistics[run]['maxhr']) %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['rhr']) %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['vo2max']) %></div>
 				<div class="box a"><%- Math.floor(data.statistics[run]['gain']) %></div>
 			<% }) %>
 		</div>	
 				</div>					
 				</div>
 			</div>
-		
-		
-		
-		
-		
-		
 
 		<div>
 			<div>
@@ -75,16 +73,16 @@
 
 				
 				<div>
-					Latest <%- data.runs.length %> runs.
+					Latest <%- data.runs.length %> runs or workouts.
 					<div class="grid-container">
 					
 			<div class="runsWrapper">
-			<div><b>Date</b></div>
-			<div><b>Distance</b> <span class="passive">km</span></div>
-			<div><b>Duration</b> <span class="passive">min</span></div>
+			<div><b></b></div>
+			<div><b>km</b></div>
+			<div><b>Time</b> <span class="passive">min</span></div>
 			<div><b>♡</b></div>
 			<div><b>♡↑</b></div>
-			<div><b>Gain</b> <span class="passive">m</span></div>
+			<div><b>↑</b> <span class="passive">m</span></div>
 			
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
@@ -105,8 +103,8 @@
 
 		<div class="boxWrapper">
 		<div><b>Shoe</b></div>
-		<div><b>Start Date</b></div>
-		<div><b>Distance</b> <span class="passive">km</span></div>
+		<div><b>Start</b></div>
+		<div><b></b><span class="passive">km</span></div>
 		<div><b>Usage</b> <span class="passive">%</span></div>
 
 			<% Object.keys(data.shoes).forEach((shoe) => { %>
@@ -124,7 +122,7 @@
 			Workouts
 		</div>
 
-		<div class="boxWrapper">
+		<div class="workoutsWrapper">
 		<div><b>Type</b></div>
 		<div><b>Distance</b><span class="passive"> km</span></div>
 		<div><b>Average Pace</b><span class="passive"> min/km</span></div>

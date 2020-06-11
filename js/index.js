@@ -780,11 +780,24 @@ app.get('/bicis/*', (req, res) => {
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: "keyBiLKFwcjErb7if"}).base('appZ1mj1OPiwONMYU');
 
+Date.prototype.getWeek = function() {
+        var onejan = new Date(this.getFullYear(), 0, 1);
+        return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+    }
+
+
 app.get('/runs', (req, res) => {
 
 	var promises = [];
 	
+	var date = new Date()
 	
+	var userLocale = Intl.DateTimeFormat().resolvedOptions().locale
+	
+	var currentWeekNumber = (new Date()).getWeek(); 
+
+	
+	var currentWeekday = new Date(new Date().toLocaleString(userLocale)) // , {  weekday: 'long' });
 	
 	promises.push(new Promise(function(resolve, reject) {
 
@@ -873,9 +886,9 @@ app.get('/runs', (req, res) => {
 	
 	
 	var statistics = {
-		'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0},
-		'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0},
-		'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0}
+		'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0},
+		'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0},
+		'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0}
 		};
 	
 	// Total statistics
@@ -887,9 +900,11 @@ app.get('/runs', (req, res) => {
 
 		var firstDayOfWeek = new Date();
 		firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
+		firstDayOfWeek.setHours(00,00,00);
 		
 		var monthCounter = 0;
 		var weekCounter = 0;
+		var yearCounter = 0;
 		
 
 		base('Run').select({
@@ -904,7 +919,11 @@ app.get('/runs', (req, res) => {
 					
 					statistics.year.distance += rec.fields.Distance		
 					statistics.year.duration += rec.fields.Duration	
-					statistics.year.rhr += rec.fields.RHR
+					
+					if (typeof rec.fields['RHR'] !== 'undefined') {
+						statistics.year.rhr += rec.fields['RHR']
+						yearCounter += 1;
+					}
 					
 					if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
 						statistics.year.gain += rec.fields['Vertical Gain']
@@ -921,7 +940,10 @@ app.get('/runs', (req, res) => {
 					if (typeof rec.fields['Max HR'] !== 'undefined') {
 						statistics.year.maxhr += rec.fields['Max HR']
 					}
-				
+					
+					if (typeof rec.fields['VO2Max'] !== 'undefined') {
+						statistics.year.vo2max += rec.fields['VO2Max']
+					}
 					
 					var currentSample = new Date(rec.fields['Date'])
 					
@@ -945,7 +967,10 @@ app.get('/runs', (req, res) => {
 						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
 							statistics.month.gain += rec.fields['Vertical Gain']
 						}
-					
+						
+						if (typeof rec.fields['VO2Max'] !== 'undefined') {
+							statistics.month.vo2max += rec.fields['VO2Max']
+						}
 					}
 					
 					
@@ -969,27 +994,34 @@ app.get('/runs', (req, res) => {
 						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
 							statistics.week.gain += rec.fields['Vertical Gain']
 						}
+						
+						if (typeof rec.fields['VO2Max'] !== 'undefined') {
+							statistics.week.vo2max += rec.fields['VO2Max']
+						}
 					
 					}
 					
-					
-					
-					
 				})
 				
-				statistics.year.avghr /= records.length
+				statistics.year.avghr /= yearCounter
 				statistics.week.avghr /= weekCounter
 				statistics.month.avghr /= monthCounter
 				
-				statistics.year.maxhr /= records.length
+				statistics.year.maxhr /= yearCounter
 				statistics.week.maxhr /= weekCounter
 				statistics.month.maxhr /= monthCounter
+				
+				statistics.year.vo2max /= yearCounter
+				statistics.week.vo2max /= weekCounter
+				statistics.month.vo2max /= monthCounter
+				
+				statistics.year.rhr /= yearCounter
+				statistics.week.rhr /= weekCounter
+				statistics.month.rhr /= monthCounter
 				
 				statistics.year.duration = toHHMMSS(statistics.year.duration)
 				statistics.month.duration = toHHMMSS(statistics.month.duration)
 				statistics.week.duration = toHHMMSS(statistics.week.duration)
-				
-				console.log(statistics)
 				
 
 				fetchNextPage();
@@ -1033,4 +1065,4 @@ var toHHMMSS = (secs) => {
 
 module.exports = app
 
-app.listen()
+app.listen(3000)
