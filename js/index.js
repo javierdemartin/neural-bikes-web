@@ -371,13 +371,13 @@ app.get('/api/v1/today/*', (req, res) => {
 				}
 			} else if (city === "newyork") {
 		
-				stationsList = body["network"]["stations"]
+				stationsList = body["data"]["stations"]
 		
 				for (i = 0; i < stationsList.length; i++) {
 
 					gotStationsList.push(stationsList[i]["name"].replace(/^\d\d-/g, ''))
 			
-					stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["id"]
+					stationsDict[String(stationsList[i]["name"].replace(/^\d\d-/g, ''))] = stationsList[i]["station_id"]
 				}
 			}
 		
@@ -648,7 +648,7 @@ app.get('/blog/*', (req, res) => {
 let cityParsers = {
 	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
 	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
-	"newyork": "https://feeds.citibikenyc.com/stations/stations.json"
+	"newyork": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
 }
 
 var getIpInfo = function(req) {
@@ -736,15 +736,15 @@ app.get('/bicis/*', (req, res) => {
 		} else if (city === "newyork") {
 		
 
-			let stations = body['stationBeanList']
+			let stations = body['data']['stations']
 			centerLatitude = 40.758896 
 			centerLongitude = -73.985130
 			
 			for (i = 0; i< stations.length; i++) { 
 			
-				dataToEjsView[stations[i]["stationName"]] = {"lat": stations[i]["latitude"], "lng": stations[i]["longitude"], "id": stations[i]["id"], "free_bikes": stations[i]["availableBikes"], 'total_docks': stations[i]['totalDocks']}
+				dataToEjsView[stations[i]["name"]] = {"lat": stations[i]["lat"], "lng": stations[i]["lon"], "id": stations[i]["station_id"], "free_bikes": stations[i]["availableBikes"], 'total_docks': stations[i]['capacity']}
 								
-				stationIdDict[stations[i]["name"]] =  stations[i]["id"]
+				stationIdDict[stations[i]["name"]] =  stations[i]["station_id"]
 			}
 		}
 						
