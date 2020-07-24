@@ -586,9 +586,6 @@ var getBlogFloderStructure = function(filePath, callback) {
 		months	= getDirectories(filePath + "/"  + year)
 
 			lista[year] = {}
-
-
-			console.log(lista)
 			
 			months.forEach(function(month) {
 		
@@ -598,8 +595,6 @@ var getBlogFloderStructure = function(filePath, callback) {
 				lista[year][month] = getFilesIn(filePath + "/" + year + "/" + month)
 			})
 	})		
-	
-	console.log("DONE")
 	
 	callback(lista)
 }
@@ -699,7 +694,6 @@ app.get('/bicis/*', (req, res) => {
     	}
     
 		if (city === 'madrid') {
-		
 			options = {
 				url: urlToParse, 
 				method: 'GET',
@@ -774,31 +768,44 @@ app.get('/bicis/*', (req, res) => {
 
 ////////////////////////////
 
+var toHHMMSS = (secs) => {
+    var sec_num = parseInt(secs, 10)
+    var hours   = Math.floor(sec_num / 3600)
+    var minutes = Math.floor(sec_num / 60) % 60
+    var seconds = sec_num % 60
+
+    return [hours,minutes,seconds]
+        .map(v => v < 10 ? "0" + v : v)
+        .filter((v,i) => v !== "00" || i > 0)
+        .join(":")
+}
+
+function filterRecordsBetween(records, startDate, endDate) {
+		return records.filter(item => {
+			let date = new Date(item.Date);
+			return date >= startDate && date <= endDate;
+		})
+	}
+	
+var statistics = {
+	'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0},
+	'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0},
+	'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0}
+};
+
 // var Airtable = require('airtable');
 // var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
 
 var Airtable = require('airtable');
 var base = new Airtable({apiKey: "keyBiLKFwcjErb7if"}).base('appZ1mj1OPiwONMYU');
 
-Date.prototype.getWeek = function() {
-        var onejan = new Date(this.getFullYear(), 0, 1);
-        return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-    }
-
-
 app.get('/runs', (req, res) => {
 
 	var promises = [];
 	
-	var date = new Date()
-	
-	var userLocale = Intl.DateTimeFormat().resolvedOptions().locale
-	
-	var currentWeekNumber = (new Date()).getWeek(); 
-
-	
-	var currentWeekday = new Date(new Date().toLocaleString(userLocale)) // , {  weekday: 'long' });
-	
+	/**
+		Latest workouts
+	*/
 	promises.push(new Promise(function(resolve, reject) {
 
 		var date = new Date(new Date().getFullYear(),0,1,1);
@@ -809,13 +816,9 @@ app.get('/runs', (req, res) => {
 			sort: [
         {field: 'Date', direction: 'desc'}
         ],
-			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration', 'Max HR', 'RHR', 'Vertical Gain', 'VO2Max']
-			}).eachPage(function page(records, fetchNextPage) {
+			fields: ['Date', 'distance', 'duration', 'calories', 'Type', 'avghr', 'maxhr', 'rhr', 'vert', 'vo2max']
 			
-				records.forEach(function(rec) {			
-				
-					rec.fields.Duration = new Date(1000 * rec.fields.Duration).toISOString().substr(11, 8)
-				})
+			}).eachPage(function page(records, fetchNextPage) {
 
 				fetchNextPage();
 			
@@ -827,6 +830,9 @@ app.get('/runs', (req, res) => {
 
 	}))
 
+	/**
+		Shoes
+	*/
 	promises.push(new Promise(function(resolve, reject) {
 
 		base('Shoes').select({
@@ -846,8 +852,11 @@ app.get('/runs', (req, res) => {
 			if (err) { console.error(err); return; }
 		});
 
-	}))
-
+ 	}))
+ 	
+	/**
+		Workout Types
+	*/
 	promises.push(new Promise(function(resolve, reject) {
 
 		base('Workout Type').select({
@@ -855,6 +864,7 @@ app.get('/runs', (req, res) => {
 			maxRecords: 100,
 			        sort: [{field: 'Distance', direction: 'desc'}],
 			fields: ['Name', 'Pace', 'AvHR', 'MaxHR', 'Distance', 'AvgCal']
+			
 
 			}).eachPage(function page(records, fetchNextPage) {
 			
@@ -883,155 +893,92 @@ app.get('/runs', (req, res) => {
 		});
 
 	}))
+		
 	
-	
-	var statistics = {
-		'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0},
-		'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0},
-		'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'gain': 0.0, 'avghr': 0.0, 'maxhr': 0.0, rhr: 0.0, 'gain': 0.0, 'vo2max':0.0}
-		};
+	filteredRecs = []
 	
 	// Total statistics
 	promises.push(new Promise(function(resolve, reject) {	
-
-		var date = new Date(new Date().getFullYear(),0,1,1);
-		var date = date.toISOString();		
-		var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
-
-		var firstDayOfWeek = new Date();
-		firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
-		firstDayOfWeek.setHours(00,00,00);
-		
-		var monthCounter = 0;
-		var weekCounter = 0;
-		var yearCounter = 0;
-		
-
+	
 		base('Run').select({
-			filterByFormula: `{Date} > "${date}"`,
+			maxRecords: 3000,
 			sort: [
         {field: 'Date', direction: 'desc'}
         ],
-			fields: ['Date', 'Distance', 'Duration', 'Calories', 'Type', 'Average HR', 'Duration', 'Max HR', 'RHR', 'Vertical Gain', 'VO2Max']
+			fields: ['Date', 'distance', 'duration', 'calories', 'Type', 'avghr', 'maxhr', 'rhr', 'vert', 'vo2max']
 			}).eachPage(function page(records, fetchNextPage) {
 			
-				records.forEach(function(rec) {	
+				var myRecs = records.filter(function(obj) {
 					
-					statistics.year.distance += rec.fields.Distance		
-					statistics.year.duration += rec.fields.Duration	
-					
-					if (typeof rec.fields['RHR'] !== 'undefined') {
-						statistics.year.rhr += rec.fields['RHR']
-						yearCounter += 1;
-					}
-					
-					if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
-						statistics.year.gain += rec.fields['Vertical Gain']
-					}
-					
-					if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
-						statistics.year.calories += rec.fields.Calories
-					}
-					
-					if (typeof rec.fields['Average HR'] !== 'undefined') {
-						statistics.year.avghr += rec.fields['Average HR']
-					}
-					
-					if (typeof rec.fields['Max HR'] !== 'undefined') {
-						statistics.year.maxhr += rec.fields['Max HR']
-					}
-					
-					if (typeof rec.fields['VO2Max'] !== 'undefined') {
-						statistics.year.vo2max += rec.fields['VO2Max']
-					}
-					
-					var currentSample = new Date(rec.fields['Date'])
-					
-					if (currentSample > firstDayOfMonth) {
-						
-						monthCounter += 1
-						
-						statistics.month.distance += rec.fields.Distance		
-						statistics.month.duration += rec.fields.Duration	
-						statistics.month.rhr += rec.fields.RHR
-						statistics.month.maxhr += rec.fields['Max HR']
-					
-						if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
-							statistics.month.calories += rec.fields.Calories
-						}
-					
-						if (typeof rec.fields['Average HR'] !== 'undefined') {
-							statistics.month.avghr += rec.fields['Average HR']
-						}
-						
-						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
-							statistics.month.gain += rec.fields['Vertical Gain']
-						}
-						
-						if (typeof rec.fields['VO2Max'] !== 'undefined') {
-							statistics.month.vo2max += rec.fields['VO2Max']
-						}
-					}
-					
-					
-					if (currentSample >= firstDayOfWeek) {
-						
-						statistics.week.distance += rec.fields.Distance		
-						statistics.week.duration += rec.fields.Duration	
-						statistics.week.rhr += rec.fields.RHR
-						statistics.week.maxhr += rec.fields['Max HR']
-					
-						if (typeof rec.fields.Calories !== 'undefined' && rec.fields.Calories) {
-							statistics.week.calories += rec.fields.Calories
-						}
-						
-						weekCounter += 1
-					
-						if (typeof rec.fields['Average HR'] !== 'undefined') {
-							statistics.week.avghr += rec.fields['Average HR']
-						}
-						
-						if (typeof rec.fields['Vertical Gain'] !== 'undefined' && rec.fields['Vertical Gain']) {
-							statistics.week.gain += rec.fields['Vertical Gain']
-						}
-						
-						if (typeof rec.fields['VO2Max'] !== 'undefined') {
-							statistics.week.vo2max += rec.fields['VO2Max']
-						}
-					
-					}
-					
-				})
-				
-				statistics.year.avghr /= yearCounter
-				statistics.week.avghr /= weekCounter
-				statistics.month.avghr /= monthCounter
-				
-				statistics.year.maxhr /= yearCounter
-				statistics.week.maxhr /= weekCounter
-				statistics.month.maxhr /= monthCounter
-				
-				statistics.year.vo2max /= yearCounter
-				statistics.week.vo2max /= weekCounter
-				statistics.month.vo2max /= monthCounter
-				
-				statistics.year.rhr /= yearCounter
-				statistics.week.rhr /= weekCounter
-				statistics.month.rhr /= monthCounter
-				
-				statistics.year.duration = toHHMMSS(statistics.year.duration)
-				statistics.month.duration = toHHMMSS(statistics.month.duration)
-				statistics.week.duration = toHHMMSS(statistics.week.duration)
-				
+					filteredRecs.push(obj.fields)
 
+					return obj.fields;
+				});
+				
 				fetchNextPage();
 			
-				resolve(records)
-
 		}, function done(err) {
-			if (err) { console.error(err); return; }
-		});
 		
+			if (err) { console.error(err); return; }
+			
+			Object.keys(statistics).forEach(function(key) {
+				
+				var date = new Date(new Date().getFullYear(),0,1,1);
+				var date = date.toISOString();		
+				var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
+
+				var firstDayOfWeek = new Date();
+				firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
+				firstDayOfWeek.setHours(00,00,00);
+				
+				startDate = new Date().getTime()
+				
+				if (key === 'year') {
+					var date = new Date(new Date().getFullYear(),0,1,1);
+					startDate = date;
+				} else if (key === 'month') {
+					var date = new Date(new Date().getFullYear(),0,1,1);
+					var date = date.toISOString();		
+					var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
+					startDate = firstDayOfMonth
+				} else if (key === 'week') {
+					var firstDayOfWeek = new Date();
+					firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
+					firstDayOfWeek.setHours(00,00,00);
+					startDate = firstDayOfWeek;
+				}
+				
+				var thisYearsRecords = filterRecordsBetween(filteredRecs, startDate, new Date().getTime());
+
+				Object.keys(statistics[key]).forEach(function(key2) {
+					
+					distance = thisYearsRecords.filter(function(obj) {
+						return obj[key2]
+					})
+					.map(function(obj) {
+						return obj[key2];
+					});
+					
+					var yearSum = distance.reduce((a,b) => a+b,0);
+					
+					switch(key2) {
+					case 'distance':
+						statistics[key][key2] = yearSum
+						break;
+					case 'duration':
+						statistics[key][key2] = toHHMMSS(yearSum)
+						break;
+					case 'vert':
+						statistics[key][key2] = yearSum
+						break;
+					default:
+					statistics[key][key2] = yearSum / distance.length;		
+					}
+				})
+			})
+			
+			resolve(statistics)
+		});
 
 	}))
 
@@ -1041,26 +988,11 @@ app.get('/runs', (req, res) => {
 	
 		let shoes = data[1];
 		
-
 		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics}
 
 		res.render('views/runs.ejs', {data: raw})
 	})
-
 })
-
-
-var toHHMMSS = (secs) => {
-    var sec_num = parseInt(secs, 10)
-    var hours   = Math.floor(sec_num / 3600)
-    var minutes = Math.floor(sec_num / 60) % 60
-    var seconds = sec_num % 60
-
-    return [hours,minutes,seconds]
-        .map(v => v < 10 ? "0" + v : v)
-        .filter((v,i) => v !== "00" || i > 0)
-        .join(":")
-}
 
 
 module.exports = app

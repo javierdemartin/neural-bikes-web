@@ -1,6 +1,6 @@
 <html>
 <head>
-	  <title>Runs</title>
+   	<title>Runs</title>
 	<link href="/resources/styles.css" rel="stylesheet" type="text/css">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
 			<div class="title"><h2>I like to run</h2></div>
 			<p>I'm Javi, you probably discovered this because of... reasons. I love spending time on my feet, this is updated automatically whenever I run.</p>
 		</div>
-		
+
 		<div>
 			<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 				Goals for this year
@@ -27,6 +27,10 @@
 			</div>
 		</div>
 		
+		<div class="centre">
+			<span style="font-family:Arial;" id="goalProgress">░░░░░░░░░░░░░░░░▓▓▓▓░░░░░ <%- Math.floor(data.statistics['year'].distance) %> / 2020 km</span>
+		</div>
+		
 		<div>
 			<div>
 				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
@@ -37,8 +41,6 @@
 				<div>
 					<div class="grid-container">
 					
-			
-			
 			<div class="statisticsWrapper">
 			<div><b></b></div>
 			<div><b>km</b></div>
@@ -58,15 +60,16 @@
 				<div class="box a"><%- Math.floor(data.statistics[run]['maxhr']) %></div>
 				<div class="box a"><%- Math.floor(data.statistics[run]['rhr']) %></div>
 				<div class="box a"><%- Math.floor(data.statistics[run]['vo2max']) %></div>
-				<div class="box a"><%- Math.floor(data.statistics[run]['gain']) %></div>
+				<div class="box a"><%- Math.floor(data.statistics[run]['vert']) %></div>
 			<% }) %>
 		</div>	
 				</div>					
 				</div>
 			</div>
-
+		
 		<div>
-			<div>
+			<details>
+			<summary>Last  <%- data.runs.length %> runs</summary>
 				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
 				Runs
 				</div>
@@ -87,59 +90,65 @@
 			<% Object.keys(data.runs).forEach((run) => { %>
 			
 				<div class="box a"><span class="passive"><%- data.runs[run].fields.Date.split("T")[0] %></div>
-				<div class="box a"><%- data.runs[run].fields.Distance %></div>
-				<div class="box a"><%- data.runs[run].fields.Duration %></div>
-				<div class="box a"><%- data.runs[run].fields['Average HR'] %></div>
-				<div class="box a"><%- data.runs[run].fields['Max HR'] %></div>
-				<div class="box a"><%- data.runs[run].fields['Vertical Gain'] %></div>
+				<div class="box a"><%- data.runs[run].fields.distance %></div>
+				<div class="box a"><%- data.runs[run].fields.duration %></div>
+				<div class="box a"><%- data.runs[run].fields['avghr'] %></div>
+				<div class="box a"><%- data.runs[run].fields['maxhr'] %></div>
+				<div class="box a"><%- data.runs[run].fields['vert'] %></div>
 			<% }) %>
 		</div>	
 				</div>					
 				</div>
 			</div>
-		<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
-		Shoes
+			
+		<div>
+			<details>
+			<summary>Shoes</summary>
+			<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+			Shoes
+			</div>
+
+			<div class="boxWrapper">
+			<div><b>Shoe</b></div>
+			<div><b>Start</b></div>
+			<div><b></b><span class="passive">km</span></div>
+			<div><b>Usage</b> <span class="passive">%</span></div>
+
+				<% Object.keys(data.shoes).forEach((shoe) => { %>
+
+						<div class="box a"><%- data.shoes[shoe].fields.Model %></div>
+						<div class="box a"><%- data.shoes[shoe].fields.Start %></div>
+						<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance)%></div>
+						<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Usage) %></div>
+
+				<% }) %>
+			</div>
 		</div>
 
-		<div class="boxWrapper">
-		<div><b>Shoe</b></div>
-		<div><b>Start</b></div>
-		<div><b></b><span class="passive">km</span></div>
-		<div><b>Usage</b> <span class="passive">%</span></div>
+		<div>
+			<details>
+			<summary>Workouts</summary>
+			<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
+				Workouts
+			</div>
 
-			<% Object.keys(data.shoes).forEach((shoe) => { %>
-
-					<div class="box a"><%- data.shoes[shoe].fields.Model %></div>
-					<div class="box a"><%- data.shoes[shoe].fields.Start %></div>
-					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Distance)%></div>
-					<div class="box a"><%- Math.floor(data.shoes[shoe].fields.Usage) %></div>
-
-			<% }) %>
-		</div>
-
-
-		<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">
-			Workouts
-		</div>
-
-		<div class="workoutsWrapper">
-		<div><b>Type</b></div>
-		<div><b>Distance</b><span class="passive"> km</span></div>
-		<div><b>Average Pace</b><span class="passive"> min/km</span></div>
-		<div><b>♡</b><span class="passive"> bpm</span></div>
-			<% Object.keys(data.workout).forEach((wo) => { %>
-				<div class="box a"><%- data.workout[wo].fields.Name %> </div>
-				<div class="box a"><%- Math.floor(data.workout[wo].fields.Distance)%></div>
-				<div class="box a"><%- data.workout[wo].fields.Pace %></div>
-				<div class="box a"><%- data.workout[wo].fields['AvHR'] %></div>
-			<% }) %>
+			<div class="workoutsWrapper">
+			<div><b>Type</b></div>
+			<div><b>Distance</b><span class="passive"> km</span></div>
+			<div><b>Average Pace</b><span class="passive"> min/km</span></div>
+			<div><b>♡</b><span class="passive"> bpm</span></div>
+				<% Object.keys(data.workout).forEach((wo) => { %>
+					<div class="box a"><%- data.workout[wo].fields.Name %> </div>
+					<div class="box a"><%- Math.floor(data.workout[wo].fields.Distance)%></div>
+					<div class="box a"><%- data.workout[wo].fields.Pace %></div>
+					<div class="box a"><%- data.workout[wo].fields['AvHR'] %></div>
+				<% }) %>
+			</div>
+			</details>
 		</div>
 
 
 		<p class="Poppins"><a href='https://ko-fi.com/H2H814TXG'>Support my projects on Ko-Fi!️</a></p>
 	</div>
-	
-	
-
 	</body>
 </html>

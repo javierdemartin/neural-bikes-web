@@ -44,6 +44,17 @@
   color: #C8CACA;
 }
 
+details > summary {
+  padding: 10px;
+  border: none;
+}
+
+div.centre {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .section {
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
