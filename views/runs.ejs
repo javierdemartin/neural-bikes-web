@@ -71,6 +71,19 @@
 			</div>
 		
 		<div>
+		<details open >
+		<summary>Graphs</summary>
+		
+		Current weekly accumulated weekly distance over the course of this year.
+		
+			<% Object.keys(data.weekGraph).forEach((run) => { %>
+				<% console.log(data.weekGraph[run]) %>
+				<span style="font-family:Arial;"><p>wk<%- ( "00" + run).slice(-2) %> <%- data.weekGraph[run].text %> <%- Math.floor(data.weekGraph[run].distance) %>km</p></span>
+			<% }) %>
+		</details>
+		</div>
+		
+		<div>
 			<details>
 			<summary>Last  <%- data.runs.length %> runs</summary>
 				<div class="section" style="padding-top: 50px; padding-bottom: 3px; margin-bottom: 20px; border-bottom: 1px solid #C8CACA;">

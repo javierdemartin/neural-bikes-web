@@ -766,6 +766,41 @@ app.get('/bicis/*', (req, res) => {
 	})
 })
 
+/**
+ * Returns the week number for this date.  dowOffset is the day of week the week
+ * "starts" on for your locale - it can be from 0 to 6. If dowOffset is 1 (Monday),
+ * the week returned is the ISO 8601 week number.
+ * @param int dowOffset
+ * @return int
+ */
+Date.prototype.getWeek = function (dowOffset) {
+/*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
+
+    dowOffset = typeof(dowOffset) == 'int' ? dowOffset : 0; //default dowOffset to zero
+    var newYear = new Date(this.getFullYear(),0,1);
+    var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+    day = (day >= 0 ? day : day + 7);
+    var daynum = Math.floor((this.getTime() - newYear.getTime() - 
+    (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
+    var weeknum;
+    //if the year starts before the middle of a week
+    if(day < 4) {
+        weeknum = Math.floor((daynum+day-1)/7) + 1;
+        if(weeknum > 52) {
+            nYear = new Date(this.getFullYear() + 1,0,1);
+            nday = nYear.getDay() - dowOffset;
+            nday = nday >= 0 ? nday : nday + 7;
+            /*if the next year starts before the middle of
+              the week, it is week #1 of that year*/
+            weeknum = nday < 4 ? 1 : 53;
+        }
+    }
+    else {
+        weeknum = Math.floor((daynum+day-1)/7);
+    }
+    return weeknum;
+};
+
 ////////////////////////////
 
 function daysIntoYear(date){
@@ -901,19 +936,27 @@ app.get('/runs', (req, res) => {
 	
 	filteredRecs = []
 	
+	var weekGraph = {}
+	var maxWeeklyDistance = -1.0
+	
 	// Total statistics
 	promises.push(new Promise(function(resolve, reject) {	
 	
+			var date = new Date(new Date().getFullYear(),0,1,1);
+
+	console.log(date)
+	
 		base('Run').select({
 			maxRecords: 3000,
+// 			filterByFormula: `{Date} >= "${date}"`,
 			sort: [
         {field: 'Date', direction: 'desc'}
         ],
 			fields: ['Date', 'distance', 'duration', 'calories', 'Type', 'avghr', 'maxhr', 'rhr', 'vert', 'vo2max']
 			}).eachPage(function page(records, fetchNextPage) {
 			
-				var myRecs = records.filter(function(obj) {
-					
+				records.filter(function(obj) {
+
 					filteredRecs.push(obj.fields)
 
 					return obj.fields;
@@ -924,6 +967,59 @@ app.get('/runs', (req, res) => {
 		}, function done(err) {
 		
 			if (err) { console.error(err); return; }
+			
+			// Graphs
+			// ************************************************************************
+			
+			var startDate = new Date(new Date().getFullYear(),0,1,1);
+			var thisYearsRecords = filterRecordsBetween(filteredRecs, startDate, new Date().getTime());
+
+			thisYearsRecords.forEach(function(rec) {
+			
+				const currentWeekNumber = (new Date(rec.Date)).getWeek()
+			
+				console.log((rec.Date) + " - " + currentWeekNumber)
+				
+				if (currentWeekNumber in weekGraph) {
+
+					weekGraph[currentWeekNumber]["distance"] += rec.distance
+				} else {
+
+					const toAdd = {"distance": rec.distance, "text":""}
+					weekGraph[currentWeekNumber] = toAdd
+				}
+				
+				if (maxWeeklyDistance < weekGraph[currentWeekNumber]["distance"]) {
+					maxWeeklyDistance = weekGraph[currentWeekNumber]["distance"]
+				}
+			})
+			
+
+			
+			const maxWidth = 20;
+
+			
+			Object.keys(weekGraph).forEach(function(key) {
+			
+				var goal_text = "";
+			
+				for(i = 0; i < maxWidth; i++) {
+		
+					if (((weekGraph[key].distance/maxWeeklyDistance) * maxWidth) > i) {
+						goal_text += "▓"
+					} else {
+						goal_text += "░"
+					}
+				}	
+				
+				weekGraph[key].text = goal_text
+				
+			})
+
+			console.log(weekGraph)
+			console.log(maxWeeklyDistance)
+
+			// ************************************************************************
 			
 			Object.keys(statistics).forEach(function(key) {
 				
@@ -997,30 +1093,29 @@ app.get('/runs', (req, res) => {
 		
 		const percentageOfYear = Math.floor(daysIntoYear(new Date()) / 365 * 100) 
 		
-		for(i = 0; i < 20; i++) {
+		const maxWidth = 20;
 		
-			if (((statistics['year'].distance/2020) * 20) > i) {
+		for(i = 0; i < maxWidth; i++) {
+		
+			if (((statistics['year'].distance/2020) * maxWidth) > i) {
 				goal_text += "▓"
 			} else {
 				goal_text += "░"
 			}
 		}	
 		
-		
-		for(i = 0; i < 20; i++) {
+		for(i = 0; i < maxWidth; i++) {
 				
-			if (((percentageOfYear/100) * 20) > i) {
+			if (((percentageOfYear/100) * maxWidth) > i) {
 				poy_text += "▓"
 			} else {
 				poy_text += "░"
 			}
 		}		
 		
-		
-		
 		const goal_percentage = Math.floor(statistics['year'].distance / 2020.0 * 100)
 		
-		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics, 'poy': percentageOfYear, 'poy_text': poy_text, 'goal_percentage': goal_percentage, 'goal_distance_text': goal_text}
+		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics, 'poy': percentageOfYear, 'poy_text': poy_text, 'goal_percentage': goal_percentage, 'goal_distance_text': goal_text, "weekGraph": weekGraph}
 
 		res.render('views/runs.ejs', {data: raw})
 	})
