@@ -768,6 +768,10 @@ app.get('/bicis/*', (req, res) => {
 
 ////////////////////////////
 
+function daysIntoYear(date){
+    return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
+}
+
 var toHHMMSS = (secs) => {
     var sec_num = parseInt(secs, 10)
     var hours   = Math.floor(sec_num / 3600)
@@ -988,7 +992,35 @@ app.get('/runs', (req, res) => {
 	
 		let shoes = data[1];
 		
-		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics}
+		var poy_text = "";
+		var goal_text = "";
+		
+		const percentageOfYear = Math.floor(daysIntoYear(new Date()) / 365 * 100) 
+		
+		for(i = 0; i < 20; i++) {
+		
+			if (((statistics['year'].distance/2020) * 20) > i) {
+				goal_text += "▓"
+			} else {
+				goal_text += "░"
+			}
+		}	
+		
+		
+		for(i = 0; i < 20; i++) {
+				
+			if (((percentageOfYear/100) * 20) > i) {
+				poy_text += "▓"
+			} else {
+				poy_text += "░"
+			}
+		}		
+		
+		
+		
+		const goal_percentage = Math.floor(statistics['year'].distance / 2020.0 * 100)
+		
+		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics, 'poy': percentageOfYear, 'poy_text': poy_text, 'goal_percentage': goal_percentage, 'goal_distance_text': goal_text}
 
 		res.render('views/runs.ejs', {data: raw})
 	})
