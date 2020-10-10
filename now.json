@@ -1,29 +1,22 @@
 {
 	"version": 2,
-	"alias": "javierdemart.in",
-"builds": [
-
-    { "src": "resources/*", "use": "@now/static" },
+	"builds": [
+	{ "src": "/js/*.js", "use": "@now/node-server" },
+	{ "src": "resources/*", "use": "@now/static" },
     { "src": "_posts/*/*/*", "use": "@now/static" },
     { "src": "*.html", "use": "@now/static" },
-	{ "src": "_posts/resources/*", "use": "@now/static" },
-	{ "src": "/js/*.js", "use": "@now/node-server" }
-  ],
-  "env": {
-    "airtable_api_key": "@airtable_api_key"
-  },
- "routes": [
-  	{"src": "/", "dest": "/js/index.js"},
-  	{"src": "/api/v1/prediction/(.*)", "dest": "/js/index.js"},
- 	{"src": "/api/v1/today/(.*)", "dest": "/js/index.js"},
- 	{"src": "/api/v1/prediction/(.*)/(.*)", "dest": "/js/index.js"},
- 	{"src": "/api/v1/all/(.*)/(.*)", "dest": "/js/index.js"},
-	{"src": "/api/v1/today/(.*)/(.*)", "dest": "/js/index.js"},
-	{"src": "/blog", "dest": "/js/index.js"},
-	{"src": "/blog/", "dest": "/js/index.js"},
-	{"src": "/blog/(.*)", "dest": "/js/index.js"},
-	{"src" : "/bicis/(.*)", "dest": "/js/index.js"},
-	{"src" : "/bicis", "dest": "/js/index.js"},
-	{"src" : "/runs", "dest": "/js/index.js"},
-	{"src": "/cv", "dest": "/resources/Javier_de_Martin_resume.pdf"}]
+	{ "src": "_posts/resources/*", "use": "@now/static" }
+	],
+	"routes": [
+		{"src": "/ios", "dest": "https://apps.apple.com/id1275889928"},	
+		{"src": "/privacy", "dest": "/js/index.js"},	
+		{"src": "/docs", "dest": "/js/index.js"},
+		{"src": "/", "dest": "/js/index.js"},
+		{"src": "/api/v1/prediction/(.*)", "dest": "/js/index.js"},
+		{"src": "/api/v1/today/(.*)", "dest": "/js/index.js"},
+		{"src": "/api/v1/prediction/(.*)/(.*)", "dest": "/js/index.js"},
+		{"src": "/api/v1/all/(.*)/(.*)", "dest": "/js/index.js"},
+		{"src": "/api/v1/today/(.*)/(.*)", "dest": "/js/index.js"},
+		{"src" : "/(.*)", "dest": "/js/index.js"}
+	]
 }

@@ -41,24 +41,27 @@ app.set('views', path.join(__dirname, '../'));
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine','ejs');
 
+let cityParsers = {
+	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
+	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
+	"newyork": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
+}
+
+app.get('/docs', (req, res) => {
+
+	// const jsonFile = path.join(__dirname, '../resources/now.json')
+
+	// var raw = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+
+	res.render('views/api.ejs', {availableCities: {'Madrid': "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/", "Bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532", "New York": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"}})
+})
 
 app.get('/', (req, res) => {
 
-	getIpInfo(req)
-
-
-	const jsonFile = path.join(__dirname, '../resources/now.json')
-
-	var raw = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-
-	res.render('views/index.ejs', {data: raw})
-
+	res.render('views/select-city')
 })
 
-
 app.get('/bicis/privacy', (req, res) => {
-
-	getIpInfo(req)
 
 	const fileFolder = path.join(__dirname, '../texts/privacy.md');
 
@@ -77,16 +80,9 @@ app.get('/bicis/privacy', (req, res) => {
 
 })
 
-app.get('/bicis', (req, res) => {
-	getIpInfo(req)
-	res.render('views/select-city')
-})
-
 // MARK: API
 
 app.get('/api/v1/all/*/*', (req, res) => {
-
-		getIpInfo(req)
 
 	let currentUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/today/")
 	let predictionUrl = 'http://' + req.headers.host + req.originalUrl.replace("/all/", "/prediction/")
@@ -206,8 +202,6 @@ function median(values){
 
 app.get('/api/v1/:param/*/*', (req, res) => {
 
-	getIpInfo(req)
-
 	let city = req.params[0].toLowerCase()
 	let station = req.params[1]//.toUpperCase()
 
@@ -252,8 +246,6 @@ app.get('/api/v1/:param/*/*', (req, res) => {
 			decoded_data = {};
 		}
 
-		
-		
 		var datetime = new Date();
 		
 		var payload = {};
@@ -313,8 +305,6 @@ var apiPreLogIn = function(city) {
 }
 
 app.get('/api/v1/today/*', (req, res) => {
-
-		getIpInfo(req)
 
 	let city = req.params[0].toLowerCase()
 	
@@ -412,8 +402,6 @@ app.get('/api/v1/today/*', (req, res) => {
 
 app.get('/api/v1/prediction/*', (req, res) => {
 
-		getIpInfo(req)
-
 	let city = req.params[0].toLowerCase()
 	
 	var gotStationsList = []
@@ -509,8 +497,6 @@ app.get('/api/v1/prediction/*', (req, res) => {
 
 var queryForStation = function(typeOfQuery, stationName, resolveName) {
 
-	getIpInfo(req)
-
 	let recordNameSuffix = ""
 	
 	if (typeOfQuery === "Today") {
@@ -599,91 +585,11 @@ var getBlogFloderStructure = function(filePath, callback) {
 	callback(lista)
 }
 
-
-app.get('/blog', (req, res) => {
-
-	getIpInfo(req)
-
-	const testFolder = path.join(__dirname, '../_posts')
-	
-	getBlogFloderStructure(testFolder, function(stucture) {
-	
-		res.render('views/blog', {
-		posts: stucture
-		})
-	})
-
-
-});
-
-app.get('/blog/*', (req, res) => {
-
-	getIpInfo(req)
-
-	const testFolder = path.join(__dirname, '../_posts')
-				
-	var file = req.originalUrl.replace('/blog/', '')
-	
-	var fileUrl = testFolder + req.originalUrl.replace('/blog', '') + ".md"
-		
-	var raw = fs.readFileSync(fileUrl, 'utf8');
-	
-	const { data, content } = frontmatter(raw);
-	
-	data.date = data.date.toISOString().replace(/T/, ' ').replace(/\..+/, '').split(" ")[0]
-	
-	var aux = frontmatter(raw);
-	
-	const markdown = ejs.render(content, data);
-	const html = marked.parse(markdown);
-	
-	res.render('views/post', {data: data, content: html})
-})
-
-let cityParsers = {
-	"madrid": "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/",
-	"bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532",
-	"newyork": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
-}
-
-var getIpInfo = function(req) {
-
-	var ip = req.headers['x-forwarded-for'] || 
-	 req.connection.remoteAddress || 
-	 req.socket.remoteAddress ||
-	 (req.connection.socket ? req.connection.socket.remoteAddress : null);
-
-
-	url = 'https://freegeoip.app/json/' + ip
-
-	request.get(url, (error, response, body) => {
-	
-		if (!error && response.statusCode == 200) {
-			ip_info = JSON.parse(body)
-			
-			var latitude = ip_info['latitude']
-			var longitude = ip_info['longitude']
-			
-			var log = req.url  + " " + ip_info['country_name'] + " " + ip_info['city'] 
-			
-			if (latitude !== 0) {
-				log += " (" + ip_info['latitude'] + "," + ip_info['longitude'] + ")"
-			}
-	
-			console.log(log)
-		}
-	})	
-}
-
-app.get('/bicis/*', (req, res) => {
+app.get('/*', (req, res) => {
 
 	let city = req.params[0].toLowerCase()
 		
 	let urlToParse = cityParsers[city]
-	
-
-	
-	getIpInfo(req)
 		
 	apiPreLogIn(city).then(accessToken => {
 		
@@ -766,362 +672,7 @@ app.get('/bicis/*', (req, res) => {
 	})
 })
 
-/**
- * Returns the week number for this date.  dowOffset is the day of week the week
- * "starts" on for your locale - it can be from 0 to 6. If dowOffset is 1 (Monday),
- * the week returned is the ISO 8601 week number.
- * @param int dowOffset
- * @return int
- */
-Date.prototype.getWeek = function (dowOffset) {
-/*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
-
-    dowOffset = typeof(dowOffset) == 'int' ? dowOffset : 0; //default dowOffset to zero
-    var newYear = new Date(this.getFullYear(),0,1);
-    var day = newYear.getDay() - dowOffset; //the day of week the year begins on
-    day = (day >= 0 ? day : day + 7);
-    var daynum = Math.floor((this.getTime() - newYear.getTime() - 
-    (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-    var weeknum;
-    //if the year starts before the middle of a week
-    if(day < 4) {
-        weeknum = Math.floor((daynum+day-1)/7) + 1;
-        if(weeknum > 52) {
-            nYear = new Date(this.getFullYear() + 1,0,1);
-            nday = nYear.getDay() - dowOffset;
-            nday = nday >= 0 ? nday : nday + 7;
-            /*if the next year starts before the middle of
-              the week, it is week #1 of that year*/
-            weeknum = nday < 4 ? 1 : 53;
-        }
-    }
-    else {
-        weeknum = Math.floor((daynum+day-1)/7);
-    }
-    return weeknum;
-};
-
 ////////////////////////////
-
-function daysIntoYear(date){
-    return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
-}
-
-var toHHMMSS = (secs) => {
-    var sec_num = parseInt(secs, 10)
-    var hours   = Math.floor(sec_num / 3600)
-    var minutes = Math.floor(sec_num / 60) % 60
-    var seconds = sec_num % 60
-
-    return [hours,minutes,seconds]
-        .map(v => v < 10 ? "0" + v : v)
-        .filter((v,i) => v !== "00" || i > 0)
-        .join(":")
-}
-
-function filterRecordsBetween(records, startDate, endDate) {
-		return records.filter(item => {
-			let date = new Date(item.Date);
-			return date >= startDate && date <= endDate;
-		})
-	}
-	
-var statistics = {
-	'year': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0},
-	'month': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0},
-	'week': {'distance':0.0, 'duration': 0.0, 'calories': 0.0, 'vert': 0.0, 'avghr': 0.0, 'maxhr': 0.0, 'rhr': 0.0, 'vert': 0.0, 'vo2max':0.0}
-};
-
-// var Airtable = require('airtable');
-// var base = new Airtable({apiKey: process.env.airtable_api_key}).base('appZ1mj1OPiwONMYU');
-
-var Airtable = require('airtable');
-var base = new Airtable({apiKey: "keyBiLKFwcjErb7if"}).base('appZ1mj1OPiwONMYU');
-
-app.get('/runs', (req, res) => {
-
-	var promises = [];
-	
-	/**
-		Latest workouts
-	*/
-	promises.push(new Promise(function(resolve, reject) {
-
-		var date = new Date(new Date().getFullYear(),0,1,1);
-		var date = date.toISOString();
-		
-		base('Run').select({
- 			maxRecords: 14,
-			sort: [
-        {field: 'Date', direction: 'desc'}
-        ],
-			fields: ['Date', 'distance', 'duration', 'calories', 'Type', 'avghr', 'maxhr', 'rhr', 'vert', 'vo2max']
-			
-			}).eachPage(function page(records, fetchNextPage) {
-
-				fetchNextPage();
-			
-				resolve(records)
-
-		}, function done(err) {
-			if (err) { console.error(err); return; }
-		});
-
-	}))
-
-	/**
-		Shoes
-	*/
-	promises.push(new Promise(function(resolve, reject) {
-
-		base('Shoes').select({
-			// Selecting the first 3 records in Monthly:
-			maxRecords: 100,
-						sort: [
-        {field: 'Distance', direction: 'desc'}
-        ],
-			fields: ['Model', 'Distance', 'Start', 'Usage']
-			}).eachPage(function page(records, fetchNextPage) {
-
-				fetchNextPage();
-			
-				resolve(records)
-
-		}, function done(err) {
-			if (err) { console.error(err); return; }
-		});
-
- 	}))
- 	
-	/**
-		Workout Types
-	*/
-	promises.push(new Promise(function(resolve, reject) {
-
-		base('Workout Type').select({
-			// Selecting the first 3 records in Monthly:
-			maxRecords: 100,
-			        sort: [{field: 'Distance', direction: 'desc'}],
-			fields: ['Name', 'Pace', 'AvHR', 'MaxHR', 'Distance', 'AvgCal']
-			
-
-			}).eachPage(function page(records, fetchNextPage) {
-			
-			
-				records.forEach(function(rec) {		
-					
-					if (typeof(rec.fields.Pace) === 'number') {
-						rec.fields.Pace = new Date(1000 * rec.fields.Pace).toISOString().substr(14, 5)
-					} else {
-						rec.fields.Pace = "-:--"
-					}
-					
-					if (typeof(rec.fields['AvHR']) !== 'number') {
-						rec.fields['AvHR'] = "---"
-					} else {
-						rec.fields['AvHR'] = Math.floor(rec.fields['AvHR'])
-					}
-				})
-			
-				fetchNextPage();
-			
-				resolve(records)
-
-		}, function done(err) {
-			if (err) { console.error(err); return; }
-		});
-
-	}))
-		
-	
-	filteredRecs = []
-	
-	var weekGraph = {}
-	var maxWeeklyDistance = -1.0
-	
-	// Total statistics
-	promises.push(new Promise(function(resolve, reject) {	
-	
-			var date = new Date(new Date().getFullYear(),0,1,1);
-
-	console.log(date)
-	
-		base('Run').select({
-			maxRecords: 3000,
-// 			filterByFormula: `{Date} >= "${date}"`,
-			sort: [
-        {field: 'Date', direction: 'desc'}
-        ],
-			fields: ['Date', 'distance', 'duration', 'calories', 'Type', 'avghr', 'maxhr', 'rhr', 'vert', 'vo2max']
-			}).eachPage(function page(records, fetchNextPage) {
-			
-				records.filter(function(obj) {
-
-					filteredRecs.push(obj.fields)
-
-					return obj.fields;
-				});
-				
-				fetchNextPage();
-			
-		}, function done(err) {
-		
-			if (err) { console.error(err); return; }
-			
-			// Graphs
-			// ************************************************************************
-			
-			var startDate = new Date(new Date().getFullYear(),0,1,1);
-			var thisYearsRecords = filterRecordsBetween(filteredRecs, startDate, new Date().getTime());
-
-			thisYearsRecords.forEach(function(rec) {
-			
-				const currentWeekNumber = (new Date(rec.Date)).getWeek()
-			
-				console.log((rec.Date) + " - " + currentWeekNumber)
-				
-				if (currentWeekNumber in weekGraph) {
-
-					weekGraph[currentWeekNumber]["distance"] += rec.distance
-				} else {
-
-					const toAdd = {"distance": rec.distance, "text":""}
-					weekGraph[currentWeekNumber] = toAdd
-				}
-				
-				if (maxWeeklyDistance < weekGraph[currentWeekNumber]["distance"]) {
-					maxWeeklyDistance = weekGraph[currentWeekNumber]["distance"]
-				}
-			})
-			
-
-			
-			const maxWidth = 20;
-
-			
-			Object.keys(weekGraph).forEach(function(key) {
-			
-				var goal_text = "";
-			
-				for(i = 0; i < maxWidth; i++) {
-		
-					if (((weekGraph[key].distance/maxWeeklyDistance) * maxWidth) > i) {
-						goal_text += "▓"
-					} else {
-						goal_text += "░"
-					}
-				}	
-				
-				weekGraph[key].text = goal_text
-				
-			})
-
-			console.log(weekGraph)
-			console.log(maxWeeklyDistance)
-
-			// ************************************************************************
-			
-			Object.keys(statistics).forEach(function(key) {
-				
-				var date = new Date(new Date().getFullYear(),0,1,1);
-				var date = date.toISOString();		
-				var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
-
-				var firstDayOfWeek = new Date();
-				firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
-				firstDayOfWeek.setHours(00,00,00);
-				
-				startDate = new Date().getTime()
-				
-				if (key === 'year') {
-					var date = new Date(new Date().getFullYear(),0,1,1);
-					startDate = date;
-				} else if (key === 'month') {
-					var date = new Date(new Date().getFullYear(),0,1,1);
-					var date = date.toISOString();		
-					var firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1,2)
-					startDate = firstDayOfMonth
-				} else if (key === 'week') {
-					var firstDayOfWeek = new Date();
-					firstDayOfWeek.setDate(firstDayOfWeek.getDate() - (firstDayOfWeek.getDay() + 6) % 7);
-					firstDayOfWeek.setHours(00,00,00);
-					startDate = firstDayOfWeek;
-				}
-				
-				var thisYearsRecords = filterRecordsBetween(filteredRecs, startDate, new Date().getTime());
-
-				Object.keys(statistics[key]).forEach(function(key2) {
-					
-					distance = thisYearsRecords.filter(function(obj) {
-						return obj[key2]
-					})
-					.map(function(obj) {
-						return obj[key2];
-					});
-					
-					var yearSum = distance.reduce((a,b) => a+b,0);
-					
-					switch(key2) {
-					case 'distance':
-						statistics[key][key2] = yearSum
-						break;
-					case 'duration':
-						statistics[key][key2] = toHHMMSS(yearSum)
-						break;
-					case 'vert':
-						statistics[key][key2] = yearSum
-						break;
-					default:
-					statistics[key][key2] = yearSum / distance.length;		
-					}
-				})
-			})
-			
-			resolve(statistics)
-		});
-
-	}))
-
-	// When both endpoints have finished their tasks start format the data for the new API &
-	// calculate the statistics
-	Promise.all(promises).then(data => {
-	
-		let shoes = data[1];
-		
-		var poy_text = "";
-		var goal_text = "";
-		
-		const percentageOfYear = Math.floor(daysIntoYear(new Date()) / 365 * 100) 
-		
-		const maxWidth = 20;
-		
-		for(i = 0; i < maxWidth; i++) {
-		
-			if (((statistics['year'].distance/2020) * maxWidth) > i) {
-				goal_text += "▓"
-			} else {
-				goal_text += "░"
-			}
-		}	
-		
-		for(i = 0; i < maxWidth; i++) {
-				
-			if (((percentageOfYear/100) * maxWidth) > i) {
-				poy_text += "▓"
-			} else {
-				poy_text += "░"
-			}
-		}		
-		
-		const goal_percentage = Math.floor(statistics['year'].distance / 2020.0 * 100)
-		
-		var raw = {'runs': data[0], 'shoes': shoes, 'workout': data[2], 'statistics': statistics, 'poy': percentageOfYear, 'poy_text': poy_text, 'goal_percentage': goal_percentage, 'goal_distance_text': goal_text, "weekGraph": weekGraph}
-
-		res.render('views/runs.ejs', {data: raw})
-	})
-})
-
-
 module.exports = app
 
 app.listen(3000)

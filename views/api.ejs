@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>Docs</title>
+<link href="/resources/styles.css" rel="stylesheet" type="text/css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="body">
+<div class="inner">
+<div>
+<div class="title">
+    <strong>Docs</strong>
+</div>
+
+<div>
+
+    <p>Apart from Neural Bikes an iOS app and some sort of web app that shows the capabilities it exposes a public API with data available to use.</p>
+
+    <p>What cities are available? As of now:</p>
+    <ul>
+        <% Object.keys(availableCities).forEach((city) => { %>		  		
+
+            <% console.log(availableCities[city]) %>
+        			<li><a href="<%- availableCities[city] %>"><%- city %></a></li>		
+        <% }) %>
+    </ul>
+
+    
+
+    
+
+    For each city there are three endpoints available:
+
+    <ul>
+        <li><code>today</code></li>
+        <li><code>prediction</code></li>
+        <li><code>all</code></li>
+    </ul>
+
+    <p>To query a specific station you should use the station identifier provided by either the Open Data catalog of each city or the ones used on each app. The link for each one is linked on each city beforehand.</p>
+
+    <h3>Fields</h3>
+
+    <p>Both today and prediction return the same fields. Only the number of them changes as the current availability is constantly being updated every ten minutes. The values field below on the /prediction/ endpoint has a constant length of 144 as it contains samples for each hour of the day in ten minutes intervals. For the /today value this is constantly growing through the day as new samples are gathered.</p>
+
+    <pre>
+├── values ─ [String: Int]
+├── values ─ [String: Int]
+├── donate ─ String
+├── license ─ String
+└── last_updated
+    </pre>
+
+    <h3>Examples</h3>
+
+    <p>The format for a sample query is as follows.</p>
+
+    <pre>
+https://neuralbike.app/api/v1/today/bilbao/9018452
+    </pre>
+
+    <h3>Final thoughts</h3>
+
+    <p>This project is able to exist thanks to Open Data catalogs. Data is gathered on a local server at home on ten minutes intervals. With that growing data catalog a neural network is trained that creates daily predictions of bike sharing availability.</p>
+    <p>Everything is free to use and tinker with. Even all of the code has been open sourced. If you're building something with this or would like to support the development of the project consider <a href="http://paypal.me/javierdemartin">donating</a> some dollarinos so I can enjoy some coffee every so once in a while. </p>
+    <p>Also, ping me on <a href="https://twitter.com/javierdemartin">Twitter</a> or via <a href="mailto:javierdemartin@me.com">mail</a> if something's wrong or you know, whatever.</p>
+</div>
+
+
+
+</div>
+
+</div>
+</body>
+</html>
