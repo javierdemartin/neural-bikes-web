@@ -1,14 +1,11 @@
 {
 	"version": 2,
+	"alias": "neuralbike.app",
 	"builds": [
 	{ "src": "/js/*.js", "use": "@now/node-server" },
-	{ "src": "resources/*", "use": "@now/static" },
-    { "src": "_posts/*/*/*", "use": "@now/static" },
-    { "src": "*.html", "use": "@now/static" },
-	{ "src": "_posts/resources/*", "use": "@now/static" }
+	{ "src": "resources/*", "use": "@now/static" }
 	],
 	"routes": [
-		{"src": "/ios", "dest": "https://apps.apple.com/id1275889928"},
 		{"src": "/report", "dest": "/js/index.js"},	
 		{"src": "/privacy", "dest": "/js/index.js"},	
 		{"src": "/docs", "dest": "/js/index.js"},

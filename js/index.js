@@ -14,9 +14,6 @@ var CloudKit = require('./cloudkit.js')
 const frontmatter = require('frontmatter');
 const marked = require('marked');
 
-const Bearer = require('@bearer/node-agent')
-Bearer.init({ secretKey: 'sk_production_XlAJqg_Jp0FdO0R9kZWp5B0LzwECnrfm' })
-
 var stations = [];
 var total = [];
 var datos = [];
