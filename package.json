@@ -1,0 +1,22 @@
+{
+    "name": "nodejs-express",
+    "version": "1.0.0",
+    "main": "app.js",
+    "engines": {
+      "node": "12.x"
+    },
+    "license": "MIT",
+    "dependencies": {
+      "async": "^2.6.2",
+      "ejs": "2.6.1",
+      "encoding": "^0.1.12",
+      "express": "^4.16.4",
+      "frontmatter": "^0.0.3",
+      "html": "1.0.0",
+      "marked": "^0.7.0",
+      "node-fetch": "^2.6.0",
+      "now": "^16.7.3",
+      "request": "^2.88.0"
+    }
+  }
+  

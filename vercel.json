@@ -1,6 +1,4 @@
 {
-	"version": 2,
-	"alias": "neuralbike.app",
 	"builds": [
 	{ "src": "/js/*.js", "use": "@now/node-server" },
 	{ "src": "resources/*", "use": "@now/static" }
