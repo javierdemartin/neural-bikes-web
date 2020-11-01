@@ -8,7 +8,8 @@
 	{ "src": "_posts/resources/*", "use": "@now/static" }
 	],
 	"routes": [
-		{"src": "/ios", "dest": "https://apps.apple.com/id1275889928"},	
+		{"src": "/ios", "dest": "https://apps.apple.com/id1275889928"},
+		{"src": "/report", "dest": "/js/index.js"},	
 		{"src": "/privacy", "dest": "/js/index.js"},	
 		{"src": "/docs", "dest": "/js/index.js"},
 		{"src": "/", "dest": "/js/index.js"},

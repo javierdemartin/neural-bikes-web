@@ -56,9 +56,48 @@ app.get('/docs', (req, res) => {
 	res.render('views/api.ejs', {availableCities: {'Madrid': "https://openapi.emtmadrid.es/v1/transport/bicimad/stations/", "Bilbao": "https://nextbike.net/maps/nextbike-official.json?city=532", "New York": "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"}})
 })
 
+
+app.get('/report', (req, res) => {
+
+	const fileFolder = path.join(__dirname, '../views/report/report.md');
+
+	var raw = fs.readFileSync(fileFolder, 'utf8');
+
+			const { data, content } = frontmatter(raw);
+										
+			var aux = frontmatter(raw);
+
+			const markdown = ejs.render(content, data);
+			const html = marked.parse(markdown);
+
+			res.render('views/bicis/privacy', {
+			body: html
+		  })
+})
+
+
 app.get('/', (req, res) => {
 
 	res.render('views/select-city')
+})
+
+
+app.get('/report', (req, res) => {
+
+	const fileFolder = path.join(__dirname, '../views/report/report.md');
+
+	var raw = fs.readFileSync(fileFolder, 'utf8');
+
+			const { data, content } = frontmatter(raw);
+										
+			var aux = frontmatter(raw);
+
+			const markdown = ejs.render(content, data);
+			const html = marked.parse(markdown);
+
+			res.render('views/bicis/privacy', {
+			body: html
+		  })
 })
 
 app.get('/bicis/privacy', (req, res) => {
@@ -77,7 +116,6 @@ app.get('/bicis/privacy', (req, res) => {
 			res.render('views/bicis/privacy', {
 			body: html
 		  })
-
 })
 
 // MARK: API
