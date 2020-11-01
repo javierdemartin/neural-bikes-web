@@ -1,4 +1,5 @@
 {
+	"version": 2,
 	"builds": [
 	{ "src": "/js/*.js", "use": "@now/node-server" },
 	{ "src": "resources/*", "use": "@now/static" }

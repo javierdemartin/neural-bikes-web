@@ -2,9 +2,9 @@
 
 Los datos utilizados para este análisis provienen de catálogos de datos abiertos. Estos datos son utilizados por la app [Neural Bikes](https://apps.apple.com/es/app/neural-bikes-bike-sharing/id1275889928?mt=8&ign-itsct=apps_box&ign-itscg=30200&ign-mpt=uo%3D4) para realizar predicciones de demanda diaria y ayudar a los usuarios y operarios de estos servicios.
 
-Este proyecto se mantiene en pie gracias a donaciones a través de [Ko-Fi](https://ko-fi.com/javierdemartin).
-
 Este análisis pretende reflejar las relaciones existentes del comportamiento humano que se ve reflejado en el transporte público. Esto es especialmente importante este año y la normalidad de la vida diaria se ve reflejada en este medio de transporte.
+
+Este proyecto se mantiene en pie gracias a donaciones a través de [Ko-Fi](https://ko-fi.com/javierdemartin).
 
 ## Bilbao
 

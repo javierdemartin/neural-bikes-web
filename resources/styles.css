@@ -12,7 +12,7 @@ body {
   overflow-y: scroll;
   font-family:sans-serif
 }
-/* 
+
 @media (prefers-color-scheme: dark) {
   body {
   	color: white;
@@ -46,7 +46,7 @@ body {
     display: block;
     word-wrap: break-word;
   }
-} */
+}
 
 .passive {
   font-weight: normal;

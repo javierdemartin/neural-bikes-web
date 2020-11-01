@@ -1,8 +1,6 @@
-resources/*.pdf
 */.DS_Store
 .DS_STORE
 yarn.lock
 node_modules/
-
 .now
 .vercel
