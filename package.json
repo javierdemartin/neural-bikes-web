@@ -1,7 +1,7 @@
 {
   "name": "nodejs-express",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "js/index.js",
   "engines": {
     "node": "12.x"
   },
@@ -17,5 +17,8 @@
     "node-fetch": "^2.6.0",
     "now": "^16.7.3",
     "request": "^2.88.0"
+  },
+  "scripts": {
+    "start": "node ."
   }
 }
