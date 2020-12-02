@@ -2,7 +2,9 @@
 	"version": 2,
 	"builds": [
 	{ "src": "/js/*.js", "use": "@now/node-server" },
-	{ "src": "resources/*", "use": "@now/static" }
+	{ "src": "resources/*", "use": "@now/static" },
+	{ "src": "views/*", "use": "@now/static" },
+	{ "src": "views/*/*", "use": "@now/static" }
 	],
 	"routes": [
 		{"src": "/report", "dest": "/js/index.js"},	
